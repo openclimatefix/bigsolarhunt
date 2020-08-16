@@ -45,8 +45,7 @@ class _UploadScreenState extends State<UploadScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Upload a photo',
-            style: Theme.of(context).textTheme.bodyText1),
+        title: Text('Upload a photo'),
         actions: <Widget>[
           IconButton(
               icon: const Icon(Icons.refresh), onPressed: () => _regetImage())
