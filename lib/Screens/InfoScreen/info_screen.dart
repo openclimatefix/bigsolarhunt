@@ -13,10 +13,6 @@ class _InfoScreenState extends State<InfoScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Info'),
-        backgroundColor: Colors.green,
-      ),
       backgroundColor: Colors.green[100],
       body: Container(
         padding: const EdgeInsets.all(32.0),
