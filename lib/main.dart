@@ -18,7 +18,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
         theme: ThemeData(
             brightness: Brightness.light,
-            primaryColor: Colors.black,
+            primaryColor: Colors.teal,
             accentColor: Colors.teal,
             textTheme: GoogleFonts.interTextTheme(Theme.of(context).textTheme)),
         initialRoute: '/',

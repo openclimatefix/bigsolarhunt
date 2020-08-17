@@ -13,10 +13,6 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Open climate fix'),
-        backgroundColor: Colors.black,
-      ),
       backgroundColor: Colors.grey[100],
       body: Container(
         padding: const EdgeInsets.all(32.0),
