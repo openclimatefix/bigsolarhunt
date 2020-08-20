@@ -3,6 +3,8 @@ import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:image_fade/image_fade.dart';
 
+import 'UploadScreenWidgets/upload_button.dart';
+
 class UploadScreen extends StatefulWidget {
   const UploadScreen({
     Key key,
@@ -66,13 +68,7 @@ class _UploadScreenState extends State<UploadScreen> {
         Container(
             padding: EdgeInsets.all(20),
             alignment: Alignment.bottomCenter,
-            child: FloatingActionButton.extended(
-              backgroundColor: Colors.orange,
-              label: Text('Upload'),
-              icon: Icon(Icons.cloud_upload),
-              // TODO: Implement mappiliary API call
-              onPressed: () => {print('Began upload to mapilliary API')},
-            ))
+            child: UploadButton(image: _image))
       ])),
     );
   }
