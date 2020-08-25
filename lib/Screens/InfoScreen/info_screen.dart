@@ -19,7 +19,9 @@ class _InfoScreenState extends State<InfoScreen> {
         alignment: Alignment.center,
         child:
             // Placeholder
-            Center(child: Text('Info Screen', style: TextStyle(fontSize: 40))),
+            Center(
+                child: Text('Info Screen',
+                    style: Theme.of(context).textTheme.headline3)),
       ),
     );
   }

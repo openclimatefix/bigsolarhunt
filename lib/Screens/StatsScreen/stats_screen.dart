@@ -17,8 +17,9 @@ class _StatsScreenState extends State<StatsScreen> {
       body: Container(
         padding: const EdgeInsets.all(32.0),
         alignment: Alignment.center,
-        child:
-            Center(child: Text('Stats Screen', style: TextStyle(fontSize: 40))),
+        child: Center(
+            child: Text('Stats Screen',
+                style: Theme.of(context).textTheme.headline3)),
       ),
     );
   }

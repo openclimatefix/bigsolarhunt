@@ -25,7 +25,9 @@ class _HomePageState extends State<HomePage> {
     Destination _currentDestination = allDestinations[_currentIndex];
     return Scaffold(
       appBar: AppBar(
-        title: Text(allDestinations[_currentIndex].title),
+        backgroundColor: Theme.of(context).primaryColor,
+        title: Text(allDestinations[_currentIndex].title,
+            style: Theme.of(context).textTheme.headline6),
       ),
       body: SafeArea(
           top: false,
@@ -38,6 +40,8 @@ class _HomePageState extends State<HomePage> {
                 return MaterialPageRoute(builder: builder, settings: settings);
               })),
       bottomNavigationBar: BottomNavigationBar(
+        backgroundColor:
+            Theme.of(context).bottomNavigationBarTheme.backgroundColor,
         currentIndex: _currentIndex,
         showSelectedLabels: false,
         showUnselectedLabels: false,
@@ -53,14 +57,17 @@ class _HomePageState extends State<HomePage> {
         },
         items: allDestinations.map((Destination destination) {
           return BottomNavigationBarItem(
-              icon: Icon(destination.icon),
+              icon: Icon(destination.icon,
+                  color: Theme.of(context).iconTheme.color),
+              activeIcon:
+                  Icon(destination.icon, color: Theme.of(context).accentColor),
               backgroundColor: destination.color,
               title: Text(destination.title));
         }).toList(),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add_a_photo),
+        child: Icon(Icons.add_a_photo, color: Colors.black),
         onPressed: () => Navigator.pushNamed(context, '/upload'),
       ),
     );
