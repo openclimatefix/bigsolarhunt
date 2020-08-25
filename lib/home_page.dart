@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 
 import 'Animation/page_route_animations.dart';
 import 'Screens/InfoScreen/info_screen.dart';
-import 'Screens/MapScreen.dart/map_screen.dart';
+import 'Screens/MapScreen/map_screen.dart';
 import 'Screens/StatsScreen/stats_screen.dart';
 
 class HomePage extends StatefulWidget {
