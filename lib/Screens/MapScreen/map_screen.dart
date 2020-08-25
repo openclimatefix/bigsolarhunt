@@ -20,8 +20,8 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   GoogleMapController _mapController;
-  String _mapStyle;
-  BitmapDescriptor _pinLocationIcon;
+  List<String> _mapStyles = List<String>(2);
+  List<BitmapDescriptor> _pinLocationIcons = List<BitmapDescriptor>(2);
   OSMService osmService = new OSMService();
   Location location = new Location();
   static LatLng _userLocation;
@@ -40,18 +40,24 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   _setCustomMapPin() async {
-    final Uint8List markerIcon =
-        await _getBytesFromAsset('assets/sun-icon-md.png', 50);
+    final Uint8List darkMarkerIcon =
+        await _getBytesFromAsset('assets/panel-icon-orange-dark.png', 50);
+    final Uint8List lightMarkerIcon =
+        await _getBytesFromAsset('assets/panel-icon-orange.png', 50);
     setState(() {
-      _pinLocationIcon = BitmapDescriptor.fromBytes(markerIcon);
+      _pinLocationIcons[0] = BitmapDescriptor.fromBytes(lightMarkerIcon);
+      _pinLocationIcons[1] = BitmapDescriptor.fromBytes(darkMarkerIcon);
     });
   }
 
   _setMapStyle() async {
-    final String mapStyle =
-        await rootBundle.loadString('assets/map_style.json');
+    final String darkMapStyle =
+        await rootBundle.loadString('assets/map_style_dark.json');
+    final String lightMapStyle =
+        await rootBundle.loadString('assets/map_style_light.json');
     setState(() {
-      _mapStyle = mapStyle;
+      _mapStyles[0] = lightMapStyle;
+      _mapStyles[1] = darkMapStyle;
     });
   }
 
@@ -73,8 +79,10 @@ class _MapScreenState extends State<MapScreen> {
 
   _onMapCreated(GoogleMapController controller) async {
     _mapController = controller;
-    _mapController.setMapStyle(_mapStyle);
-    _initializeClusters(_solarPanelData);
+    int themeIdentifier =
+        Theme.of(context).brightness == Brightness.light ? 0 : 1;
+    _mapController.setMapStyle(_mapStyles[themeIdentifier]);
+    _initializeClusters(_solarPanelData, themeIdentifier);
     final double zoomLevel = await _mapController.getZoomLevel();
     setState(() {
       _markers = _fluster
@@ -94,13 +102,13 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
-  _initializeClusters(List<SolarPanel> newPanels) {
+  _initializeClusters(List<SolarPanel> newPanels, int themeIdentifier) {
     final List<MapMarker> markers = [];
     for (final solarPanel in newPanels) {
       markers.add(MapMarker(
           id: solarPanel.id.toString(),
           position: LatLng(solarPanel.lat, solarPanel.lon),
-          icon: _pinLocationIcon));
+          icon: _pinLocationIcons[themeIdentifier]));
     }
     final Fluster<MapMarker> fluster = Fluster<MapMarker>(
         minZoom: 0,
@@ -113,7 +121,7 @@ class _MapScreenState extends State<MapScreen> {
             MapMarker(
                 id: cluster.id.toString(),
                 position: LatLng(lat, lng),
-                icon: _pinLocationIcon,
+                icon: _pinLocationIcons[themeIdentifier],
                 isCluster: cluster.isCluster,
                 clusterId: cluster.id,
                 pointsSize: cluster.pointsSize,
@@ -141,9 +149,7 @@ class _MapScreenState extends State<MapScreen> {
               child: Center(
                 child: Text(
                   'loading map..',
-                  style: TextStyle(
-                      fontFamily: 'Avenir-Medium', //TODO make consistent theme
-                      color: Colors.grey[400]),
+                  style: Theme.of(context).textTheme.bodyText2,
                 ),
               ),
             )
