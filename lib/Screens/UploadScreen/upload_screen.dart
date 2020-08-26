@@ -92,11 +92,19 @@ class MapWithDraggablePin extends StatefulWidget {
 class _MapWithDraggablePinState extends State<MapWithDraggablePin> {
   Location location = new Location();
   GoogleMapController _mapController;
-  static LatLng _markerLocation;
+  static LatLng _userLocation;
+  static LatLng _userLocationUpperBound;
+  static LatLng _userLocationLowerBound;
+  LatLng _markerLocation;
 
   _getUserLocation() async {
     LocationData locationData = await location.getLocation();
     setState(() {
+      _userLocation = LatLng(locationData.latitude, locationData.longitude);
+      _userLocationUpperBound = LatLng(
+          _userLocation.latitude + 0.0007, _userLocation.longitude + 0.0008);
+      _userLocationLowerBound = LatLng(
+          _userLocation.latitude - 0.0007, _userLocation.longitude - 0.0008);
       _markerLocation = LatLng(locationData.latitude, locationData.longitude);
     });
   }
@@ -104,6 +112,7 @@ class _MapWithDraggablePinState extends State<MapWithDraggablePin> {
   _updateMarkerLocation(CameraPosition cameraPosition) {
     double lat = cameraPosition.target.latitude;
     double long = cameraPosition.target.longitude;
+    print(LatLng(lat, long).toString());
     setState(() {
       _markerLocation = LatLng(lat, long);
     });
@@ -120,6 +129,9 @@ class _MapWithDraggablePinState extends State<MapWithDraggablePin> {
     return GoogleMap(
         mapType: MapType.hybrid,
         minMaxZoomPreference: MinMaxZoomPreference(18, 20),
+        cameraTargetBounds: CameraTargetBounds(LatLngBounds(
+            southwest: _userLocationLowerBound,
+            northeast: _userLocationUpperBound)),
         myLocationButtonEnabled: true,
         myLocationEnabled: true,
         tiltGesturesEnabled: false,
