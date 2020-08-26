@@ -49,7 +49,11 @@ class _UploadScreenState extends State<UploadScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Upload a photo', style: Theme.of(context).textTheme.headline4),
+        title: Text('Upload a photo',
+            style: Theme.of(context)
+                .textTheme
+                .headline6
+                .copyWith(color: Colors.white)),
         actions: <Widget>[
           IconButton(
               icon: const Icon(Icons.refresh), onPressed: () => _regetImage())
@@ -59,9 +63,8 @@ class _UploadScreenState extends State<UploadScreen> {
       body: Container(
           child: Stack(children: <Widget>[
         Container(
-            // TODO: Map goes here
-            color: Colors.blue,
-            child: MapWithDraggablePin()),
+            child: MapWithDraggablePin(
+                onSelectedPVPosition: () => {})), //TODO: upload callback
         Container(
             padding: EdgeInsets.all(20),
             alignment: Alignment.topCenter,
@@ -69,20 +72,19 @@ class _UploadScreenState extends State<UploadScreen> {
         Container(
             padding: EdgeInsets.all(20),
             alignment: Alignment.bottomCenter,
-            child: UploadButton(image: _image)),
-        Center(
-          child: Icon(
-            Icons.control_point_duplicate,
-            color: Colors.white,
-            size: 50,
-          ),
-        )
+            child: UploadButton(image: _image))
       ])),
     );
   }
 }
 
 class MapWithDraggablePin extends StatefulWidget {
+  final Function onSelectedPVPosition;
+  const MapWithDraggablePin({
+    Key key,
+    @required this.onSelectedPVPosition,
+  }) : super(key: key);
+
   @override
   _MapWithDraggablePinState createState() => _MapWithDraggablePinState();
 }
@@ -99,8 +101,12 @@ class _MapWithDraggablePinState extends State<MapWithDraggablePin> {
     });
   }
 
-  _onCameraIdle() async {
-    _
+  _updateMarkerLocation(CameraPosition cameraPosition) {
+    double lat = cameraPosition.target.latitude;
+    double long = cameraPosition.target.longitude;
+    setState(() {
+      _markerLocation = LatLng(lat, long);
+    });
   }
 
   @override
@@ -112,33 +118,27 @@ class _MapWithDraggablePinState extends State<MapWithDraggablePin> {
   @override
   Widget build(BuildContext context) {
     return GoogleMap(
-      mapType: MapType.satellite,
-      minMaxZoomPreference: MinMaxZoomPreference(18, 20),
-      myLocationEnabled: true,
-      myLocationButtonEnabled: true,
-      initialCameraPosition: CameraPosition(
-        target: _markerLocation,
-        zoom: 19,
-      ),
-      markers: Set<Marker>.of(
-        <Marker>[
-          Marker(
-              onTap: () {
-                print('Tapped');
-              },
-              draggable: true,
-              markerId: MarkerId('Marker'),
-              position: _markerLocation,
-              onDragEnd: ((value) {
-                print(value.latitude);
-                print(value.longitude);
-              }))
-        ],
-      ),
-      onMapCreated: (GoogleMapController controller) {
-        _mapController = controller;
-      },
-      onCameraIdle: () => print(_mapController.getLatLng())),
-    );
+        mapType: MapType.hybrid,
+        minMaxZoomPreference: MinMaxZoomPreference(18, 20),
+        myLocationButtonEnabled: true,
+        myLocationEnabled: true,
+        tiltGesturesEnabled: false,
+        trafficEnabled: false,
+        initialCameraPosition: CameraPosition(
+          target: _markerLocation,
+          zoom: 19,
+        ),
+        markers: Set<Marker>.of(
+          <Marker>[
+            Marker(
+                flat: false,
+                markerId: MarkerId('Marker'),
+                position: _markerLocation)
+          ],
+        ),
+        onMapCreated: (GoogleMapController controller) {
+          _mapController = controller;
+        },
+        onCameraMove: _updateMarkerLocation);
   }
 }
