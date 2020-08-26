@@ -112,7 +112,6 @@ class _MapWithDraggablePinState extends State<MapWithDraggablePin> {
   _updateMarkerLocation(CameraPosition cameraPosition) {
     double lat = cameraPosition.target.latitude;
     double long = cameraPosition.target.longitude;
-    print(LatLng(lat, long).toString());
     setState(() {
       _markerLocation = LatLng(lat, long);
     });
