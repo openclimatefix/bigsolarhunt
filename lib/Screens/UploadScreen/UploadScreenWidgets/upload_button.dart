@@ -49,9 +49,9 @@ class _UploadButtonState extends State<UploadButton> {
           ButtonState.idle: IconedButton(
               text: "Upload",
               icon: Icon(Icons.file_upload, color: Colors.white),
-              color: Colors.orange),
-          ButtonState.loading:
-              IconedButton(text: "Loading", color: Colors.orange),
+              color: Theme.of(context).accentColor),
+          ButtonState.loading: IconedButton(
+              text: "Loading", color: Theme.of(context).accentColor),
           ButtonState.fail: IconedButton(
               text: "Failed",
               icon: Icon(Icons.cancel, color: Colors.white),
