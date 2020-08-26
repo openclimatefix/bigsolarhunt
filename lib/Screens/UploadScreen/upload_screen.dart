@@ -52,9 +52,8 @@ class _UploadScreenState extends State<UploadScreen> {
           IconButton(
               icon: const Icon(Icons.refresh), onPressed: () => _regetImage())
         ],
-        backgroundColor: Colors.orange,
+        backgroundColor: Theme.of(context).accentColor,
       ),
-      backgroundColor: Colors.orange[100],
       body: Container(
           child: Stack(children: <Widget>[
         Container(

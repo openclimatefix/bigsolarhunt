@@ -3,7 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
-    primaryColor: Colors.orange[400],
+    primaryColor: Colors.black,
     accentColor: Colors.orange[400],
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: Color.fromARGB(255, 234, 234, 234)),
@@ -12,7 +12,7 @@ ThemeData lightTheme = ThemeData(
 
 ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
-    primaryColor: Colors.orange[400],
+    primaryColor: Colors.black,
     accentColor: Colors.orange[400],
     bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: Color.fromARGB(255, 29, 29, 29)),

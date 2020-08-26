@@ -26,8 +26,17 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).primaryColor,
+        leading: Padding(
+          padding: const EdgeInsets.only(left: 15.0),
+          child: Image.asset('assets/logo_white.png'),
+        ),
+        actions: [],
         title: Text(allDestinations[_currentIndex].title,
-            style: Theme.of(context).textTheme.headline6),
+            style: Theme.of(context)
+                .textTheme
+                .headline6
+                .copyWith(color: Colors.white)),
+        centerTitle: true,
       ),
       body: SafeArea(
           top: false,
@@ -67,7 +76,7 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add_a_photo, color: Colors.black),
+        child: Icon(Icons.add_a_photo, color: Colors.white),
         onPressed: () => Navigator.pushNamed(context, '/upload'),
       ),
     );
@@ -86,8 +95,10 @@ class Destination {
 }
 
 const List<Destination> allDestinations = <Destination>[
-  Destination(0, 'Solar Streets', '/', MapScreen(), Icons.map, Colors.grey),
+  Destination(0, 'Solar Streets', '/', MapScreen(), Icons.place,
+      Colors.grey), //Icons.public
   Destination(
-      1, 'Stats', '/stats', StatsScreen(), Icons.pie_chart, Colors.purple),
-  Destination(2, 'Info', '/info', InfoScreen(), Icons.info, Colors.green),
+      1, 'Stats', '/stats', StatsScreen(), Icons.equalizer, Colors.purple),
+  Destination(
+      2, 'Info', '/info', InfoScreen(), Icons.info_outline, Colors.green),
 ];
