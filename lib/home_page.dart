@@ -49,8 +49,7 @@ class _HomePageState extends State<HomePage> {
                 return MaterialPageRoute(builder: builder, settings: settings);
               })),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor:
-            Theme.of(context).bottomNavigationBarTheme.backgroundColor,
+        backgroundColor: Theme.of(context).navigationRailTheme.backgroundColor,
         currentIndex: _currentIndex,
         showSelectedLabels: false,
         showUnselectedLabels: false,
