@@ -5,7 +5,7 @@ ThemeData lightTheme = ThemeData(
     brightness: Brightness.light,
     primaryColor: Colors.black,
     accentColor: Colors.orange[400],
-    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+    navigationRailTheme: NavigationRailThemeData(
         backgroundColor: Color.fromARGB(255, 234, 234, 234)),
     iconTheme: IconThemeData(color: Colors.black54),
     textTheme: GoogleFonts.interTextTheme());
@@ -14,7 +14,18 @@ ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,
     primaryColor: Colors.black,
     accentColor: Colors.orange[400],
-    bottomNavigationBarTheme: BottomNavigationBarThemeData(
+    navigationRailTheme: NavigationRailThemeData(
         backgroundColor: Color.fromARGB(255, 29, 29, 29)),
     iconTheme: IconThemeData(color: Colors.white60),
     textTheme: GoogleFonts.interTextTheme());
+
+/*
+-----flutter stable channel-----
+// LIGHT THEME
+bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: Color.fromARGB(255, 234, 234, 234)),
+
+// DARK THEME
+bottomNavigationBarTheme: BottomNavigationBarThemeData(
+        backgroundColor: Color.fromARGB(255, 29, 29, 29)),
+*/
