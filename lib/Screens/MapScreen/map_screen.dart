@@ -2,12 +2,10 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:fluster/fluster.dart';
 import 'package:location/location.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:solar_streets/Model/map_marker.dart';
 import 'package:solar_streets/Model/solar_panel.dart';
-import 'package:solar_streets/Services/osm_services.dart';
+import 'package:solar_streets/Services/database_services.dart';
 
 class MapScreen extends StatefulWidget {
   const MapScreen({
@@ -22,21 +20,27 @@ class _MapScreenState extends State<MapScreen> {
   GoogleMapController _mapController;
   List<String> _mapStyles = List<String>(2);
   List<BitmapDescriptor> _pinLocationIcons = List<BitmapDescriptor>(2);
-  OSMService osmService = new OSMService();
+  OSMDatabaseProvider osmDatabase = OSMDatabaseProvider.databaseProvider;
   Location location = new Location();
   static LatLng _userLocation;
-  static List<SolarPanel> _solarPanelData;
-  Fluster<MapMarker> _fluster;
+  bool _databaseConnected = false;
   List<Marker> _markers = [];
   static const int _MARKER_LIMIT = 5000;
 
   @override
   void initState() {
     super.initState();
+    _connectDatabase();
     _getUserLocation();
-    _getSolarPanelData();
     _setCustomMapPin();
     _setMapStyle();
+  }
+
+  _connectDatabase() async {
+    await osmDatabase.database;
+    setState(() {
+      _databaseConnected = true;
+    });
   }
 
   _setCustomMapPin() async {
@@ -68,12 +72,22 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
-  _getSolarPanelData() async {
-    await osmService.updatePanelData();
-    List<SolarPanel> solarPanelData = await osmService.getPanelData();
+  _getMarkerData(LatLngBounds visibleRegion, int themeIdentifier) async {
+    List<SolarPanel> solarPanelData =
+        await osmDatabase.getPanelData(visibleRegion);
+    List<Marker> markers = [];
+    solarPanelData.forEach((panel) {
+      markers.add(Marker(
+        markerId: MarkerId(panel.id.toString()),
+        position: LatLng(panel.lat, panel.lon),
+        icon: _pinLocationIcons[themeIdentifier],
+      ));
+    });
+    if (markers.length > 300) {
+      markers = markers.sublist(0, 300);
+    }
     setState(() {
-      solarPanelData.shuffle();
-      _solarPanelData = solarPanelData.sublist(0, _MARKER_LIMIT);
+      _markers = markers;
     });
   }
 
@@ -82,54 +96,42 @@ class _MapScreenState extends State<MapScreen> {
     int themeIdentifier =
         Theme.of(context).brightness == Brightness.light ? 0 : 1;
     _mapController.setMapStyle(_mapStyles[themeIdentifier]);
-    _initializeClusters(_solarPanelData, themeIdentifier);
-    final double zoomLevel = await _mapController.getZoomLevel();
-    setState(() {
-      _markers = _fluster
-          .clusters([-180, -85, 180, 85], zoomLevel.toInt())
-          .map((cluster) => cluster.toMarker())
-          .toList();
-    });
   }
 
   _onCameraIdle() async {
-    final double zoomLevel = await _mapController.getZoomLevel();
-    setState(() {
-      _markers = _fluster
-          .clusters([-180, -85, 180, 85], zoomLevel.toInt())
-          .map((cluster) => cluster.toMarker())
-          .toList();
-    });
+    int themeIdentifier =
+        Theme.of(context).brightness == Brightness.light ? 0 : 1;
+    _getMarkerData(await _mapController.getVisibleRegion(), themeIdentifier);
   }
 
-  _initializeClusters(List<SolarPanel> newPanels, int themeIdentifier) {
-    final List<MapMarker> markers = [];
-    for (final solarPanel in newPanels) {
-      markers.add(MapMarker(
-          id: solarPanel.id.toString(),
-          position: LatLng(solarPanel.lat, solarPanel.lon),
-          icon: _pinLocationIcons[themeIdentifier]));
-    }
-    final Fluster<MapMarker> fluster = Fluster<MapMarker>(
-        minZoom: 0,
-        maxZoom: 20,
-        radius: 150,
-        extent: 2048,
-        nodeSize: 64,
-        points: markers,
-        createCluster: (BaseCluster cluster, double lng, double lat) =>
-            MapMarker(
-                id: cluster.id.toString(),
-                position: LatLng(lat, lng),
-                icon: _pinLocationIcons[themeIdentifier],
-                isCluster: cluster.isCluster,
-                clusterId: cluster.id,
-                pointsSize: cluster.pointsSize,
-                childMarkerId: cluster.childMarkerId));
-    setState(() {
-      _fluster = fluster;
-    });
-  }
+  // _initializeClusters(List<SolarPanel> newPanels, int themeIdentifier) {
+  //   final List<MapMarker> markers = [];
+  //   for (final solarPanel in newPanels) {
+  //     markers.add(MapMarker(
+  //         id: solarPanel.id.toString(),
+  //         position: LatLng(solarPanel.lat, solarPanel.lon),
+  //         icon: _pinLocationIcons[themeIdentifier]));
+  //   }
+  //   final Fluster<MapMarker> fluster = Fluster<MapMarker>(
+  //       minZoom: 0,
+  //       maxZoom: 20,
+  //       radius: 150,
+  //       extent: 2048,
+  //       nodeSize: 64,
+  //       points: markers,
+  //       createCluster: (BaseCluster cluster, double lng, double lat) =>
+  //           MapMarker(
+  //               id: cluster.id.toString(),
+  //               position: LatLng(lat, lng),
+  //               icon: _pinLocationIcons[themeIdentifier],
+  //               isCluster: cluster.isCluster,
+  //               clusterId: cluster.id,
+  //               pointsSize: cluster.pointsSize,
+  //               childMarkerId: cluster.childMarkerId));
+  //   setState(() {
+  //     _fluster = fluster;
+  //   });
+  // }
 
   Future<Uint8List> _getBytesFromAsset(String path, int width) async {
     ByteData data = await rootBundle.load(path);
@@ -144,7 +146,7 @@ class _MapScreenState extends State<MapScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: (_userLocation == null) || (_solarPanelData == null)
+      body: (_userLocation == null || !_databaseConnected)
           ? Container(
               child: Center(
                 child: Text(
@@ -158,12 +160,12 @@ class _MapScreenState extends State<MapScreen> {
                 myLocationButtonEnabled: true,
                 myLocationEnabled: true,
                 onMapCreated: _onMapCreated,
+                onCameraIdle: _onCameraIdle,
                 markers: _markers.toSet(),
                 initialCameraPosition: CameraPosition(
                   target: _userLocation,
                   zoom: 5.0,
                 ),
-                onCameraIdle: _onCameraIdle,
               ),
             ),
     );

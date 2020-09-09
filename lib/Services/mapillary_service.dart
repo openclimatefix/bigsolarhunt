@@ -5,9 +5,9 @@ import 'dart:convert';
 class MapillaryService {
   static const _BASE_URL = 'https://a.mapillary.com/v3/me/uploads';
   static const _BEARER_TOKEN =
-      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJtcHkiLCJzdWIiOiJBUWdDaUl6VUlMSDVlWmFMZDFqbG1PIiwiYXVkIjoiYUVGWVdFeDRUMWRTUVdwWk9HVm9aVVpHZG13M2JUcGlOems1TUdVMk1qQTJaR1kxTnpneSIsImlhdCI6MTU5NzA1OTAxODU0NCwianRpIjoiMWEyOTY2Mjc2M2NiZDEzNWE3MTAxNjg5YjEzNmZhMjkiLCJzY28iOlsicHVibGljOnVwbG9hZCIsInByaXZhdGU6cmVhZCIsInByaXZhdGU6dXBsb2FkIl0sInZlciI6MX0.mOggY3udqDRSTKVYr-RF06K4iF6zfl5Yyjq1WRjWmrE';
+      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJtcHkiLCJzdWIiOiJBUWdDaUl6VUlMSDVlWmFMZDFqbG1PIiwiYXVkIjoiYUVGWVdFeDRUMWRTUVdwWk9HVm9aVVpHZG13M2JUcGlOems1TUdVMk1qQTJaR1kxTnpneSIsImlhdCI6MTU5NzA1OTAxODU0NCwianRpIjoiMWEyOTY2Mjc2M2NiZDEzNWE3MTAxNjg5YjEzNmZhMjkiLCJzY28iOlsicHVibGljOnVwbG9hZCIsInByaXZhdGU6cmVhZCIsInByaXZhdGU6dXBsb2FkIl0sInZlciI6MX0.mOggY3udqDRSTKVYr-RF06K4iF6zfl5Yyjq1WRjWmrE'; //TODO update (maybe fetch) token
   static const _CLIENT_ID =
-      'aEFYWEx4T1dSQWpZOGVoZUZGdmw3bTpiNzk5MGU2MjA2ZGY1Nzgy';
+      'aEFYWEx4T1dSQWpZOGVoZUZGdmw3bTpiNzk5MGU2MjA2ZGY1Nzgy'; // TODO update client_id
 
   Future<File> upload(File imageFile) async {
     final UploadSession session = await _createUploadSession();
@@ -58,7 +58,7 @@ class MapillaryService {
 
   _closeUploadSession(UploadSession session) async {
     final String url = _BASE_URL +
-        '/${session.key}/closed?client_id=$_CLIENT_ID'; //TODO remove &_dry_run to publish for reals
+        '/${session.key}/closed?client_id=$_CLIENT_ID&_dry_run'; //TODO remove &_dry_run to publish for reals
     final Map<String, String> headers = {};
     headers['Authorization'] = _BEARER_TOKEN;
     final response = await http.put(url, headers: headers);
