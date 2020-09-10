@@ -36,7 +36,7 @@ class MapillaryService {
   Future<File> _awsUpload(File image, UploadSession session) async {
     String fileName = image.path.split("/").last;
     final fields = session.fields;
-    fields['key'] = session.key_prefix + fileName;
+    fields['key'] = session.keyPrefix + fileName;
     final stream = http.ByteStream((image.openRead()));
     stream.cast();
     final length = await image.length();
@@ -69,16 +69,16 @@ class MapillaryService {
 }
 
 class UploadSession {
-  UploadSession({this.fields, this.key, this.key_prefix, this.url});
+  UploadSession({this.fields, this.key, this.keyPrefix, this.url});
 
   final Map<String, dynamic> fields;
   final String key;
-  final String key_prefix;
+  final String keyPrefix;
   final String url;
 
   factory UploadSession.fromJson(Map<String, dynamic> json) => UploadSession(
       fields: json['fields'],
       key: json['key'],
-      key_prefix: json['key_prefix'],
+      keyPrefix: json['key_prefix'],
       url: json['url']);
 }

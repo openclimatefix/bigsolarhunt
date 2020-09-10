@@ -3,6 +3,9 @@ import 'dart:io';
 import 'package:progress_state_button/iconed_button.dart';
 import 'package:progress_state_button/progress_button.dart';
 
+import 'package:solar_streets/Services/mapillary_service.dart';
+import 'upload_dialogues.dart';
+
 class UploadButton extends StatefulWidget {
   // Dynamic button able to upload a File to OSM and display status
   //  of the async OSM API calls
@@ -15,28 +18,39 @@ class UploadButton extends StatefulWidget {
 }
 
 class _UploadButtonState extends State<UploadButton> {
+  MapillaryService mapillaryService = new MapillaryService();
   ButtonState state = ButtonState.idle;
 
-  void engageIdleState() {
-    setState(() {
-      state = ButtonState.idle;
-    });
+  void handleUpload(image) async {
+    _displayLoading();
+    var responseImage;
+    try {
+      responseImage = await mapillaryService.upload(image);
+    } catch (e) {
+      _displayFailure();
+      print(e);
+      showDialog(
+          context: context, builder: (_) => new UploadFailedDialogue(error: e));
+      return null;
+    }
+    _displaySuccess();
+    showDialog(context: context, builder: (_) => new UploadCompleteDialogue());
+    return responseImage;
   }
 
-  void beginUpload() {
-    //TODO: Implement uploading of file image
+  void _displayLoading() {
     setState(() {
       state = ButtonState.loading;
     });
   }
 
-  void displaySuccess() {
+  void _displaySuccess() {
     setState(() {
       state = ButtonState.success;
     });
   }
 
-  void displayFailure() {
+  void _displayFailure() {
     setState(() {
       state = ButtonState.fail;
     });
@@ -65,7 +79,7 @@ class _UploadButtonState extends State<UploadButton> {
               color: Colors.green.shade400)
         },
         onPressed: () =>
-            {state == ButtonState.idle ? beginUpload() : engageIdleState()},
+            {state == ButtonState.idle ? handleUpload(widget.image) : null},
         state: state);
   }
 }
