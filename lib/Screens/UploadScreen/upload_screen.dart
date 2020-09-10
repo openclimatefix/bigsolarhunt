@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
+import 'UploadScreenWidgets/map_with_draggable_pin.dart';
 import 'UploadScreenWidgets/upload_button.dart';
 import 'UploadScreenWidgets/image_card.dart';
 
