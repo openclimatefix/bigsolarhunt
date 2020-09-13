@@ -1,10 +1,20 @@
 import 'package:flutter/material.dart';
 
-import 'home_page.dart';
-import 'Screens/UploadScreen/upload_screen.dart';
-import 'Themes/themes.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
-void main() {
+import 'package:solar_streets/Screens/OnboardingScreen/onboarding_screen.dart';
+import 'package:solar_streets/home_page.dart';
+import 'package:solar_streets/Screens/UploadScreen/upload_screen.dart';
+import 'package:solar_streets/Themes/themes.dart';
+
+int initScreen;
+
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  SharedPreferences prefs = await SharedPreferences.getInstance();
+  initScreen = await prefs.getInt("initScreen");
+  await prefs.setInt("initScreen", 1);
+  print('initScreen ${initScreen}');
   runApp(MyApp());
 }
 
@@ -19,10 +29,12 @@ class MyApp extends StatelessWidget {
         themeMode: ThemeMode.light,
         theme: lightTheme,
         darkTheme: darkTheme,
-        initialRoute: '/',
+        initialRoute:
+            initScreen == 0 || initScreen == null ? "onboarding" : "/",
         routes: {
           '/': (context) => HomePage(),
           '/upload': (context) => UploadScreen(),
+          'onboarding': (context) => OnboardingScreen(),
         },
         debugShowCheckedModeBanner: false);
   }
