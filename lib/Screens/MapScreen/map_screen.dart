@@ -20,7 +20,7 @@ class _MapScreenState extends State<MapScreen> {
   GoogleMapController _mapController;
   List<String> _mapStyles = List<String>(2);
   List<BitmapDescriptor> _pinLocationIcons = List<BitmapDescriptor>(2);
-  OSMDatabaseProvider osmDatabase = OSMDatabaseProvider.databaseProvider;
+  DatabaseProvider panelDatabase = DatabaseProvider.databaseProvider;
   Location location = new Location();
   static LatLng _userLocation;
   bool _databaseConnected = false;
@@ -37,7 +37,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   _connectDatabase() async {
-    await osmDatabase.database;
+    await panelDatabase.database;
     setState(() {
       _databaseConnected = true;
     });
@@ -73,8 +73,7 @@ class _MapScreenState extends State<MapScreen> {
   }
 
   _getMarkerData(LatLngBounds visibleRegion, int themeIdentifier) async {
-    List<SolarPanel> solarPanelData =
-        await osmDatabase.getPanelData(visibleRegion);
+    List<SolarPanel> solarPanelData = await panelDatabase.getUserPanelData();
     List<Marker> markers = [];
     solarPanelData.forEach((panel) {
       markers.add(Marker(

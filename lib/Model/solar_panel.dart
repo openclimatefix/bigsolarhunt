@@ -1,5 +1,3 @@
-import 'dart:convert';
-
 class SolarPanel {
   SolarPanel({this.id, this.lat, this.lon});
 
@@ -12,5 +10,9 @@ class SolarPanel {
 
   Map<String, dynamic> toMap() {
     return {'id': id, 'lat': lat, 'lon': lon};
+  }
+
+  Map<String, dynamic> toMapNoID() {
+    return {'lat': lat, 'lon': lon};
   }
 }

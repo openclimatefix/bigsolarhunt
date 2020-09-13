@@ -5,9 +5,9 @@ import 'dart:convert';
 class MapillaryService {
   static const _BASE_URL = 'https://a.mapillary.com/v3/me/uploads';
   static const _BEARER_TOKEN =
-      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJtcHkiLCJzdWIiOiJBUWdDaUl6VUlMSDVlWmFMZDFqbG1PIiwiYXVkIjoiYUVGWVdFeDRUMWRTUVdwWk9HVm9aVVpHZG13M2JUcGlOems1TUdVMk1qQTJaR1kxTnpneSIsImlhdCI6MTU5NzA1OTAxODU0NCwianRpIjoiMWEyOTY2Mjc2M2NiZDEzNWE3MTAxNjg5YjEzNmZhMjkiLCJzY28iOlsicHVibGljOnVwbG9hZCIsInByaXZhdGU6cmVhZCIsInByaXZhdGU6dXBsb2FkIl0sInZlciI6MX0.mOggY3udqDRSTKVYr-RF06K4iF6zfl5Yyjq1WRjWmrE'; //TODO update (maybe fetch) token
+      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJtcHkiLCJzdWIiOiJIbWc4Zk1YS2ZqUWU3bUlsVjFHaW10IiwiYXVkIjoiU0cxbk9HWk5XRXRtYWxGbE4yMUpiRll4UjJsdGREb3hPREpoWmpneU1XSm1NRFZtT0dRMSIsImlhdCI6MTU5OTY2NDMyODA2OSwianRpIjoiNmViY2M4MDg0NTFkM2U5ZmI1ZmY1ZjZmMWNlYjZhMjIiLCJzY28iOlsicHVibGljOnVwbG9hZCJdLCJ2ZXIiOjF9.sZxR1YJHMeKzNeWqobvowL_xZRGM9uBcKoWdBwwJh6c';
   static const _CLIENT_ID =
-      'aEFYWEx4T1dSQWpZOGVoZUZGdmw3bTpiNzk5MGU2MjA2ZGY1Nzgy'; // TODO update client_id
+      'SG1nOGZNWEtmalFlN21JbFYxR2ltdDoxODJhZjgyMWJmMDVmOGQ1'; // TODO update client_id
 
   Future<File> upload(File imageFile) async {
     final UploadSession session = await _createUploadSession();
@@ -52,6 +52,7 @@ class MapillaryService {
     if (response.statusCode == 204) {
       return image;
     } else {
+      print('Error uploading');
       throw Exception('Error uploading to AWS');
     }
   }
