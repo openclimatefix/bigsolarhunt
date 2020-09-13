@@ -5,14 +5,15 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../Model/solar_panel.dart';
 
-class OSMDatabaseProvider {
-  OSMDatabaseProvider._();
+class DatabaseProvider {
+  DatabaseProvider._();
 
-  static final OSMDatabaseProvider databaseProvider = OSMDatabaseProvider._();
+  static final DatabaseProvider databaseProvider = DatabaseProvider._();
   Database _database;
 
   static const String _panelDatabaseName = 'osm_panel_database.db';
-  static const String _OsmPanelTableName = 'panels';
+  static const String _osmPanelTableName = 'panels';
+  static const String _userPanelTableName = 'userPanels';
   static const String _dbLastUpdated = 'last_updated';
   static const List<String> _osmBaseURL = [
     'http://overpass-api.de/api/interpreter?data=[out:json];node["generator:source"="solar"]["location"="roof"]',
@@ -26,7 +27,7 @@ class OSMDatabaseProvider {
   Future<Database> get database async {
     if (_database != null) return _database;
     _database = await getDatabaseInstance();
-    await _updateDatabase();
+    // await _updateDatabase();
     return _database;
   }
 
@@ -38,13 +39,22 @@ class OSMDatabaseProvider {
     return database;
   }
 
-  void _onCreate(Database db, int newVersion) async {
-    await createOsmTables(db);
+  Future<void> _onCreate(Database db, int newVersion) async {
+    await createUserPanelsTable(db);
+    // await createOsmTables(db);
+  }
+
+  Future<void> createUserPanelsTable(Database db) async {
+    await db.execute("CREATE TABLE $_userPanelTableName("
+        "id INTEGER PRIMARY KEY AUTOINCREMENT,"
+        "lat FLOAT,"
+        "lon FLOAT"
+        ")");
   }
 
   Future<void> createOsmTables(Database db) async {
     final Future<List<SolarPanel>> futurePanelData = _getOSMPanelData();
-    db.execute("CREATE TABLE $_OsmPanelTableName("
+    db.execute("CREATE TABLE $_osmPanelTableName("
         "id INTEGER PRIMARY KEY,"
         "lat FLOAT,"
         "lon FLOAT"
@@ -52,7 +62,7 @@ class OSMDatabaseProvider {
     Batch batch = db.batch();
     List<SolarPanel> panelData = await futurePanelData;
     for (int i = 0; i < panelData.length; i++) {
-      batch.insert(_OsmPanelTableName, panelData[i].toMap(),
+      batch.insert(_osmPanelTableName, panelData[i].toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace);
       if (i % 100000 == 0) {
         print(i);
@@ -79,17 +89,31 @@ class OSMDatabaseProvider {
     );
   }
 
-  Future<List<SolarPanel>> getPanelData(LatLngBounds bounds) async {
+  Future<List<SolarPanel>> getOSMPanelData(LatLngBounds bounds) async {
     final Database db = await database;
     final double minLat = bounds.southwest.latitude;
     final double maxLat = bounds.northeast.latitude;
     final double minLng = bounds.southwest.longitude;
     final double maxLng = bounds.northeast.longitude;
     final List<Map<String, dynamic>> response = await db.rawQuery(
-        "SELECT * FROM $_OsmPanelTableName WHERE lat>$minLat AND lat<$maxLat AND lon>$minLng AND lon<$maxLng LIMIT $_limitNumber");
+        "SELECT * FROM $_osmPanelTableName WHERE lat>$minLat AND lat<$maxLat AND lon>$minLng AND lon<$maxLng LIMIT $_limitNumber");
     List<SolarPanel> panelData =
         response.map((row) => SolarPanel.fromMap(row)).toList();
     return panelData;
+  }
+
+  Future<List<SolarPanel>> getUserPanelData() async {
+    final Database db = await database;
+    final List<Map<String, dynamic>> response =
+        await db.rawQuery("SELECT * FROM $_userPanelTableName");
+    List<SolarPanel> panelData =
+        response.map((row) => SolarPanel.fromMap(row)).toList();
+    return panelData;
+  }
+
+  Future<void> insertUserPanel(SolarPanel newPanel) async {
+    final Database db = await database;
+    await db.insert(_userPanelTableName, newPanel.toMapNoID());
   }
 
   Future<void> _updateDatabase() async {
@@ -103,7 +127,7 @@ class OSMDatabaseProvider {
           await _getPanelDataFromTime(lastUpdated);
       Batch batch = db.batch();
       for (int i = 0; i < newPanelData.length; i++) {
-        batch.insert(_OsmPanelTableName, newPanelData[i].toMap(),
+        batch.insert(_osmPanelTableName, newPanelData[i].toMap(),
             conflictAlgorithm: ConflictAlgorithm.replace);
         if (i % 100000 == 0) {
           await batch.commit(noResult: true);

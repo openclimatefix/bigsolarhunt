@@ -15,11 +15,10 @@ class MapWithDraggablePin extends StatefulWidget {
 
 class _MapWithDraggablePinState extends State<MapWithDraggablePin> {
   Location location = new Location();
-  GoogleMapController _mapController;
   static LatLng _userLocation;
   static LatLng _userLocationUpperBound;
   static LatLng _userLocationLowerBound;
-  LatLng _markerLocation;
+  LatLng _panelLocation;
 
   _getUserLocation() async {
     LocationData locationData = await location.getLocation();
@@ -29,15 +28,15 @@ class _MapWithDraggablePinState extends State<MapWithDraggablePin> {
           _userLocation.latitude + 0.0007, _userLocation.longitude + 0.0008);
       _userLocationLowerBound = LatLng(
           _userLocation.latitude - 0.0007, _userLocation.longitude - 0.0008);
-      _markerLocation = LatLng(locationData.latitude, locationData.longitude);
+      _panelLocation = LatLng(locationData.latitude, locationData.longitude);
     });
   }
 
-  _updateMarkerLocation(CameraPosition cameraPosition) {
+  _updatePanelLocation(CameraPosition cameraPosition) {
     double lat = cameraPosition.target.latitude;
     double long = cameraPosition.target.longitude;
     setState(() {
-      _markerLocation = LatLng(lat, long);
+      _panelLocation = LatLng(lat, long);
     });
   }
 
@@ -60,7 +59,7 @@ class _MapWithDraggablePinState extends State<MapWithDraggablePin> {
         tiltGesturesEnabled: false,
         trafficEnabled: false,
         initialCameraPosition: CameraPosition(
-          target: _markerLocation,
+          target: _panelLocation,
           zoom: 19,
         ),
         markers: Set<Marker>.of(
@@ -68,12 +67,9 @@ class _MapWithDraggablePinState extends State<MapWithDraggablePin> {
             Marker(
                 flat: false,
                 markerId: MarkerId('Marker'),
-                position: _markerLocation)
+                position: _panelLocation)
           ],
         ),
-        onMapCreated: (GoogleMapController controller) {
-          _mapController = controller;
-        },
-        onCameraMove: _updateMarkerLocation);
+        onCameraMove: _updatePanelLocation);
   }
 }
