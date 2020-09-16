@@ -27,7 +27,7 @@ class DatabaseProvider {
   Future<Database> get database async {
     if (_database != null) return _database;
     _database = await getDatabaseInstance();
-    // await _updateDatabase();
+    await _updateDatabase();
     return _database;
   }
 
@@ -41,7 +41,7 @@ class DatabaseProvider {
 
   Future<void> _onCreate(Database db, int newVersion) async {
     await createUserPanelsTable(db);
-    // await createOsmTables(db);
+    await createOsmTables(db);
   }
 
   Future<void> createUserPanelsTable(Database db) async {
@@ -97,6 +97,15 @@ class DatabaseProvider {
     final double maxLng = bounds.northeast.longitude;
     final List<Map<String, dynamic>> response = await db.rawQuery(
         "SELECT * FROM $_osmPanelTableName WHERE lat>$minLat AND lat<$maxLat AND lon>$minLng AND lon<$maxLng LIMIT $_limitNumber");
+    List<SolarPanel> panelData =
+        response.map((row) => SolarPanel.fromMap(row)).toList();
+    return panelData;
+  }
+
+  Future<List<SolarPanel>> getAllOSMPanelData() async {
+    final Database db = await database;
+    final List<Map<String, dynamic>> response =
+        await db.rawQuery("SELECT * FROM $_osmPanelTableName");
     List<SolarPanel> panelData =
         response.map((row) => SolarPanel.fromMap(row)).toList();
     return panelData;

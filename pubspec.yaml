@@ -28,6 +28,7 @@ dependencies:
   image_fade: ^0.2.1
   animations: ^1.1.2
   google_maps_flutter: ^0.5.24+3
+  google_maps_cluster_manager: ^0.1.0
   http: ^0.12.0+1
   progress_state_button: ^1.0.1
   location: ^3.0.2
