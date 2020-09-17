@@ -15,6 +15,8 @@ class DatabaseProvider {
   static const String _osmPanelTableName = 'panels';
   static const String _userPanelTableName = 'userPanels';
   static const String _dbLastUpdated = 'last_updated';
+  static const String _uploadQueueTableName = 'uploadQueue';
+
   static const List<String> _osmBaseURL = [
     'http://overpass-api.de/api/interpreter?data=[out:json];node["generator:source"="solar"]["location"="roof"]',
     '(newer:"',
@@ -40,8 +42,17 @@ class DatabaseProvider {
   }
 
   Future<void> _onCreate(Database db, int newVersion) async {
-    await createUserPanelsTable(db);
     await createOsmTables(db);
+    await createUserPanelsTable(db);
+    await createUploadQueueTable(db);
+  }
+
+  Future<void> createUploadQueueTable(Database db) async {
+    await db.execute("CREATE TABLE $_uploadQueueTableName("
+        "path TINYTEXT,"
+        "lat FLOAT,"
+        "lon FLOAT"
+        ")");
   }
 
   Future<void> createUserPanelsTable(Database db) async {
