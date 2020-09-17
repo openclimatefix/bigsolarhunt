@@ -1,5 +1,8 @@
 import 'dart:io';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
+import 'package:solar_streets/Model/solar_panel.dart';
+import 'package:solar_streets/Services/database_services.dart';
 import 'dart:convert';
 
 class MapillaryService {
@@ -8,11 +11,15 @@ class MapillaryService {
       'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJtcHkiLCJzdWIiOiJIbWc4Zk1YS2ZqUWU3bUlsVjFHaW10IiwiYXVkIjoiU0cxbk9HWk5XRXRtYWxGbE4yMUpiRll4UjJsdGREb3hPREpoWmpneU1XSm1NRFZtT0dRMSIsImlhdCI6MTU5OTY2NDMyODA2OSwianRpIjoiNmViY2M4MDg0NTFkM2U5ZmI1ZmY1ZjZmMWNlYjZhMjIiLCJzY28iOlsicHVibGljOnVwbG9hZCJdLCJ2ZXIiOjF9.sZxR1YJHMeKzNeWqobvowL_xZRGM9uBcKoWdBwwJh6c';
   static const _CLIENT_ID =
       'SG1nOGZNWEtmalFlN21JbFYxR2ltdDoxODJhZjgyMWJmMDVmOGQ1'; // TODO update client_id
+  DatabaseProvider panelDatabase = DatabaseProvider.databaseProvider;
 
-  Future<File> upload(File imageFile) async {
+  Future<File> upload(File imageFile, LatLng panelLocation) async {
     final UploadSession session = await _createUploadSession();
+
     final File uploadedFile = await _awsUpload(imageFile, session);
     await _closeUploadSession(session);
+    panelDatabase.insertUserPanel(SolarPanel(
+        id: null, lat: panelLocation.latitude, lon: panelLocation.longitude));
     return uploadedFile;
   }
 
