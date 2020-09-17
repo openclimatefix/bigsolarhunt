@@ -25,9 +25,9 @@ class _UploadButtonState extends State<UploadButton> {
 
   void handleUpload(image, panelLocation) async {
     _displayLoading();
-    var responseImage;
+    var uploadStatus;
     try {
-      responseImage = await mapillaryService.upload(image, panelLocation);
+      uploadStatus = await mapillaryService.upload(image, panelLocation);
     } catch (e) {
       _displayFailure();
       print(e);
@@ -36,8 +36,13 @@ class _UploadButtonState extends State<UploadButton> {
       return null;
     }
     _displaySuccess();
-    showDialog(context: context, builder: (_) => new UploadCompleteDialogue());
-    return responseImage;
+    if (uploadStatus) {
+      showDialog(
+          context: context, builder: (_) => new UploadCompleteDialogue());
+    } else {
+      showDialog(context: context, builder: (_) => new UploadLaterDialogue());
+    }
+    return uploadStatus;
   }
 
   void _displayLoading() {

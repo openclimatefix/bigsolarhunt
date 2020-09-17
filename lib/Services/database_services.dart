@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../Model/solar_panel.dart';
+import '../Model/upload_queue.dart';
 
 class DatabaseProvider {
   DatabaseProvider._();
@@ -134,6 +135,13 @@ class DatabaseProvider {
   Future<void> insertUserPanel(SolarPanel newPanel) async {
     final Database db = await database;
     await db.insert(_userPanelTableName, newPanel.toMapNoID());
+  }
+
+  Future<void> insertQueueData(String imagePath, panelLocation) async {
+    final Database db = await database;
+    final toUpload = UploadQueue(
+        path: imagePath, lat: panelLocation.lat, lon: panelLocation.lon);
+    await db.insert(_uploadQueueTableName, toUpload.toMap());
   }
 
   Future<void> _updateDatabase() async {

@@ -2,25 +2,33 @@ import 'dart:io';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:solar_streets/Model/solar_panel.dart';
+import 'package:connectivity/connectivity.dart';
 import 'package:solar_streets/Services/database_services.dart';
 import 'dart:convert';
 
 class MapillaryService {
+  DatabaseProvider panelDatabase = DatabaseProvider.databaseProvider;
+
   static const _BASE_URL = 'https://a.mapillary.com/v3/me/uploads';
   static const _BEARER_TOKEN =
       'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJtcHkiLCJzdWIiOiJIbWc4Zk1YS2ZqUWU3bUlsVjFHaW10IiwiYXVkIjoiU0cxbk9HWk5XRXRtYWxGbE4yMUpiRll4UjJsdGREb3hPREpoWmpneU1XSm1NRFZtT0dRMSIsImlhdCI6MTU5OTY2NDMyODA2OSwianRpIjoiNmViY2M4MDg0NTFkM2U5ZmI1ZmY1ZjZmMWNlYjZhMjIiLCJzY28iOlsicHVibGljOnVwbG9hZCJdLCJ2ZXIiOjF9.sZxR1YJHMeKzNeWqobvowL_xZRGM9uBcKoWdBwwJh6c';
   static const _CLIENT_ID =
-      'SG1nOGZNWEtmalFlN21JbFYxR2ltdDoxODJhZjgyMWJmMDVmOGQ1'; // TODO update client_id
-  DatabaseProvider panelDatabase = DatabaseProvider.databaseProvider;
+      'SG1nOGZNWEtmalFlN21JbFYxR2ltdDoxODJhZjgyMWJmMDVmOGQ1';
 
-  Future<File> upload(File imageFile, LatLng panelLocation) async {
-    final UploadSession session = await _createUploadSession();
-
-    final File uploadedFile = await _awsUpload(imageFile, session);
-    await _closeUploadSession(session);
-    panelDatabase.insertUserPanel(SolarPanel(
-        id: null, lat: panelLocation.latitude, lon: panelLocation.longitude));
-    return uploadedFile;
+  Future<bool> upload(File imageFile, LatLng panelLocation) async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.mobile ||
+        connectivityResult == ConnectivityResult.wifi) {
+      final UploadSession session = await _createUploadSession();
+      await _awsUpload(imageFile, session);
+      await _closeUploadSession(session);
+      panelDatabase.insertUserPanel(SolarPanel(
+          id: null, lat: panelLocation.latitude, lon: panelLocation.longitude));
+      return true;
+    } else {
+      panelDatabase.insertQueueData(imageFile.path, panelLocation);
+      return false;
+    }
   }
 
   Future<UploadSession> _createUploadSession() async {
@@ -36,7 +44,7 @@ class MapillaryService {
       final session = UploadSession.fromJson(jsonDecode(response.body));
       return session;
     } else {
-      throw Exception('Error creating session');
+      throw MapillaryException('Error creating session');
     }
   }
 
@@ -89,4 +97,14 @@ class UploadSession {
       key: json['key'],
       keyPrefix: json['key_prefix'],
       url: json['url']);
+}
+
+class MapillaryException implements Exception {
+  final _message;
+  MapillaryException(this._message);
+
+  String toString() {
+    if (_message == null) return "Exception";
+    return "Exception: $_message";
+  }
 }
