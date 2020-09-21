@@ -29,7 +29,7 @@ class DatabaseProvider {
   Future<Database> get database async {
     if (_database != null) return _database;
     _database = await getDatabaseInstance();
-    await _updateDatabase();
+    // await _updateDatabase();
     return _database;
   }
 
@@ -43,7 +43,7 @@ class DatabaseProvider {
 
   Future<void> _onCreate(Database db, int newVersion) async {
     await createUserPanelsTable(db);
-    await createOsmTables(db);
+    // await createOsmTables(db);
   }
 
   Future<void> createUserPanelsTable(Database db) async {
