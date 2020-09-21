@@ -3,7 +3,9 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+
 import '../Model/solar_panel.dart';
+import 'package:solar_streets/Progress/progress_utilities.dart';
 
 class DatabaseProvider {
   DatabaseProvider._();
@@ -118,6 +120,18 @@ class DatabaseProvider {
     List<SolarPanel> panelData =
         response.map((row) => SolarPanel.fromMap(row)).toList();
     return panelData;
+  }
+
+  Future<int> getUserPanelCount() async {
+    final Database db = await database;
+    final List<Map<String, dynamic>> result =
+        await db.rawQuery("SELECT COUNT (*) FROM $_userPanelTableName");
+    int count = Sqflite.firstIntValue(result);
+    if (count >= maxPanels) {
+      return (count - maxPanels);
+    } else {
+      return count;
+    }
   }
 
   Future<void> insertUserPanel(SolarPanel newPanel) async {
