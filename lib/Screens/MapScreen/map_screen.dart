@@ -20,15 +20,15 @@ class MapScreen extends StatefulWidget {
 
 class _MapScreenState extends State<MapScreen> {
   GoogleMapController _mapController;
-  ClusterManager _manager;
+  // ClusterManager _manager;
   List<String> _mapStyles = List<String>(2);
   List<BitmapDescriptor> _pinLocationIcons = List<BitmapDescriptor>(4);
   DatabaseProvider panelDatabase = DatabaseProvider.databaseProvider;
   Location location = new Location();
   static LatLng _userLocation;
   bool _databaseConnected = false;
-  List<ClusterItem<MapPanel>> _clusterItems = [];
-  Set<Marker> _markers = Set();
+  // List<ClusterItem<MapPanel>> _clusterItems = [];
+  // Set<Marker> _markers = Set();
   Set<Marker> _userPanelMarkers = Set();
   CameraPosition _initialPostion =
       CameraPosition(target: LatLng(54.12501425, -4.31989979), zoom: 5.3);
@@ -45,7 +45,7 @@ class _MapScreenState extends State<MapScreen> {
   _initMarkerData() async {
     await panelDatabase.database;
     await _setCustomMapPin();
-    await _initClusterManager();
+    // await _initClusterManager();
     _getUserPanels();
     setState(() {
       _databaseConnected = true;
@@ -82,52 +82,52 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
-  _initClusterManager() async {
-    await _getOSMClusters();
-    setState(() {
-      _manager = ClusterManager<MapPanel>(_clusterItems, _updateMarkers,
-          markerBuilder: _markerBuilder,
-          levels: [
-            3,
-            4,
-            5,
-            6,
-            7,
-            8,
-            9,
-            10,
-            11,
-            12,
-            13,
-            14,
-            15,
-            16,
-            17
-          ], // Optional : Configure this if you want to change zoom levels at which the clustering precision change
-          extraPercent: 0.2,
-          initialZoom: _initialPostion.zoom);
-    });
-  }
+  // _initClusterManager() async {
+  //   await _getOSMClusters();
+  //   setState(() {
+  //     _manager = ClusterManager<MapPanel>(_clusterItems, _updateMarkers,
+  //         markerBuilder: _markerBuilder,
+  //         levels: [
+  //           3,
+  //           4,
+  //           5,
+  //           6,
+  //           7,
+  //           8,
+  //           9,
+  //           10,
+  //           11,
+  //           12,
+  //           13,
+  //           14,
+  //           15,
+  //           16,
+  //           17
+  //         ], // Optional : Configure this if you want to change zoom levels at which the clustering precision change
+  //         extraPercent: 0.2,
+  //         initialZoom: _initialPostion.zoom);
+  //   });
+  // }
 
-  Future<Marker> Function(Cluster<MapPanel>) get _markerBuilder =>
-      (cluster) async {
-        return Marker(
-          markerId: MarkerId(cluster.getId()),
-          position: cluster.location,
-          onTap: () {
-            print('---- $cluster');
-            cluster.items.forEach((p) => print(p));
-          },
-          icon: _pinLocationIcons[_themeIdentifier],
-        );
-      };
+  // Future<Marker> Function(Cluster<MapPanel>) get _markerBuilder =>
+  //     (cluster) async {
+  //       return Marker(
+  //         markerId: MarkerId(cluster.getId()),
+  //         position: cluster.location,
+  //         onTap: () {
+  //           print('---- $cluster');
+  //           cluster.items.forEach((p) => print(p));
+  //         },
+  //         icon: _pinLocationIcons[_themeIdentifier],
+  //       );
+  //     };
 
-  _updateMarkers(Set<Marker> markers) {
-    markers.addAll(_userPanelMarkers);
-    setState(() {
-      _markers = markers;
-    });
-  }
+  // _updateMarkers(Set<Marker> markers) {
+  //   markers.addAll(_userPanelMarkers);
+  //   setState(() {
+  //     _markers = markers;
+  //   });
+  // }
 
   _getUserPanels() async {
     List<SolarPanel> userPanelData = await panelDatabase.getUserPanelData();
@@ -151,40 +151,40 @@ class _MapScreenState extends State<MapScreen> {
     });
   }
 
-  _getOSMClusters() async {
-    List<SolarPanel> solarPanelData = await panelDatabase.getAllOSMPanelData();
-    List<ClusterItem<MapPanel>> items = [];
-    solarPanelData.forEach((panel) {
-      items.add(ClusterItem(LatLng(panel.lat, panel.lon),
-          item: MapPanel(userUploaded: false)));
-    });
-    setState(() {
-      _clusterItems = items;
-    });
-  }
+  // _getOSMClusters() async {
+  //   List<SolarPanel> solarPanelData = await panelDatabase.getAllOSMPanelData();
+  //   List<ClusterItem<MapPanel>> items = [];
+  //   solarPanelData.forEach((panel) {
+  //     items.add(ClusterItem(LatLng(panel.lat, panel.lon),
+  //         item: MapPanel(userUploaded: false)));
+  //   });
+  //   setState(() {
+  //     _clusterItems = items;
+  //   });
+  // }
 
-  _getMarkerData(LatLngBounds visibleRegion) async {
-    List<Marker> markers = [];
-    List<SolarPanel> solarPanelData =
-        await panelDatabase.getOSMPanelData(visibleRegion);
-    List<ClusterItem<MapPanel>> items = [];
-    solarPanelData.forEach((panel) {
-      items.add(ClusterItem(LatLng(panel.lat, panel.lon),
-          item: MapPanel(userUploaded: false)));
-    });
-    _manager.setItems(items);
-  }
+  // _getMarkerData(LatLngBounds visibleRegion) async {
+  //   List<Marker> markers = [];
+  //   List<SolarPanel> solarPanelData =
+  //       await panelDatabase.getOSMPanelData(visibleRegion);
+  //   List<ClusterItem<MapPanel>> items = [];
+  //   solarPanelData.forEach((panel) {
+  //     items.add(ClusterItem(LatLng(panel.lat, panel.lon),
+  //         item: MapPanel(userUploaded: false)));
+  //   });
+  //   _manager.setItems(items);
+  // }
 
   _onMapCreated(GoogleMapController controller) async {
     _mapController = controller;
-    _manager.setMapController(controller);
+    // _manager.setMapController(controller);
     _mapController.setMapStyle(_mapStyles[_themeIdentifier]);
   }
 
-  _onCameraIdle() async {
-    _getMarkerData(await _mapController.getVisibleRegion());
-    _manager.updateMap();
-  }
+  // _onCameraIdle() async {
+  //   _getMarkerData(await _mapController.getVisibleRegion());
+  //   _manager.updateMap();
+  // }
 
   Future<Uint8List> _getBytesFromAsset(String path, int width) async {
     ByteData data = await rootBundle.load(path);
@@ -213,9 +213,9 @@ class _MapScreenState extends State<MapScreen> {
                 myLocationButtonEnabled: true,
                 myLocationEnabled: true,
                 onMapCreated: _onMapCreated,
-                onCameraMove: _manager.onCameraMove,
-                onCameraIdle: _onCameraIdle,
-                markers: _markers,
+                // onCameraMove: _manager.onCameraMove,
+                // onCameraIdle: _onCameraIdle,
+                markers: _userPanelMarkers,
                 initialCameraPosition: _initialPostion,
               ),
             ),
