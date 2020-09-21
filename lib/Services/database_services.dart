@@ -25,7 +25,7 @@ class DatabaseProvider {
     '(49.92,-10.6,61.02,1.935);out;'
   ];
   static const _limitNumber = 1000;
-  static const Duration _updateTime = Duration(hours: 1);
+  static const Duration _updateTime = Duration(days: 1);
 
   Future<Database> get database async {
     if (_database != null) return _database;
