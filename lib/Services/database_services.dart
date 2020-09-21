@@ -137,10 +137,12 @@ class DatabaseProvider {
     await db.insert(_userPanelTableName, newPanel.toMapNoID());
   }
 
-  Future<void> insertQueueData(String imagePath, panelLocation) async {
+  Future<void> insertQueueData(String imagePath, LatLng panelLocation) async {
     final Database db = await database;
     final toUpload = UploadQueueItem(
-        path: imagePath, lat: panelLocation.lat, lon: panelLocation.lon);
+        path: imagePath,
+        lat: panelLocation.latitude,
+        lon: panelLocation.longitude);
     await db.insert(_uploadQueueTableName, toUpload.toMap());
   }
 

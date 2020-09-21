@@ -34,7 +34,7 @@ class UploadLaterDialogue extends StatelessWidget {
     return AlertDialog(
       title: new Text("No internet connection.",
           style: Theme.of(context).textTheme.headline5),
-      content: new Text("The picture will be uploaded when get a connection.",
+      content: new Text("The picture will be uploaded automatically later.",
           style: Theme.of(context).textTheme.bodyText1),
       actions: <Widget>[
         FlatButton(
