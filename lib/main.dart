@@ -14,7 +14,7 @@ Future<void> main() async {
   SharedPreferences prefs = await SharedPreferences.getInstance();
   initScreen = await prefs.getInt("initScreen");
   await prefs.setInt("initScreen", 1);
-  print('initScreen ${initScreen}');
+  print('initScreen $initScreen');
   runApp(MyApp());
 }
 
