@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:solar_streets/Model/solar_panel.dart';
 import 'package:connectivity/connectivity.dart';
+import 'package:solar_streets/Model/upload_queue_item.dart';
 import 'package:solar_streets/Services/database_services.dart';
 import 'dart:convert';
 
@@ -21,14 +22,27 @@ class MapillaryService {
         connectivityResult == ConnectivityResult.wifi) {
       final UploadSession session = await _createUploadSession();
       await _awsUpload(imageFile, session);
+      await uploadQueuePanels(session);
       await _closeUploadSession(session);
-      panelDatabase.insertUserPanel(SolarPanel(
+      await panelDatabase.insertUserPanel(SolarPanel(
           id: null, lat: panelLocation.latitude, lon: panelLocation.longitude));
       return true;
     } else {
       panelDatabase.insertQueueData(imageFile.path, panelLocation);
       return false;
     }
+  }
+
+  Future uploadQueuePanels(UploadSession session) async {
+    final List<UploadQueueItem> uploadQueue =
+        await panelDatabase.getUploadQueue();
+    uploadQueue.forEach((uploadQueueItem) async {
+      final File image = File(uploadQueueItem.path);
+      await _awsUpload(image, session);
+      panelDatabase.deleteFromUploadQueue(uploadQueueItem);
+      panelDatabase.insertUserPanel(SolarPanel(
+          id: null, lat: uploadQueueItem.lat, lon: uploadQueueItem.lon));
+    });
   }
 
   Future<UploadSession> _createUploadSession() async {

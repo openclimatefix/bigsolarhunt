@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 import '../Model/solar_panel.dart';
-import '../Model/upload_queue.dart';
+import '../Model/upload_queue_item.dart';
 
 class DatabaseProvider {
   DatabaseProvider._();
@@ -139,9 +139,30 @@ class DatabaseProvider {
 
   Future<void> insertQueueData(String imagePath, panelLocation) async {
     final Database db = await database;
-    final toUpload = UploadQueue(
+    final toUpload = UploadQueueItem(
         path: imagePath, lat: panelLocation.lat, lon: panelLocation.lon);
     await db.insert(_uploadQueueTableName, toUpload.toMap());
+  }
+
+  Future<List<UploadQueueItem>> getUploadQueue() async {
+    final Database db = await database;
+    final List<Map<String, dynamic>> response =
+        await db.rawQuery("SELECT * FROM $_uploadQueueTableName");
+    List<UploadQueueItem> uploadQueue =
+        response.map((row) => UploadQueueItem.fromMap(row)).toList();
+    return uploadQueue;
+  }
+
+  Future<void> deleteFromUploadQueue(UploadQueueItem toDelete) async {
+    final Database db = await database;
+    final String path = toDelete.path;
+    await db.delete(
+      _uploadQueueTableName,
+      // Use a `where` clause to delete a specific dog.
+      where: "path = ?",
+      // Pass the Dog's id as a whereArg to prevent SQL injection.
+      whereArgs: [path],
+    );
   }
 
   Future<void> _updateDatabase() async {
