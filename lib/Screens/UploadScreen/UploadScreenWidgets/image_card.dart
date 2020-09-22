@@ -22,7 +22,7 @@ class ImagePlaceholder extends StatelessWidget {
 }
 
 class ImageCard extends StatelessWidget {
-  final File image;
+  final ImageProvider image;
   const ImageCard({
     Key key,
     @required this.image,
@@ -39,7 +39,7 @@ class ImageCard extends StatelessWidget {
           child: image == null
               ? ImagePlaceholder()
               : ImageFade(
-                  image: FileImage(image),
+                  image: image,
                   fit: BoxFit.fitWidth,
                   placeholder: ImagePlaceholder()),
         ));

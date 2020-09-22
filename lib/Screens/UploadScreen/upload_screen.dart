@@ -85,33 +85,44 @@ class _UploadScreenState extends State<UploadScreen> {
       body: Container(
           child: Stack(children: <Widget>[
         Container(
-            child: GoogleMap(
-                mapType: MapType.hybrid,
-                minMaxZoomPreference: MinMaxZoomPreference(18, 20),
-                cameraTargetBounds: CameraTargetBounds(LatLngBounds(
-                    southwest: _userLocationLowerBound,
-                    northeast: _userLocationUpperBound)),
-                myLocationButtonEnabled: true,
-                myLocationEnabled: true,
-                tiltGesturesEnabled: false,
-                trafficEnabled: false,
-                initialCameraPosition: CameraPosition(
-                  target: _panelLocation,
-                  zoom: 19,
-                ),
-                markers: Set<Marker>.of(
-                  <Marker>[
-                    Marker(
-                        flat: false,
-                        markerId: MarkerId('Marker'),
-                        position: _panelLocation)
-                  ],
-                ),
-                onCameraMove: _updatePanelLocation)),
+            child: _userLocation == null
+                ? Container(
+                    child: Center(
+                      child: Text(
+                        'getting location..',
+                        style: Theme.of(context).textTheme.bodyText2,
+                      ),
+                    ),
+                  )
+                : GoogleMap(
+                    mapType: MapType.hybrid,
+                    minMaxZoomPreference: MinMaxZoomPreference(18, 20),
+                    cameraTargetBounds: CameraTargetBounds(LatLngBounds(
+                        southwest: _userLocationLowerBound,
+                        northeast: _userLocationUpperBound)),
+                    myLocationButtonEnabled: true,
+                    myLocationEnabled: true,
+                    tiltGesturesEnabled: false,
+                    trafficEnabled: false,
+                    initialCameraPosition: CameraPosition(
+                      target: _panelLocation,
+                      zoom: 19,
+                    ),
+                    markers: Set<Marker>.of(
+                      <Marker>[
+                        Marker(
+                            flat: false,
+                            markerId: MarkerId('Marker'),
+                            position: _panelLocation)
+                      ],
+                    ),
+                    onCameraMove: _updatePanelLocation)),
         Container(
             padding: EdgeInsets.all(20),
             alignment: Alignment.topCenter,
-            child: ImageCard(image: _image)),
+            child: _image == null
+                ? ImageCard(image: null)
+                : ImageCard(image: FileImage(_image))),
         Container(
             padding: EdgeInsets.all(20),
             alignment: Alignment.bottomCenter,
