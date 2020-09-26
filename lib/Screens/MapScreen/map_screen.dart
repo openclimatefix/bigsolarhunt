@@ -7,6 +7,7 @@ import 'package:location/location.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:solar_streets/Model/map_panel.dart';
 import 'package:solar_streets/Model/solar_panel.dart';
+import 'package:solar_streets/Model/upload_queue_item.dart';
 import 'package:solar_streets/Services/database_services.dart';
 
 class MapScreen extends StatefulWidget {
@@ -29,7 +30,9 @@ class _MapScreenState extends State<MapScreen> {
   bool _databaseConnected = false;
   // List<ClusterItem<MapPanel>> _clusterItems = [];
   // Set<Marker> _markers = Set();
+  Set<Marker> _markers = Set();
   Set<Marker> _userPanelMarkers = Set();
+  Set<Marker> _uploadQueueMarkers = Set();
   CameraPosition _initialPostion =
       CameraPosition(target: LatLng(54.12501425, -4.31989979), zoom: 5.3);
   int _themeIdentifier;
@@ -46,7 +49,7 @@ class _MapScreenState extends State<MapScreen> {
     await panelDatabase.database;
     await _setCustomMapPin();
     // await _initClusterManager();
-    _getUserPanels();
+    _getMarkers();
     setState(() {
       _databaseConnected = true;
     });
@@ -129,7 +132,16 @@ class _MapScreenState extends State<MapScreen> {
   //   });
   // }
 
-  _getUserPanels() async {
+  _getMarkers() async {
+    List<Marker> userPanelData = await _getUserPanels();
+    List<Marker> uploadQueue = await _getUploadQueuePanels();
+    setState(() {
+      _markers.addAll(userPanelData);
+      _markers.addAll(uploadQueue);
+    });
+  }
+
+  Future<List<Marker>> _getUserPanels() async {
     List<SolarPanel> userPanelData = await panelDatabase.getUserPanelData();
     List<Marker> markers = [];
     userPanelData.forEach((panel) {
@@ -139,9 +151,19 @@ class _MapScreenState extends State<MapScreen> {
         icon: _pinLocationIcons[_themeIdentifier + 2],
       ));
     });
-    setState(() {
-      _userPanelMarkers = markers.toSet();
+    return markers;
+  }
+
+  Future<List<Marker>> _getUploadQueuePanels() async {
+    List<UploadQueueItem> uploadQueue = await panelDatabase.getUploadQueue();
+    List<Marker> markers = [];
+    uploadQueue.forEach((panel) {
+      markers.add(Marker(
+          markerId: MarkerId(panel.path),
+          position: LatLng(panel.lat, panel.lon),
+          icon: _pinLocationIcons[_themeIdentifier]));
     });
+    return markers;
   }
 
   _getUserLocation() async {
@@ -215,7 +237,7 @@ class _MapScreenState extends State<MapScreen> {
                 onMapCreated: _onMapCreated,
                 // onCameraMove: _manager.onCameraMove,
                 // onCameraIdle: _onCameraIdle,
-                markers: _userPanelMarkers,
+                markers: _markers,
                 initialCameraPosition: _initialPostion,
               ),
             ),
