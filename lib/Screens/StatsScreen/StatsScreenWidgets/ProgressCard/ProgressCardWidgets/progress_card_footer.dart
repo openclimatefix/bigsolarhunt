@@ -46,8 +46,8 @@ class _ProgressCardFooterState extends State<ProgressCardFooter> {
                     image: AssetImage('assets/panel-icon-light.png')))),
         Text(
             panelsToNextLevel == 1
-                ? "$panelsToNextLevel Panel to next level"
-                : "$panelsToNextLevel Panels to next level",
+                ? "$panelsToNextLevel panel to next level"
+                : "$panelsToNextLevel panels to next level",
             style: Theme.of(context).textTheme.bodyText2)
       ],
     ));

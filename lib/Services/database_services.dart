@@ -146,6 +146,18 @@ class DatabaseProvider {
     }
   }
 
+  Future<int> getUploadQueueCount() async {
+    final Database db = await database;
+    final List<Map<String, dynamic>> result =
+        await db.rawQuery("SELECT COUNT (*) FROM $_uploadQueueTableName");
+    int count = Sqflite.firstIntValue(result);
+    if (count >= maxPanels) {
+      return (count - maxPanels);
+    } else {
+      return count;
+    }
+  }
+
   Future<void> insertUserPanel(SolarPanel newPanel) async {
     final Database db = await database;
     await db.insert(_userPanelTableName, newPanel.toMapNoID());
