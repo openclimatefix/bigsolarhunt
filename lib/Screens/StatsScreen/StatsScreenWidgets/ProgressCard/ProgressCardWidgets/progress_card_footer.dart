@@ -13,6 +13,7 @@ class ProgressCardFooter extends StatefulWidget {
 class _ProgressCardFooterState extends State<ProgressCardFooter> {
   DatabaseProvider panelDatabase = DatabaseProvider.databaseProvider;
   int _userPanels = 0;
+  int _queuePanels = 0;
 
   @override
   void initState() {
@@ -21,6 +22,13 @@ class _ProgressCardFooterState extends State<ProgressCardFooter> {
     panelDatabase.getUserPanelCount().then((value) {
       setState(() {
         _userPanels = value;
+      });
+    }).catchError((error) {
+      print(error);
+    });
+    panelDatabase.getUploadQueueCount().then((value) {
+      setState(() {
+        _queuePanels = value;
       });
     }).catchError((error) {
       print(error);
@@ -38,16 +46,22 @@ class _ProgressCardFooterState extends State<ProgressCardFooter> {
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
         Container(
-            margin: EdgeInsets.only(right: 10),
-            width: 35,
-            height: 35,
+            margin: EdgeInsets.only(right: 5, left: 5),
+            width: 30,
+            height: 30,
             decoration: BoxDecoration(
                 image: DecorationImage(
                     image: AssetImage('assets/panel-icon-light.png')))),
-        Text(
-            panelsToNextLevel == 1
-                ? "$panelsToNextLevel panel to next level"
-                : "$panelsToNextLevel panels to next level",
+        Text("$panelsToNextLevel to next level",
+            style: Theme.of(context).textTheme.bodyText2),
+        Container(
+            margin: EdgeInsets.only(right: 5, left: 15),
+            width: 30,
+            height: 30,
+            decoration: BoxDecoration(
+                image: DecorationImage(
+                    image: AssetImage('assets/panel-icon-orange.png')))),
+        Text("$_queuePanels in queue",
             style: Theme.of(context).textTheme.bodyText2)
       ],
     ));

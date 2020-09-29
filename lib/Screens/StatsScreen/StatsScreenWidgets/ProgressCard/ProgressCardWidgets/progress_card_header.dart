@@ -92,29 +92,10 @@ class _PanelCountDisplayTextState extends State<PanelCountDisplayText> {
   }
 }
 
-class ProgressCardHeaderText extends StatefulWidget {
-  const ProgressCardHeaderText({Key key}) : super(key: key);
-
-  @override
-  _ProgressCardHeaderTextState createState() => _ProgressCardHeaderTextState();
-}
-
-class _ProgressCardHeaderTextState extends State<ProgressCardHeaderText> {
-  DatabaseProvider panelDatabase = DatabaseProvider.databaseProvider;
-  int _uploadPanels = 0;
-
-  @override
-  void initState() {
-    super.initState();
-
-    panelDatabase.getUploadQueueCount().then((value) {
-      setState(() {
-        _uploadPanels = value;
-      });
-    }).catchError((error) {
-      print(error);
-    });
-  }
+class ProgressCardHeaderText extends StatelessWidget {
+  const ProgressCardHeaderText({
+    Key key,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -129,25 +110,7 @@ class _ProgressCardHeaderTextState extends State<ProgressCardHeaderText> {
               textAlign: TextAlign.left,
             ),
             Divider(thickness: 2),
-            _uploadPanels > 0
-                ? Row(
-                    children: <Widget>[
-                      Container(
-                          margin: EdgeInsets.only(right: 1),
-                          width: 25,
-                          height: 25,
-                          decoration: BoxDecoration(
-                              image: DecorationImage(
-                                  image: AssetImage(
-                                      'assets/panel-icon-orange.png')))),
-                      Text(
-                          _uploadPanels == 1
-                              ? "$_uploadPanels panel to be uploaded later"
-                              : "$_uploadPanels panel to be uploaded later",
-                          style: Theme.of(context).textTheme.bodyText2)
-                    ],
-                  )
-                : Text('Each panel helps improve our predictions and save CO2')
+            Text('Each panel helps improve our predictions and save CO2')
           ],
         ));
   }
