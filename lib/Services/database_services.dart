@@ -5,6 +5,7 @@ import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
 import '../Model/solar_panel.dart';
+import '../Model/upload_queue_item.dart';
 import 'package:solar_streets/Progress/progress_utilities.dart';
 
 class DatabaseProvider {
@@ -17,6 +18,8 @@ class DatabaseProvider {
   static const String _osmPanelTableName = 'panels';
   static const String _userPanelTableName = 'userPanels';
   static const String _dbLastUpdated = 'last_updated';
+  static const String _uploadQueueTableName = 'uploadQueue';
+
   static const List<String> _osmBaseURL = [
     'http://overpass-api.de/api/interpreter?data=[out:json];node["generator:source"="solar"]["location"="roof"]',
     '(newer:"',
@@ -24,7 +27,7 @@ class DatabaseProvider {
     '(49.92,-10.6,61.02,1.935);out;'
   ];
   static const _limitNumber = 1000;
-  static const Duration _updateTime = Duration(hours: 1);
+  static const Duration _updateTime = Duration(days: 1);
 
   Future<Database> get database async {
     if (_database != null) return _database;
@@ -42,8 +45,17 @@ class DatabaseProvider {
   }
 
   Future<void> _onCreate(Database db, int newVersion) async {
-    await createUserPanelsTable(db);
     // await createOsmTables(db);
+    await createUserPanelsTable(db);
+    await createUploadQueueTable(db);
+  }
+
+  Future<void> createUploadQueueTable(Database db) async {
+    await db.execute("CREATE TABLE $_uploadQueueTableName("
+        "path TINYTEXT,"
+        "lat FLOAT,"
+        "lon FLOAT"
+        ")");
   }
 
   Future<void> createUserPanelsTable(Database db) async {
@@ -134,9 +146,51 @@ class DatabaseProvider {
     }
   }
 
+  Future<int> getUploadQueueCount() async {
+    final Database db = await database;
+    final List<Map<String, dynamic>> result =
+        await db.rawQuery("SELECT COUNT (*) FROM $_uploadQueueTableName");
+    int count = Sqflite.firstIntValue(result);
+    if (count >= maxPanels) {
+      return (count - maxPanels);
+    } else {
+      return count;
+    }
+  }
+
   Future<void> insertUserPanel(SolarPanel newPanel) async {
     final Database db = await database;
     await db.insert(_userPanelTableName, newPanel.toMapNoID());
+  }
+
+  Future<void> insertQueueData(String imagePath, LatLng panelLocation) async {
+    final Database db = await database;
+    final toUpload = UploadQueueItem(
+        path: imagePath,
+        lat: panelLocation.latitude,
+        lon: panelLocation.longitude);
+    await db.insert(_uploadQueueTableName, toUpload.toMap());
+  }
+
+  Future<List<UploadQueueItem>> getUploadQueue() async {
+    final Database db = await database;
+    final List<Map<String, dynamic>> response =
+        await db.rawQuery("SELECT * FROM $_uploadQueueTableName");
+    List<UploadQueueItem> uploadQueue =
+        response.map((row) => UploadQueueItem.fromMap(row)).toList();
+    return uploadQueue;
+  }
+
+  Future<void> deleteFromUploadQueue(UploadQueueItem toDelete) async {
+    final Database db = await database;
+    final String path = toDelete.path;
+    await db.delete(
+      _uploadQueueTableName,
+      // Use a `where` clause to delete a specific dog.
+      where: "path = ?",
+      // Pass the Dog's id as a whereArg to prevent SQL injection.
+      whereArgs: [path],
+    );
   }
 
   Future<void> _updateDatabase() async {
