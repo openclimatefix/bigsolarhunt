@@ -24,6 +24,30 @@ class UploadCompleteDialogue extends StatelessWidget {
   }
 }
 
+class UploadLaterDialogue extends StatelessWidget {
+  const UploadLaterDialogue({
+    Key key,
+  }) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: new Text("No internet connection.",
+          style: Theme.of(context).textTheme.headline5),
+      content: new Text("The picture will be uploaded automatically later.",
+          style: Theme.of(context).textTheme.bodyText1),
+      actions: <Widget>[
+        FlatButton(
+          child: Text('Close'),
+          onPressed: () {
+            Navigator.of(context).popUntil(ModalRoute.withName('/'));
+          },
+        )
+      ],
+    );
+  }
+}
+
 class UploadFailedDialogue extends StatelessWidget {
   final dynamic error;
 

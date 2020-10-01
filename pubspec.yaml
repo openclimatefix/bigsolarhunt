@@ -37,6 +37,7 @@ dependencies:
   step_progress_indicator: ^0.2.4+7
   shared_preferences: ^0.5.10
   url_launcher: ^5.7.0
+  connectivity: ^0.4.9+2
 
 
   # The following adds the Cupertino Icons font to your application.

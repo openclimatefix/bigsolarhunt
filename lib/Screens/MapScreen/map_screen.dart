@@ -7,6 +7,7 @@ import 'package:location/location.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:solar_streets/Model/map_panel.dart';
 import 'package:solar_streets/Model/solar_panel.dart';
+import 'package:solar_streets/Model/upload_queue_item.dart';
 import 'package:solar_streets/Services/database_services.dart';
 
 class MapScreen extends StatefulWidget {
@@ -29,7 +30,9 @@ class _MapScreenState extends State<MapScreen> {
   bool _databaseConnected = false;
   // List<ClusterItem<MapPanel>> _clusterItems = [];
   // Set<Marker> _markers = Set();
+  Set<Marker> _markers = Set();
   Set<Marker> _userPanelMarkers = Set();
+  Set<Marker> _uploadQueueMarkers = Set();
   CameraPosition _initialPostion =
       CameraPosition(target: LatLng(54.12501425, -4.31989979), zoom: 5.3);
   int _themeIdentifier;
@@ -46,7 +49,8 @@ class _MapScreenState extends State<MapScreen> {
     await panelDatabase.database;
     await _setCustomMapPin();
     // await _initClusterManager();
-    _getUserPanels();
+    _getMarkers();
+    if (!mounted) return;
     setState(() {
       _databaseConnected = true;
     });
@@ -61,6 +65,7 @@ class _MapScreenState extends State<MapScreen> {
         await _getBytesFromAsset('assets/panel-icon-orange-dark.png', 50);
     final Uint8List lighOSMtMarkerIcon =
         await _getBytesFromAsset('assets/panel-icon-orange.png', 50);
+    if (!mounted) return;
     setState(() {
       _pinLocationIcons[0] = BitmapDescriptor.fromBytes(lighOSMtMarkerIcon);
       _pinLocationIcons[1] = BitmapDescriptor.fromBytes(darkOSMMarkerIcon);
@@ -74,6 +79,7 @@ class _MapScreenState extends State<MapScreen> {
         await rootBundle.loadString('assets/map_style_dark.json');
     final String lightMapStyle =
         await rootBundle.loadString('assets/map_style_light.json');
+    if (!mounted) return;
     setState(() {
       _themeIdentifier =
           Theme.of(context).brightness == Brightness.light ? 0 : 1;
@@ -129,7 +135,17 @@ class _MapScreenState extends State<MapScreen> {
   //   });
   // }
 
-  _getUserPanels() async {
+  _getMarkers() async {
+    List<Marker> userPanelData = await _getUserPanels();
+    List<Marker> uploadQueue = await _getUploadQueuePanels();
+    if (!mounted) return;
+    setState(() {
+      _markers.addAll(userPanelData);
+      _markers.addAll(uploadQueue);
+    });
+  }
+
+  Future<List<Marker>> _getUserPanels() async {
     List<SolarPanel> userPanelData = await panelDatabase.getUserPanelData();
     List<Marker> markers = [];
     userPanelData.forEach((panel) {
@@ -139,13 +155,24 @@ class _MapScreenState extends State<MapScreen> {
         icon: _pinLocationIcons[_themeIdentifier + 2],
       ));
     });
-    setState(() {
-      _userPanelMarkers = markers.toSet();
+    return markers;
+  }
+
+  Future<List<Marker>> _getUploadQueuePanels() async {
+    List<UploadQueueItem> uploadQueue = await panelDatabase.getUploadQueue();
+    List<Marker> markers = [];
+    uploadQueue.forEach((panel) {
+      markers.add(Marker(
+          markerId: MarkerId(panel.path),
+          position: LatLng(panel.lat, panel.lon),
+          icon: _pinLocationIcons[_themeIdentifier]));
     });
+    return markers;
   }
 
   _getUserLocation() async {
     LocationData locationData = await location.getLocation();
+    if (!mounted) return;
     setState(() {
       _userLocation = LatLng(locationData.latitude, locationData.longitude);
     });
@@ -215,7 +242,7 @@ class _MapScreenState extends State<MapScreen> {
                 onMapCreated: _onMapCreated,
                 // onCameraMove: _manager.onCameraMove,
                 // onCameraIdle: _onCameraIdle,
-                markers: _userPanelMarkers,
+                markers: _markers,
                 initialCameraPosition: _initialPostion,
               ),
             ),

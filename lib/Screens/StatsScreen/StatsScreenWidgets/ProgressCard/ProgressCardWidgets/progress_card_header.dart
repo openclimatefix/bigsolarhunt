@@ -40,6 +40,7 @@ class PanelCountDisplayText extends StatefulWidget {
 
 class _PanelCountDisplayTextState extends State<PanelCountDisplayText> {
   DatabaseProvider panelDatabase = DatabaseProvider.databaseProvider;
+  int _uploadPanels = 0;
   int _userPanels = 0;
 
   @override
@@ -109,10 +110,7 @@ class ProgressCardHeaderText extends StatelessWidget {
               textAlign: TextAlign.left,
             ),
             Divider(thickness: 2),
-            Text(
-              "Each panel helps improve our predictions and save CO2",
-              style: Theme.of(context).textTheme.bodyText1,
-            )
+            Text('Each panel helps improve our predictions and save CO2')
           ],
         ));
   }
