@@ -50,6 +50,7 @@ class _MapScreenState extends State<MapScreen> {
     await _setCustomMapPin();
     // await _initClusterManager();
     _getMarkers();
+    if (!mounted) return;
     setState(() {
       _databaseConnected = true;
     });
@@ -64,6 +65,7 @@ class _MapScreenState extends State<MapScreen> {
         await _getBytesFromAsset('assets/panel-icon-orange-dark.png', 50);
     final Uint8List lighOSMtMarkerIcon =
         await _getBytesFromAsset('assets/panel-icon-orange.png', 50);
+    if (!mounted) return;
     setState(() {
       _pinLocationIcons[0] = BitmapDescriptor.fromBytes(lighOSMtMarkerIcon);
       _pinLocationIcons[1] = BitmapDescriptor.fromBytes(darkOSMMarkerIcon);
@@ -77,6 +79,7 @@ class _MapScreenState extends State<MapScreen> {
         await rootBundle.loadString('assets/map_style_dark.json');
     final String lightMapStyle =
         await rootBundle.loadString('assets/map_style_light.json');
+    if (!mounted) return;
     setState(() {
       _themeIdentifier =
           Theme.of(context).brightness == Brightness.light ? 0 : 1;
@@ -135,6 +138,7 @@ class _MapScreenState extends State<MapScreen> {
   _getMarkers() async {
     List<Marker> userPanelData = await _getUserPanels();
     List<Marker> uploadQueue = await _getUploadQueuePanels();
+    if (!mounted) return;
     setState(() {
       _markers.addAll(userPanelData);
       _markers.addAll(uploadQueue);
@@ -168,6 +172,7 @@ class _MapScreenState extends State<MapScreen> {
 
   _getUserLocation() async {
     LocationData locationData = await location.getLocation();
+    if (!mounted) return;
     setState(() {
       _userLocation = LatLng(locationData.latitude, locationData.longitude);
     });
