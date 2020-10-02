@@ -1,11 +1,14 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
+import 'package:flutter_locations_distance/flutter_locations_distance.dart';
 
-import '../Model/solar_panel.dart';
-import '../Model/upload_queue_item.dart';
+import 'package:solar_streets/DataStructs/solar_panel.dart';
+import 'package:solar_streets/DataStructs/badge.dart';
+import 'package:solar_streets/DataStructs/upload_queue_item.dart';
 import 'package:solar_streets/Progress/progress_utilities.dart';
 
 class DatabaseProvider {
@@ -17,6 +20,7 @@ class DatabaseProvider {
   static const String _panelDatabaseName = 'osm_panel_database.db';
   static const String _osmPanelTableName = 'panels';
   static const String _userPanelTableName = 'userPanels';
+  static const String _userBadgeTableName = "userBadges";
   static const String _dbLastUpdated = 'last_updated';
   static const String _uploadQueueTableName = 'uploadQueue';
 
@@ -45,6 +49,8 @@ class DatabaseProvider {
   }
 
   Future<void> _onCreate(Database db, int newVersion) async {
+    await createUserPanelsTable(db);
+    await createUserBadgesTable(db);
     // await createOsmTables(db);
     await createUserPanelsTable(db);
     await createUploadQueueTable(db);
@@ -59,11 +65,24 @@ class DatabaseProvider {
   }
 
   Future<void> createUserPanelsTable(Database db) async {
-    await db.execute("CREATE TABLE $_userPanelTableName("
+    await db.execute("CREATE TABLE IF NOT EXISTS $_userPanelTableName("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"
         "lat FLOAT,"
         "lon FLOAT"
         ")");
+  }
+
+  Future<void> createUserBadgesTable(Database db) async {
+    await db.execute("CREATE TABLE $_userBadgeTableName("
+        "id INTEGER PRIMARY KEY,"
+        "imagePath TEXT,"
+        "unlocked INTEGER,"
+        "dateUnlocked TEXT,"
+        "description TEXT"
+        ")");
+    Future.forEach(initialBadges, (badgeRow) async {
+      await db.insert(_userBadgeTableName, badgeRow.toMap());
+    });
   }
 
   Future<void> createOsmTables(Database db) async {
@@ -158,6 +177,14 @@ class DatabaseProvider {
     }
   }
 
+  Future<List<Badge>> getUserBadgeData() async {
+    final Database db = await database;
+    final List<Map<String, dynamic>> response =
+        await db.rawQuery("SELECT * FROM $_userBadgeTableName");
+    List<Badge> badgeData = response.map((row) => Badge.fromMap(row)).toList();
+    return badgeData;
+  }
+
   Future<void> insertUserPanel(SolarPanel newPanel) async {
     final Database db = await database;
     await db.insert(_userPanelTableName, newPanel.toMapNoID());
@@ -240,5 +267,74 @@ class DatabaseProvider {
         .map((panel) => SolarPanel.fromMap(panel))
         .forEach((solarPanel) => panelData.add(solarPanel));
     return panelData;
+  }
+
+  Future<List<Badge>> checkForNewBadges(SolarPanel lastUploadedPanel) async {
+    // Checks the badge table to see whether any new badges have been earned
+    // Updates the table accordingly
+    final Database db = await database;
+    List<Badge> currentBadges = await getUserBadgeData();
+    List<SolarPanel> currentPanels = await getUserPanelData();
+    int panelCount = await getUserPanelCount();
+    List<Badge> newBadges = new List();
+
+    unlockBadgeOfIndex(int index, List<Badge> badgeList) async {
+      Badge unlockedBadge = currentBadges[index];
+      unlockedBadge.unlocked = true;
+      unlockedBadge.dateUnlocked = DateTime.now();
+      badgeList.add(unlockedBadge);
+      await db.insert(_userBadgeTableName, unlockedBadge.toMap(),
+          conflictAlgorithm: ConflictAlgorithm.replace);
+    }
+
+    checkLevelBadges() {
+      // Check level badges (rows 0-2 in badge table)
+      List<int> levels = [1, 5, 10];
+      for (int i = 0; i < levels.length; i++) {
+        if ((panelCount >= levelToPanels[levels[i]]) &&
+            !currentBadges[i].unlocked) {
+          unlockBadgeOfIndex(i, newBadges);
+        }
+      }
+    }
+
+    checkPanelCountBadges() {
+      // Check panel count badges (rows 3-5 in badge table)
+      List<int> badgePanelCounts = [5, 20, 50];
+      for (int i = 0; i < badgePanelCounts.length; i++) {
+        if ((panelCount >= badgePanelCounts[i]) &&
+            !currentBadges[i + 3].unlocked) {
+          unlockBadgeOfIndex(i + 3, newBadges);
+        }
+      }
+    }
+
+    checkExplorerBadge() async {
+      // Check explorer badge (row 7 in badge table)
+      double distance;
+      for (int i = 0; i < currentPanels.length; i++) {
+        try {
+          distance = await FlutterLocationsDistance().distanceBetween(
+              lastUploadedPanel.lat,
+              lastUploadedPanel.lon,
+              currentPanels[i].lat,
+              currentPanels[i].lon);
+        } on Exception {
+          distance = -1.0;
+        }
+        if ((distance >= 321868.8) && !currentBadges[7].unlocked) {
+          unlockBadgeOfIndex(7, newBadges);
+        }
+      }
+    }
+
+    //TODO: implement streak badge
+    // will require changing tables for user panels to include datetime
+
+    checkLevelBadges();
+    checkPanelCountBadges();
+    checkExplorerBadge();
+
+    return newBadges;
   }
 }

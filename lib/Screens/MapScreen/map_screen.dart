@@ -5,9 +5,9 @@ import 'dart:ui' as ui;
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:location/location.dart';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:solar_streets/Model/map_panel.dart';
-import 'package:solar_streets/Model/solar_panel.dart';
-import 'package:solar_streets/Model/upload_queue_item.dart';
+import 'package:solar_streets/DataStructs/map_panel.dart';
+import 'package:solar_streets/DataStructs/solar_panel.dart';
+import 'package:solar_streets/DataStructs/upload_queue_item.dart';
 import 'package:solar_streets/Services/database_services.dart';
 
 class MapScreen extends StatefulWidget {

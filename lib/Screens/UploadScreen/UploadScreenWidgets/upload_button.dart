@@ -3,9 +3,12 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:io';
 import 'package:progress_state_button/iconed_button.dart';
 import 'package:progress_state_button/progress_button.dart';
+import 'package:solar_streets/DataStructs/solar_panel.dart';
 
 import 'package:solar_streets/Services/mapillary_service.dart';
 import 'upload_dialogues.dart';
+import 'package:solar_streets/Services/database_services.dart';
+import 'package:solar_streets/DataStructs/badge.dart';
 
 class UploadButton extends StatefulWidget {
   // Dynamic button able to upload a File to OSM and display status
@@ -21,28 +24,34 @@ class UploadButton extends StatefulWidget {
 
 class _UploadButtonState extends State<UploadButton> {
   MapillaryService mapillaryService = new MapillaryService();
+  DatabaseProvider panelDatabase = DatabaseProvider.databaseProvider;
   ButtonState state = ButtonState.idle;
 
   void handleUpload(image, panelLocation) async {
     _displayLoading();
-    var uploadStatus;
+    var responseImage;
     try {
-      uploadStatus = await mapillaryService.upload(image, panelLocation);
+      responseImage = await mapillaryService.upload(image, panelLocation);
     } catch (e) {
       _displayFailure();
       print(e);
+
       showDialog(
           context: context, builder: (_) => new UploadFailedDialogue(error: e));
       return null;
     }
+    SolarPanel newPanel = SolarPanel(
+        id: null, lat: panelLocation.latitude, lon: panelLocation.longitude);
+    panelDatabase.insertUserPanel(newPanel);
     _displaySuccess();
-    if (uploadStatus) {
-      showDialog(
-          context: context, builder: (_) => new UploadCompleteDialogue());
-    } else {
-      showDialog(context: context, builder: (_) => new UploadLaterDialogue());
-    }
-    return uploadStatus;
+    List<Badge> unlockedBadges =
+        await panelDatabase.checkForNewBadges(newPanel);
+
+    showDialog(
+        context: context,
+        builder: (_) =>
+            new UploadCompleteDialogue(unlockedBadges: unlockedBadges));
+    return responseImage;
   }
 
   void _displayLoading() {

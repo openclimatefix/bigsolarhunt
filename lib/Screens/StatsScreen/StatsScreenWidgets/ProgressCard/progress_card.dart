@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'ProgressCardWidgets/progress_card_body.dart';
 import 'ProgressCardWidgets/progress_card_header.dart';
 import 'ProgressCardWidgets/progress_card_footer.dart';
-import 'package:solar_streets/Progress/progress_utilities.dart';
 
 class ProgressCard extends StatelessWidget {
   final int numPanelsSubmitted = 44;
@@ -12,6 +11,8 @@ class ProgressCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Card(
+        shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.all(Radius.circular(20))),
         child: Padding(
             padding: EdgeInsets.all(20),
             child: Column(children: <Widget>[

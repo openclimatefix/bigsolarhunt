@@ -1,9 +1,9 @@
 import 'dart:io';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:http/http.dart' as http;
-import 'package:solar_streets/Model/solar_panel.dart';
+import 'package:solar_streets/DataStructs/solar_panel.dart';
 import 'package:connectivity/connectivity.dart';
-import 'package:solar_streets/Model/upload_queue_item.dart';
+import 'package:solar_streets/DataStructs/upload_queue_item.dart';
 import 'package:solar_streets/Services/database_services.dart';
 import 'dart:convert';
 

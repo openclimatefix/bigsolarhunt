@@ -3,16 +3,11 @@ import 'package:flutter/material.dart';
 import 'StatsScreenWidgets/ProgressCard/progress_card.dart';
 import 'StatsScreenWidgets/BadgeGrid/badge_grid.dart';
 
-class StatsScreen extends StatefulWidget {
+class StatsScreen extends StatelessWidget {
   const StatsScreen({
     Key key,
   }) : super(key: key);
 
-  @override
-  _StatsScreenState createState() => _StatsScreenState();
-}
-
-class _StatsScreenState extends State<StatsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -35,7 +30,9 @@ class _StatsScreenState extends State<StatsScreen> {
                   .headline5
                   .copyWith(color: Colors.lightBlue),
               textAlign: TextAlign.left)),
-      Padding(padding: EdgeInsets.only(left: 20, right: 20), child: BadgeGrid())
+      Padding(
+          padding: EdgeInsets.only(left: 20, right: 20, bottom: 80),
+          child: BadgeGrid())
     ]));
   }
 }
