@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:image_fade/image_fade.dart';
-import 'dart:io';
 
 class ImagePlaceholder extends StatelessWidget {
   const ImagePlaceholder({

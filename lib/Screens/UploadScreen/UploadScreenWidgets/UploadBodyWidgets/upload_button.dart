@@ -6,16 +6,18 @@ import 'package:progress_state_button/progress_button.dart';
 import 'package:solar_streets/DataStructs/solar_panel.dart';
 
 import 'package:solar_streets/Services/mapillary_service.dart';
-import 'upload_dialogues.dart';
+import 'UploadButtonWidgets/upload_dialogues.dart';
 import 'package:solar_streets/Services/database_services.dart';
 import 'package:solar_streets/DataStructs/badge.dart';
 
 class UploadButton extends StatefulWidget {
   // Dynamic button able to upload a File to OSM and display status
   //  of the async OSM API calls
-  final File image;
+  final File imageFile;
   final LatLng panelLocation;
-  const UploadButton({Key key, this.image, this.panelLocation})
+  final Function fineTuneLocation;
+  const UploadButton(
+      {Key key, this.imageFile, this.panelLocation, this.fineTuneLocation})
       : super(key: key);
 
   @override
@@ -27,11 +29,11 @@ class _UploadButtonState extends State<UploadButton> {
   DatabaseProvider panelDatabase = DatabaseProvider.databaseProvider;
   ButtonState state = ButtonState.idle;
 
-  void handleUpload(image, panelLocation) async {
+  void handleUpload(imageFile, panelLocation) async {
     _displayLoading();
     var responseImage;
     try {
-      responseImage = await mapillaryService.upload(image, panelLocation);
+      responseImage = await mapillaryService.upload(imageFile, panelLocation);
     } catch (e) {
       _displayFailure();
       print(e);
@@ -76,10 +78,17 @@ class _UploadButtonState extends State<UploadButton> {
   Widget build(BuildContext context) {
     return ProgressButton.icon(
         iconedButtons: {
-          ButtonState.idle: IconedButton(
-              text: "Upload",
-              icon: Icon(Icons.file_upload, color: Colors.white),
-              color: Theme.of(context).accentColor),
+          // If panel location is null, show Edit Location button
+          // else show upload button
+          ButtonState.idle: widget.panelLocation == null
+              ? IconedButton(
+                  text: "Edit Location",
+                  icon: Icon(Icons.location_searching, color: Colors.white),
+                  color: Colors.blueGrey)
+              : IconedButton(
+                  text: "Upload",
+                  icon: Icon(Icons.file_upload, color: Colors.white),
+                  color: Theme.of(context).accentColor),
           ButtonState.loading: IconedButton(
               text: "Loading", color: Theme.of(context).accentColor),
           ButtonState.fail: IconedButton(
@@ -95,9 +104,15 @@ class _UploadButtonState extends State<UploadButton> {
               color: Colors.green.shade400)
         },
         onPressed: () => {
-              state == ButtonState.idle
-                  ? handleUpload(widget.image, widget.panelLocation)
-                  : null
+              widget.panelLocation == null
+                  // If panel location is null, pressing buttons triggers
+                  //  FineTuneLocation function from UploadScreen
+                  ? widget.fineTuneLocation()
+                  // Else display upload button
+                  : state == ButtonState.idle
+                      ? handleUpload(widget.imageFile, widget.panelLocation)
+                      // Only allow for pressing if button is in idle state
+                      : null
             },
         state: state);
   }

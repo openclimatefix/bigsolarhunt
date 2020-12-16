@@ -17,7 +17,8 @@ ThemeData darkTheme = ThemeData(
     navigationRailTheme: NavigationRailThemeData(
         backgroundColor: Color.fromARGB(255, 29, 29, 29)),
     iconTheme: IconThemeData(color: Colors.white60),
-    textTheme: GoogleFonts.interTextTheme());
+    textTheme: GoogleFonts.interTextTheme()
+        .apply(bodyColor: Colors.white, displayColor: Colors.white));
 
 /*
 -----flutter stable channel-----
