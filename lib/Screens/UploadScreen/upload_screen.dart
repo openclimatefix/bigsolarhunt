@@ -2,9 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
-import 'package:location/location.dart';
-import 'UploadScreenWidgets/upload_button.dart';
-import 'UploadScreenWidgets/image_card.dart';
+import 'package:exif/exif.dart';
+
+import 'UploadScreenWidgets/fine_tune_map.dart';
+import 'UploadScreenWidgets/upload_screen_body.dart';
+import 'package:solar_streets/Services/latlong_services.dart';
 
 class UploadScreen extends StatefulWidget {
   const UploadScreen({
@@ -16,121 +18,89 @@ class UploadScreen extends StatefulWidget {
 }
 
 class _UploadScreenState extends State<UploadScreen> {
-  File _image;
-  Location location = new Location();
-  static LatLng _userLocation;
-  static LatLng _userLocationUpperBound;
-  static LatLng _userLocationLowerBound;
+  File _imageFile;
+  Image _image;
   LatLng _panelLocation;
+
   final picker = ImagePicker();
 
-  Future _getImage() async {
+  Future _getImageAndSetState() async {
+    // Take a picture with the camera
     final pickedFile = await picker.getImage(source: ImageSource.camera);
+    final bytes = await pickedFile.readAsBytes();
+    // Read exif data from image
+    final exif = await readExifFromBytes(bytes);
+    // Convert day/minute/second coordinates to degrees if exists, else return null
+    final lat = gpsDMSToDeg(
+        exif["GPS GPSLatitude"].values, exif["GPS GPSLatitudeRef"].printable);
+    final long = gpsDMSToDeg(
+        exif["GPS GPSLongitude"].values, exif["GPS GPSLongitudeRef"].printable);
+    // To see all exif data use the following
+    //exif.forEach((key, value) {
+    //  print("$key : $value");
+    //});
 
+    // Set all the above to state. _panelLocation can be null
     setState(() {
-      _image = File(pickedFile.path);
-      print(_image);
-    });
-  }
-
-  _getUserLocation() async {
-    LocationData locationData = await location.getLocation();
-    setState(() {
-      _userLocation = LatLng(locationData.latitude, locationData.longitude);
-      _userLocationUpperBound = LatLng(
-          _userLocation.latitude + 0.0007, _userLocation.longitude + 0.0008);
-      _userLocationLowerBound = LatLng(
-          _userLocation.latitude - 0.0007, _userLocation.longitude - 0.0008);
-      _panelLocation = LatLng(locationData.latitude, locationData.longitude);
-    });
-  }
-
-  _updatePanelLocation(CameraPosition cameraPosition) {
-    double lat = cameraPosition.target.latitude;
-    double long = cameraPosition.target.longitude;
-    setState(() {
-      _panelLocation = LatLng(lat, long);
+      _imageFile = File(pickedFile.path);
+      _image = Image.file(File(pickedFile.path));
+      _panelLocation = (lat == null || long == null) ? null : LatLng(lat, long);
     });
   }
 
   void _regetImage() {
-    _image.delete();
+    // Delete temp image file
+    if (_imageFile != null) {
+      _imageFile.delete();
+    }
+    // Clear state
     setState(() {
       _image = null;
+      _imageFile = null;
+      _panelLocation = null;
     });
-    _getImage();
+    // Get image again
+    _getImageAndSetState();
+  }
+
+  void _fineTuneLocation() async {
+    // Open fine tune map screen via navigator
+    final LatLng newLocation = await Navigator.push(
+        context, MaterialPageRoute(builder: (context) => FineTuneMap()));
+    // If the back button was pressed (and not the tick) on the FineTuneLocation screen,
+    //  no LatLng will be returned. In this case, keep the panelLocation as was
+    // Else set it as the returned LatLng
+    setState(() {
+      _panelLocation = newLocation == null ? _panelLocation : newLocation;
+    });
   }
 
   @override
   void initState() {
-    _getImage().then((value) {
-      print('Got async image');
-    });
+    _getImageAndSetState();
     super.initState();
-    _getUserLocation();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Upload a photo'),
-        actions: <Widget>[
-          IconButton(
-              icon: const Icon(Icons.refresh), onPressed: () => _regetImage())
-        ],
-        backgroundColor: Colors.orange,
-      ),
-      backgroundColor: Colors.orange[100],
-      body: Container(
-          child: Stack(children: <Widget>[
-        Container(
-            child: _userLocation == null
-                ? Container(
-                    child: Center(
-                      child: Text(
-                        'getting location..',
-                        style: Theme.of(context).textTheme.bodyText2,
-                      ),
-                    ),
-                  )
-                : GoogleMap(
-                    mapType: MapType.hybrid,
-                    minMaxZoomPreference: MinMaxZoomPreference(18, 20),
-                    cameraTargetBounds: CameraTargetBounds(LatLngBounds(
-                        southwest: _userLocationLowerBound,
-                        northeast: _userLocationUpperBound)),
-                    myLocationButtonEnabled: true,
-                    myLocationEnabled: true,
-                    tiltGesturesEnabled: false,
-                    trafficEnabled: false,
-                    initialCameraPosition: CameraPosition(
-                      target: _panelLocation,
-                      zoom: 19,
-                    ),
-                    markers: Set<Marker>.of(
-                      <Marker>[
-                        Marker(
-                            flat: false,
-                            markerId: MarkerId('Marker'),
-                            position: _panelLocation)
-                      ],
-                    ),
-                    onCameraMove: _updatePanelLocation)),
-        Container(
-            padding: EdgeInsets.all(20),
-            alignment: Alignment.topCenter,
-            child: _image == null
-                ? ImageCard(image: null)
-                : ImageCard(image: FileImage(_image))),
-        Container(
-            padding: EdgeInsets.all(20),
-            alignment: Alignment.bottomCenter,
-            child: UploadButton(
-              image: _image,
-              panelLocation: _panelLocation,
-            ))
-      ])),
-    );
+        appBar: AppBar(
+          title: Text('Upload a photo',
+              style: Theme.of(context)
+                  .textTheme
+                  .headline6
+                  .copyWith(color: Colors.white)),
+          actions: <Widget>[
+            IconButton(
+                icon: const Icon(Icons.refresh), onPressed: () => _regetImage())
+          ],
+          backgroundColor: Colors.orange,
+        ),
+        body: _image != null
+            ? UploadBody(
+                imageFile: _imageFile,
+                panelPosition: _panelLocation,
+                fineTuneLocation: _fineTuneLocation)
+            : Center(child: CircularProgressIndicator()));
   }
 }

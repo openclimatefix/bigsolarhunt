@@ -24,7 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   google_fonts: ^1.1.0
-  image_picker: ^0.6.3
+  image_picker: ^0.6.7+12
   image_fade: ^0.2.1
   animations: ^1.1.2
   google_maps_flutter: ^0.5.24+3
@@ -39,6 +39,8 @@ dependencies:
   url_launcher: ^5.7.0
   connectivity: ^0.4.9+2
   flutter_locations_distance:
+  exif:
+  intl: ^0.16.0
 
 
   # The following adds the Cupertino Icons font to your application.

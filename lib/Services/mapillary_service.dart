@@ -21,6 +21,7 @@ class MapillaryService {
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
       final UploadSession session = await _createUploadSession();
+      // TODO: add location to upload
       await _awsUpload(imageFile, session);
       await uploadQueuePanels(session);
       await _closeUploadSession(session);

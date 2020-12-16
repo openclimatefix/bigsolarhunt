@@ -1,10 +1,8 @@
-import 'dart:io';
-import 'package:flutter/services.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:solar_streets/Screens/UploadScreen/UploadScreenWidgets/image_card.dart';
 import 'package:url_launcher/url_launcher.dart';
+
+import 'InfoScreenWidgets/image_card.dart';
 
 class InfoScreen extends StatefulWidget {
   const InfoScreen({
@@ -16,8 +14,6 @@ class InfoScreen extends StatefulWidget {
 }
 
 class _InfoScreenState extends State<InfoScreen> {
-  File _image;
-
   @override
   void initState() {
     super.initState();
