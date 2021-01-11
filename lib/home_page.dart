@@ -3,7 +3,7 @@ import 'package:flutter/widgets.dart';
 
 import 'Animation/page_route_animations.dart';
 import 'Screens/InfoScreen/info_screen.dart';
-import 'Screens/MapScreen/map_screen.dart';
+import 'Screens/MapScreen/osm_map.dart';
 import 'Screens/StatsScreen/stats_screen.dart';
 
 class HomePage extends StatefulWidget {
@@ -94,8 +94,8 @@ class Destination {
 }
 
 const List<Destination> allDestinations = <Destination>[
-  Destination(0, 'Solar Streets', '/', MapScreen(), Icons.place,
-      Colors.grey), //Icons.public
+  Destination(0, 'Solar Streets', '/', OpenStreetMapScreen(), Icons.place,
+      Colors.grey), ////Icons.public
   Destination(
       1, 'Stats', '/stats', StatsScreen(), Icons.equalizer, Colors.purple),
   Destination(

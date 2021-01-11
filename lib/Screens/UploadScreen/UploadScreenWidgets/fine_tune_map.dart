@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:flutter_map/plugin_api.dart';
+import 'package:latlong/latlong.dart';
 import 'package:location/location.dart';
+import 'package:user_location/user_location.dart';
 
 class FineTuneMap extends StatefulWidget {
   const FineTuneMap({Key key}) : super(key: key);
@@ -11,10 +13,13 @@ class FineTuneMap extends StatefulWidget {
 
 class _FineTuneMapState extends State<FineTuneMap> {
   Location location = new Location();
+  static String _tileUrl;
   static LatLng _userLocation;
   static LatLng _userLocationUpperBound;
   static LatLng _userLocationLowerBound;
+  static List<Marker> _markers = [];
   static LatLng _panelLocation;
+  static Widget _uploadMarker = Image.asset('assets/panel-icon-blue.png');
 
   @override
   void initState() {
@@ -35,17 +40,26 @@ class _FineTuneMapState extends State<FineTuneMap> {
     });
   }
 
-  _updatePanelLocation(CameraPosition cameraPosition) {
-    // Set the panel location to the camera's target
-    double lat = cameraPosition.target.latitude;
-    double long = cameraPosition.target.longitude;
-    setState(() {
-      _panelLocation = LatLng(lat, long);
+  _updatePostion(MapPosition mapPosition, bool boolValue) {
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      setState(() {
+        _panelLocation = mapPosition.center;
+      });
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    _tileUrl = Theme.of(context).brightness == Brightness.light
+        ? 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'
+        : 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png';
+
+    _markers = [
+      Marker(
+          point: _panelLocation,
+          builder: (ctx) => Container(child: _uploadMarker))
+    ];
+
     return Scaffold(
         appBar: AppBar(
           title: Text('Edit location',
@@ -61,31 +75,24 @@ class _FineTuneMapState extends State<FineTuneMap> {
           backgroundColor: Colors.deepOrange,
         ),
         body: Stack(children: <Widget>[
-          GoogleMap(
-              mapType: MapType.hybrid,
-              minMaxZoomPreference: MinMaxZoomPreference(18, 20),
-              cameraTargetBounds: CameraTargetBounds(LatLngBounds(
-                  southwest: _userLocationLowerBound,
-                  northeast: _userLocationUpperBound)),
-              myLocationButtonEnabled: false,
-              zoomControlsEnabled: false,
-              zoomGesturesEnabled: false,
-              myLocationEnabled: true,
-              tiltGesturesEnabled: false,
-              trafficEnabled: false,
-              initialCameraPosition: CameraPosition(
-                target: _userLocation,
-                zoom: 19,
+          new FlutterMap(
+            options: MapOptions(
+                center: _userLocation,
+                zoom: 18,
+                minZoom: 17,
+                maxZoom: 18,
+                swPanBoundary: _userLocationLowerBound,
+                nePanBoundary: _userLocationUpperBound,
+                onPositionChanged: (mapPosition, boolValue) =>
+                    {_updatePostion(mapPosition, boolValue)}),
+            layers: [
+              TileLayerOptions(
+                urlTemplate: _tileUrl,
+                subdomains: ['a', 'b', 'c'],
               ),
-              markers: Set<Marker>.of(
-                <Marker>[
-                  Marker(
-                      flat: false,
-                      markerId: MarkerId('Marker'),
-                      position: _panelLocation)
-                ],
-              ),
-              onCameraMove: _updatePanelLocation),
+              MarkerLayerOptions(markers: _markers),
+            ],
+          ),
           Container(
               padding: EdgeInsets.only(bottom: 70),
               alignment: Alignment.bottomCenter,
@@ -93,7 +100,7 @@ class _FineTuneMapState extends State<FineTuneMap> {
                   style: Theme.of(context)
                       .textTheme
                       .headline6
-                      .copyWith(color: Colors.white),
+                      .copyWith(color: Colors.amber),
                   textAlign: TextAlign.center))
         ]));
   }

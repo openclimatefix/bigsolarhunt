@@ -1,8 +1,5 @@
-import 'dart:convert';
-import 'package:flutter/foundation.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
-import 'package:http/http.dart' as http;
 import 'package:sqflite/sqflite.dart';
+import 'package:latlong/latlong.dart';
 import 'package:path/path.dart';
 import 'package:flutter_locations_distance/flutter_locations_distance.dart';
 
@@ -16,27 +13,15 @@ class DatabaseProvider {
 
   static final DatabaseProvider databaseProvider = DatabaseProvider._();
   Database _database;
-
-  static const String _panelDatabaseName = 'osm_panel_database.db';
-  static const String _osmPanelTableName = 'panels';
+  static const String _panelDatabaseName = 'panel_database';
   static const String _userPanelTableName = 'userPanels';
   static const String _userBadgeTableName = "userBadges";
   static const String _dbLastUpdated = 'last_updated';
   static const String _uploadQueueTableName = 'uploadQueue';
 
-  static const List<String> _osmBaseURL = [
-    'http://overpass-api.de/api/interpreter?data=[out:json];node["generator:source"="solar"]["location"="roof"]',
-    '(newer:"',
-    'Z")',
-    '(49.92,-10.6,61.02,1.935);out;'
-  ];
-  static const _limitNumber = 1000;
-  static const Duration _updateTime = Duration(days: 1);
-
   Future<Database> get database async {
     if (_database != null) return _database;
     _database = await getDatabaseInstance();
-    // await _updateDatabase();
     return _database;
   }
 
@@ -51,7 +36,6 @@ class DatabaseProvider {
   Future<void> _onCreate(Database db, int newVersion) async {
     await createUserPanelsTable(db);
     await createUserBadgesTable(db);
-    // await createOsmTables(db);
     await createUserPanelsTable(db);
     await createUploadQueueTable(db);
   }
@@ -85,31 +69,6 @@ class DatabaseProvider {
     });
   }
 
-  Future<void> createOsmTables(Database db) async {
-    final Future<List<SolarPanel>> futurePanelData = _getOSMPanelData();
-    db.execute("CREATE TABLE $_osmPanelTableName("
-        "id INTEGER PRIMARY KEY,"
-        "lat FLOAT,"
-        "lon FLOAT"
-        ")");
-    Batch batch = db.batch();
-    List<SolarPanel> panelData = await futurePanelData;
-    for (int i = 0; i < panelData.length; i++) {
-      batch.insert(_osmPanelTableName, panelData[i].toMap(),
-          conflictAlgorithm: ConflictAlgorithm.replace);
-      if (i % 100000 == 0) {
-        print(i);
-        await batch.commit(noResult: true);
-      }
-    }
-    await batch.commit(noResult: true);
-    db.execute("CREATE TABLE $_dbLastUpdated("
-        "id INT PRIMARY KEY,"
-        "last_updated BIGINT"
-        ")");
-    await _updateDatabaseLastModified(db);
-  }
-
   Future<void> _updateDatabaseLastModified(Database db) async {
     final Map<String, dynamic> lastModified = {
       'id': 1,
@@ -120,28 +79,6 @@ class DatabaseProvider {
       lastModified,
       conflictAlgorithm: ConflictAlgorithm.replace,
     );
-  }
-
-  Future<List<SolarPanel>> getOSMPanelData(LatLngBounds bounds) async {
-    final Database db = await database;
-    final double minLat = bounds.southwest.latitude;
-    final double maxLat = bounds.northeast.latitude;
-    final double minLng = bounds.southwest.longitude;
-    final double maxLng = bounds.northeast.longitude;
-    final List<Map<String, dynamic>> response = await db.rawQuery(
-        "SELECT * FROM $_osmPanelTableName WHERE lat>$minLat AND lat<$maxLat AND lon>$minLng AND lon<$maxLng LIMIT $_limitNumber");
-    List<SolarPanel> panelData =
-        response.map((row) => SolarPanel.fromMap(row)).toList();
-    return panelData;
-  }
-
-  Future<List<SolarPanel>> getAllOSMPanelData() async {
-    final Database db = await database;
-    final List<Map<String, dynamic>> response =
-        await db.rawQuery("SELECT * FROM $_osmPanelTableName");
-    List<SolarPanel> panelData =
-        response.map((row) => SolarPanel.fromMap(row)).toList();
-    return panelData;
   }
 
   Future<List<SolarPanel>> getUserPanelData() async {
@@ -220,55 +157,6 @@ class DatabaseProvider {
     );
   }
 
-  Future<void> _updateDatabase() async {
-    final Database db = await database;
-    final List<Map<String, dynamic>> query = await db.query(_dbLastUpdated);
-    final DateTime lastUpdated =
-        DateTime.fromMillisecondsSinceEpoch(query[0]['last_updated']);
-    final Duration timeSinceLastUpdate = DateTime.now().difference(lastUpdated);
-    if (timeSinceLastUpdate > _updateTime) {
-      final Map<int, SolarPanel> newPanelData =
-          await _getPanelDataFromTime(lastUpdated);
-      Batch batch = db.batch();
-      for (int i = 0; i < newPanelData.length; i++) {
-        batch.insert(_osmPanelTableName, newPanelData[i].toMap(),
-            conflictAlgorithm: ConflictAlgorithm.replace);
-        if (i % 100000 == 0) {
-          await batch.commit(noResult: true);
-        }
-      }
-      await batch.commit(noResult: true);
-      await _updateDatabaseLastModified(db);
-    }
-  }
-
-  Future<Map<int, SolarPanel>> _getPanelDataFromTime(
-      DateTime lastUpdated) async {
-    final String url = _osmBaseURL[0] +
-        _osmBaseURL[1] +
-        lastUpdated.toIso8601String() +
-        _osmBaseURL[2] +
-        _osmBaseURL[3];
-    final response = await http.get(url);
-    final responseData = jsonDecode(response.body)['elements'];
-    final Map<int, SolarPanel> panelData = {};
-    responseData
-        .map((panel) => SolarPanel.fromMap(panel))
-        .forEach((solarPanel) => panelData[solarPanel.id] = solarPanel);
-    return panelData;
-  }
-
-  Future<List<SolarPanel>> _getOSMPanelData() async {
-    final String url = _osmBaseURL[0] + _osmBaseURL[3];
-    final response = await http.get(url);
-    final responseData = jsonDecode(response.body)['elements'];
-    final List<SolarPanel> panelData = [];
-    responseData
-        .map((panel) => SolarPanel.fromMap(panel))
-        .forEach((solarPanel) => panelData.add(solarPanel));
-    return panelData;
-  }
-
   Future<List<Badge>> checkForNewBadges(SolarPanel lastUploadedPanel) async {
     // Checks the badge table to see whether any new badges have been earned
     // Updates the table accordingly
@@ -327,9 +215,6 @@ class DatabaseProvider {
         }
       }
     }
-
-    //TODO: implement streak badge
-    // will require changing tables for user panels to include datetime
 
     checkLevelBadges();
     checkPanelCountBadges();

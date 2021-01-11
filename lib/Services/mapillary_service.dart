@@ -1,5 +1,5 @@
 import 'dart:io';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'package:solar_streets/DataStructs/solar_panel.dart';
 import 'package:connectivity/connectivity.dart';
