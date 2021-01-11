@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong/latlong.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 import 'package:exif/exif.dart';

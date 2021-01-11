@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
-import 'package:google_maps_flutter/google_maps_flutter.dart';
+import 'package:latlong/latlong.dart';
 
 import 'UploadBodyWidgets/upload_button.dart';
 import 'UploadBodyWidgets/image_with_column_overlap.dart';
