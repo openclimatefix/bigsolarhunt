@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:solar_streets/Screens/OnboardingScreen/OnboardingScreenWidgets/account_onboarding.dart';
 
 import 'OnboardingScreenWidgets/onboarding_page.dart';
 import 'OnboardingScreenWidgets/indicator.dart';
@@ -11,6 +12,7 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   PageController _pageController;
   double currentIndex = 0;
+  bool createAccount = false;
 
   static const _kDuration = const Duration(milliseconds: 300);
   static const _kCurve = Curves.ease;
@@ -20,7 +22,9 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   closeFunction() {
-    Navigator.pushNamed(context, '/');
+    setState(() {
+      createAccount = true;
+    });
   }
 
   @override
@@ -43,21 +47,24 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       });
     });
     return Scaffold(
-      body: Stack(
-        children: <Widget>[
-          PageView(controller: _pageController, children: onboardingPages),
-          Container(
-            padding: EdgeInsets.all(20),
-            alignment: Alignment.bottomCenter,
-            child: Indicator(
-              numPages: onboardingPages.length,
-              currentIndex: currentIndex,
-              onNextPage: nextFunction,
-              onClosePage: closeFunction,
+      body: createAccount
+          ? OnboardingAccount()
+          : Stack(
+              children: <Widget>[
+                PageView(
+                    controller: _pageController, children: onboardingPages),
+                Container(
+                  padding: EdgeInsets.all(20),
+                  alignment: Alignment.bottomCenter,
+                  child: Indicator(
+                    numPages: onboardingPages.length,
+                    currentIndex: currentIndex,
+                    onNextPage: nextFunction,
+                    onClosePage: closeFunction,
+                  ),
+                )
+              ],
             ),
-          )
-        ],
-      ),
     );
   }
 }
@@ -75,5 +82,5 @@ List<OnboardingPage> onboardingPages = [
   OnboardingPage(
       title: "Contribute",
       description: "Upload your photo to the OCF project",
-      widget: Image.asset('assets/onboarding-contribute.png')),
+      widget: Image.asset('assets/onboarding-contribute.png'))
 ];

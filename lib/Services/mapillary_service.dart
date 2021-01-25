@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'package:latlong/latlong.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:solar_streets/DataStructs/solar_panel.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:solar_streets/DataStructs/upload_queue_item.dart';
@@ -11,10 +12,8 @@ class MapillaryService {
   DatabaseProvider panelDatabase = DatabaseProvider.databaseProvider;
 
   static const _BASE_URL = 'https://a.mapillary.com/v3/me/uploads';
-  static const _BEARER_TOKEN =
-      'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJtcHkiLCJzdWIiOiJIbWc4Zk1YS2ZqUWU3bUlsVjFHaW10IiwiYXVkIjoiU0cxbk9HWk5XRXRtYWxGbE4yMUpiRll4UjJsdGREb3hPREpoWmpneU1XSm1NRFZtT0dRMSIsImlhdCI6MTU5OTY2NDMyODA2OSwianRpIjoiNmViY2M4MDg0NTFkM2U5ZmI1ZmY1ZjZmMWNlYjZhMjIiLCJzY28iOlsicHVibGljOnVwbG9hZCJdLCJ2ZXIiOjF9.sZxR1YJHMeKzNeWqobvowL_xZRGM9uBcKoWdBwwJh6c';
   static const _CLIENT_ID =
-      'SG1nOGZNWEtmalFlN21JbFYxR2ltdDoxODJhZjgyMWJmMDVmOGQ1';
+      'SG1nOGZNWEtmalFlN21JbFYxR2ltdDozNTlkMDEyN2E5YjM1MjQx';
 
   Future<bool> upload(File imageFile, LatLng panelLocation) async {
     final connectivityResult = await Connectivity().checkConnectivity();
@@ -50,7 +49,8 @@ class MapillaryService {
     final String url = _BASE_URL + '?client_id=$_CLIENT_ID';
     final Map<String, String> headers = {};
     final Map<String, String> body = {};
-    headers['Authorization'] = _BEARER_TOKEN;
+    final String token = await _getToken();
+    headers['Authorization'] = token;
     headers['Content-Type'] = 'application/json';
     body['type'] = 'images/sequence';
     final response =
@@ -91,11 +91,18 @@ class MapillaryService {
     final String url = _BASE_URL +
         '/${session.key}/closed?client_id=$_CLIENT_ID&_dry_run'; //TODO remove &_dry_run to publish for reals
     final Map<String, String> headers = {};
-    headers['Authorization'] = _BEARER_TOKEN;
+    final String token = await _getToken();
+    headers['Authorization'] = token;
     final response = await http.put(url, headers: headers);
     if (response.statusCode != 200) {
       throw Exception('Error publishing session');
     }
+  }
+
+  Future<String> _getToken() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String token = prefs.getString('token');
+    return 'Bearer ' + token;
   }
 }
 

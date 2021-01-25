@@ -12,14 +12,14 @@ int initScreen;
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   SharedPreferences prefs = await SharedPreferences.getInstance();
-  initScreen = await prefs.getInt("initScreen");
-  await prefs.setInt("initScreen", 1);
-  print('initScreen $initScreen');
-  runApp(MyApp());
+  String token = prefs.getString('token');
+  runApp(MyApp(token: token));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({
+  final String token;
+  MyApp({
+    this.token,
     Key key,
   }) : super(key: key);
 
@@ -29,8 +29,7 @@ class MyApp extends StatelessWidget {
         themeMode: ThemeMode.light,
         theme: lightTheme,
         darkTheme: darkTheme,
-        initialRoute:
-            initScreen == 0 || initScreen == null ? "onboarding" : "/",
+        initialRoute: token == null ? "onboarding" : "/",
         routes: {
           '/': (context) => HomePage(),
           '/upload': (context) => UploadScreen(),
