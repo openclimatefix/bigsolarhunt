@@ -43,6 +43,8 @@ dependencies:
   flutter_locations_distance:
   exif:
   intl: ^0.16.0
+  oauth2_client: ^1.6.1
+  jwt_decoder: ^1.0.3
 
 
   # The following adds the Cupertino Icons font to your application.
