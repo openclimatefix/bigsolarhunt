@@ -7,6 +7,7 @@ import 'package:exif/exif.dart';
 import 'UploadScreenWidgets/fine_tune_map.dart';
 import 'UploadScreenWidgets/upload_screen_body.dart';
 import 'package:solar_streets/Services/latlong_services.dart';
+import 'package:solar_streets/Services/dialogue_services.dart';
 
 class UploadScreen extends StatefulWidget {
   const UploadScreen({
@@ -30,21 +31,32 @@ class _UploadScreenState extends State<UploadScreen> {
     final bytes = await pickedFile.readAsBytes();
     // Read exif data from image
     final exif = await readExifFromBytes(bytes);
+    // To see all exif data use the following
+    // exif.forEach((key, value) {print("$key : $value");});
+
+    final locationExifExists = exif.containsKey("GPS GPSLatitude");
+
+    if (!locationExifExists) {
+      showDialog(
+          context: context,
+          builder: (_) => new GenericDialogue(
+              title: "Can't retrieve image location data",
+              desc: "Please enable location tagging in your camera app.",
+              icon: DialogueIcons.ERROR));
+      return null;
+    }
+
     // Convert day/minute/second coordinates to degrees if exists, else return null
     final lat = gpsDMSToDeg(
         exif["GPS GPSLatitude"].values, exif["GPS GPSLatitudeRef"].printable);
     final long = gpsDMSToDeg(
         exif["GPS GPSLongitude"].values, exif["GPS GPSLongitudeRef"].printable);
-    // To see all exif data use the following
-    //exif.forEach((key, value) {
-    //  print("$key : $value");
-    //});
 
     // Set all the above to state. _panelLocation can be null
     setState(() {
       _imageFile = File(pickedFile.path);
       _image = Image.file(File(pickedFile.path));
-      _panelLocation = (lat == null || long == null) ? null : LatLng(lat, long);
+      _panelLocation = LatLng(lat, long);
     });
   }
 

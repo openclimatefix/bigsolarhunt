@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:solar_streets/DataStructs/badge.dart';
+import 'package:solar_streets/Services/dialogue_services.dart';
 
 class UploadCompleteDialogue extends StatelessWidget {
   final List<Badge> unlockedBadges;
@@ -9,23 +10,12 @@ class UploadCompleteDialogue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: new Text("Upload Complete!",
-          style: Theme.of(context).textTheme.headline5),
-      content: unlockedBadges.isEmpty
-          ? new Text("Thanks for contributing to Open Climate Fix!",
-              style: Theme.of(context).textTheme.bodyText1)
-          : new Text("You've unlocked a badge!",
-              style: Theme.of(context).textTheme.bodyText1),
-      actions: <Widget>[
-        FlatButton(
-          child: Text('Close'),
-          onPressed: () {
-            Navigator.of(context).pushReplacementNamed('/');
-          },
-        )
-      ],
-    );
+    return GenericDialogue(
+        title: "Upload Complete!",
+        desc: unlockedBadges.isEmpty
+            ? "Thanks for contributing to Open Climate Fix!"
+            : "You've unlocked a badge!",
+        icon: DialogueIcons.SUCCESS);
   }
 }
 
@@ -36,43 +26,23 @@ class UploadLaterDialogue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: new Text("No internet connection.",
-          style: Theme.of(context).textTheme.headline5),
-      content: new Text("The picture will be uploaded automatically later.",
-          style: Theme.of(context).textTheme.bodyText1),
-      actions: <Widget>[
-        FlatButton(
-          child: Text('Close'),
-          onPressed: () {
-            Navigator.of(context).popUntil(ModalRoute.withName('/'));
-          },
-        )
-      ],
-    );
+    return GenericDialogue(
+        title: "No internet connection.",
+        desc: "The picture will be uploaded automatically later.",
+        icon: DialogueIcons.WARNING);
   }
 }
 
-class UploadFailedDialogue extends StatelessWidget {
+class FailureDialogue extends StatelessWidget {
   final dynamic error;
 
-  const UploadFailedDialogue({Key key, @required this.error}) : super(key: key);
+  const FailureDialogue({Key key, @required this.error}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    return AlertDialog(
-      title: new Text("Upload Failed",
-          style: Theme.of(context).textTheme.headline5),
-      content: new Text(error.toString(),
-          style: Theme.of(context).textTheme.bodyText1),
-      actions: <Widget>[
-        FlatButton(
-          child: Text('Close'),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        )
-      ],
-    );
+    return GenericDialogue(
+        title: "Upload Failed",
+        desc: error.toString(),
+        icon: DialogueIcons.ERROR);
   }
 }
