@@ -94,14 +94,17 @@ class _FineTuneMapState extends State<FineTuneMap> {
             ],
           ),
           Container(
-              padding: EdgeInsets.only(bottom: 70),
-              alignment: Alignment.bottomCenter,
-              child: Text("Drag the map to position the marker",
-                  style: Theme.of(context)
-                      .textTheme
-                      .headline6
-                      .copyWith(color: Colors.amber),
-                  textAlign: TextAlign.center))
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height * 0.08,
+              decoration: BoxDecoration(color: Colors.deepOrange[300]),
+              alignment: Alignment.topCenter,
+              child: Center(
+                  child: Text("Drag the map to position the marker",
+                      style: Theme.of(context)
+                          .textTheme
+                          .headline6
+                          .copyWith(color: Colors.white),
+                      textAlign: TextAlign.center)))
         ]));
   }
 }

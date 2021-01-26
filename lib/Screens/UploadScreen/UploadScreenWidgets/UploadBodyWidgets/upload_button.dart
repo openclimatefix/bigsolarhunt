@@ -39,7 +39,7 @@ class _UploadButtonState extends State<UploadButton> {
       print(e);
 
       showDialog(
-          context: context, builder: (_) => new UploadFailedDialogue(error: e));
+          context: context, builder: (_) => new FailureDialogue(error: e));
       return null;
     }
     SolarPanel newPanel = SolarPanel(
