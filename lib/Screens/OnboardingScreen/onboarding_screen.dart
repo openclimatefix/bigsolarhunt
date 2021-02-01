@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:solar_streets/Screens/OnboardingScreen/OnboardingScreenWidgets/account_onboarding.dart';
 
 import 'OnboardingScreenWidgets/onboarding_page.dart';
 import 'OnboardingScreenWidgets/indicator.dart';
@@ -22,9 +21,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   closeFunction() {
-    setState(() {
-      createAccount = true;
-    });
+    Navigator.pushReplacementNamed(context, 'login');
   }
 
   @override
@@ -47,24 +44,21 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
       });
     });
     return Scaffold(
-      body: createAccount
-          ? OnboardingAccount()
-          : Stack(
-              children: <Widget>[
-                PageView(
-                    controller: _pageController, children: onboardingPages),
-                Container(
-                  padding: EdgeInsets.all(20),
-                  alignment: Alignment.bottomCenter,
-                  child: Indicator(
-                    numPages: onboardingPages.length,
-                    currentIndex: currentIndex,
-                    onNextPage: nextFunction,
-                    onClosePage: closeFunction,
-                  ),
-                )
-              ],
+      body: Stack(
+        children: <Widget>[
+          PageView(controller: _pageController, children: onboardingPages),
+          Container(
+            padding: EdgeInsets.all(20),
+            alignment: Alignment.bottomCenter,
+            child: Indicator(
+              numPages: onboardingPages.length,
+              currentIndex: currentIndex,
+              onNextPage: nextFunction,
+              onClosePage: closeFunction,
             ),
+          )
+        ],
+      ),
     );
   }
 }

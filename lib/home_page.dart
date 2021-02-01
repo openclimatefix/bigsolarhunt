@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'Animation/page_route_animations.dart';
 import 'Screens/InfoScreen/info_screen.dart';
@@ -14,10 +15,20 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   final _navigatorKey = GlobalKey<NavigatorState>();
   int _currentIndex = 0;
+  bool loggedInWithMapilliary;
 
   @override
   void initState() {
+    checkMapilliaryLoginState();
     super.initState();
+  }
+
+  checkMapilliaryLoginState() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    bool sfBool = await prefs.getBool('ownAccount') ?? false;
+    setState(() {
+      loggedInWithMapilliary = sfBool;
+    });
   }
 
   @override
@@ -30,7 +41,16 @@ class _HomePageState extends State<HomePage> {
           padding: const EdgeInsets.only(left: 15.0),
           child: Image.asset('assets/logo_white.png'),
         ),
-        actions: [],
+        actions: [
+          loggedInWithMapilliary
+              ? null
+              : IconButton(
+                  icon: const Icon(Icons.account_circle),
+                  tooltip: 'Account',
+                  onPressed: () =>
+                      Navigator.pushReplacementNamed(context, 'login'),
+                ),
+        ],
         title: Text(allDestinations[_currentIndex].title,
             style: Theme.of(context)
                 .textTheme

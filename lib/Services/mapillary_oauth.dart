@@ -36,6 +36,7 @@ class MapillaryOAuth2Client extends OAuth2Client {
         redirectUri: redirectUri);
 
     // Present the dialog to the user
+    // TODO: Implement case for if user cancels during account creation
     final result = await webAuthClient.authenticate(
         url: authorizeUrl, callbackUrlScheme: customUriScheme);
 
