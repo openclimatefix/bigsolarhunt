@@ -6,6 +6,7 @@ import 'package:solar_streets/Screens/OnboardingScreen/onboarding_screen.dart';
 import 'package:solar_streets/home_page.dart';
 import 'package:solar_streets/Screens/UploadScreen/upload_screen.dart';
 import 'package:solar_streets/Themes/themes.dart';
+import 'Screens/LoginScreen/account_login.dart';
 
 int initScreen;
 
@@ -34,6 +35,7 @@ class MyApp extends StatelessWidget {
           '/': (context) => HomePage(),
           '/upload': (context) => UploadScreen(),
           'onboarding': (context) => OnboardingScreen(),
+          'login': (context) => LoginScreen()
         },
         debugShowCheckedModeBanner: false);
   }
