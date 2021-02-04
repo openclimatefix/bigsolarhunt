@@ -1,6 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:solar_streets/Screens/InfoScreen/InfoScreenWidgets/bullet.dart';
+import 'package:solar_hunt/Screens/InfoScreen/InfoScreenWidgets/bullet.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'InfoScreenWidgets/image_card.dart';

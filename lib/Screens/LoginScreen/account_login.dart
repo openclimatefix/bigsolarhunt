@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:oauth2_client/access_token_response.dart';
 import 'package:oauth2_client/oauth2_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:solar_streets/DataStructs/mapillary_user.dart';
-import 'package:solar_streets/Services/mapillary_oauth.dart';
+import 'package:solar_hunt/DataStructs/mapillary_user.dart';
+import 'package:solar_hunt/Services/mapillary_oauth.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:solar_streets/Services/mapillary_service.dart';
+import 'package:solar_hunt/Services/mapillary_service.dart';
 
 class LoginScreen extends StatelessWidget {
   _continueWithoutAccount(BuildContext context) async {

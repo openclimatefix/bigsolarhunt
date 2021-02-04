@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:step_progress_indicator/step_progress_indicator.dart';
 
-import 'package:solar_streets/Progress/progress_utilities.dart';
-import 'package:solar_streets/Services/database_services.dart';
+import 'package:solar_hunt/Progress/progress_utilities.dart';
+import 'package:solar_hunt/Services/database_services.dart';
 
 class ProgressCardBody extends StatefulWidget {
   const ProgressCardBody({Key key}) : super(key: key);

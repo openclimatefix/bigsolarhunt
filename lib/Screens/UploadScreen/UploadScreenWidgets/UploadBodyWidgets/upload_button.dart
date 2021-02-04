@@ -3,12 +3,12 @@ import 'package:latlong/latlong.dart';
 import 'dart:io';
 import 'package:progress_state_button/iconed_button.dart';
 import 'package:progress_state_button/progress_button.dart';
-import 'package:solar_streets/DataStructs/solar_panel.dart';
+import 'package:solar_hunt/DataStructs/solar_panel.dart';
 
-import 'package:solar_streets/Services/mapillary_service.dart';
+import 'package:solar_hunt/Services/mapillary_service.dart';
 import 'UploadButtonWidgets/upload_dialogues.dart';
-import 'package:solar_streets/Services/database_services.dart';
-import 'package:solar_streets/DataStructs/badge.dart';
+import 'package:solar_hunt/Services/database_services.dart';
+import 'package:solar_hunt/DataStructs/badge.dart';
 
 class UploadButton extends StatefulWidget {
   // Dynamic button able to upload a File to OSM and display status

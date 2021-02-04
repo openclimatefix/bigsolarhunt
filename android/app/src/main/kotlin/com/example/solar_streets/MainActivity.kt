@@ -1,4 +1,4 @@
-package com.example.solar_streets
+package com.openclimatefix.solar_hunt
 
 import io.flutter.embedding.android.FlutterActivity
 

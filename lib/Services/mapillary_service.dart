@@ -2,11 +2,11 @@ import 'dart:io';
 import 'package:latlong/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:solar_streets/DataStructs/mapillary_user.dart';
-import 'package:solar_streets/DataStructs/solar_panel.dart';
+import 'package:solar_hunt/DataStructs/mapillary_user.dart';
+import 'package:solar_hunt/DataStructs/solar_panel.dart';
 import 'package:connectivity/connectivity.dart';
-import 'package:solar_streets/DataStructs/upload_queue_item.dart';
-import 'package:solar_streets/Services/database_services.dart';
+import 'package:solar_hunt/DataStructs/upload_queue_item.dart';
+import 'package:solar_hunt/Services/database_services.dart';
 import 'dart:convert';
 
 class MapillaryService {
