@@ -30,13 +30,13 @@ class MyApp extends StatelessWidget {
         themeMode: ThemeMode.light,
         theme: lightTheme,
         darkTheme: darkTheme,
-        initialRoute: token == null ? "onboarding" : "/",
+        initialRoute: token == null ? "/onboarding" : "/",
         routes: {
           '/': (context) => HomePage(),
           '/upload': (context) => UploadScreen(),
-          'onboarding': (context) => OnboardingScreen(),
-          'login': (context) => LoginScreen()
+          '/onboarding': (context) => OnboardingScreen(),
+          '/login': (context) => LoginScreen()
         },
-        debugShowCheckedModeBanner: false);
+        debugShowCheckedModeBanner: true);
   }
 }

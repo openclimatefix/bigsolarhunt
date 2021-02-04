@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 ThemeData lightTheme = ThemeData(
-    brightness: Brightness.light,
-    primaryColor: Colors.black,
-    accentColor: Colors.orange[400],
-    navigationRailTheme: NavigationRailThemeData(
-        backgroundColor: Color.fromARGB(255, 234, 234, 234)),
-    iconTheme: IconThemeData(color: Colors.black54),
-    textTheme: GoogleFonts.interTextTheme());
+  brightness: Brightness.light,
+  primaryColor: Colors.black,
+  accentColor: Colors.orange[400],
+  navigationRailTheme: NavigationRailThemeData(
+      backgroundColor: Color.fromARGB(255, 234, 234, 234)),
+  iconTheme: IconThemeData(color: Colors.black54),
+  textTheme: GoogleFonts.interTextTheme(),
+);
 
 ThemeData darkTheme = ThemeData(
     brightness: Brightness.dark,

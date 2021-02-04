@@ -28,7 +28,6 @@ class _BadgeGridState extends State<BadgeGrid> {
     setState(() {
       _badges = badgeData;
     });
-    print(badgeData.map((e) => e.toMap()));
   }
 
   @override
@@ -40,28 +39,29 @@ class _BadgeGridState extends State<BadgeGrid> {
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: (_badges.length == 0)
-            ? Padding(
-                padding: EdgeInsets.all(70),
-              )
-            : Column(
-                children: <Widget>[
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: _badges.sublist(0, 3).map((Badge badge) {
-                        return BadgeCard(badge: badge);
-                      }).toList()),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: _badges.sublist(3, 6).map((Badge badge) {
-                        return BadgeCard(badge: badge);
-                      }).toList()),
-                  Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: _badges.sublist(6).map((Badge badge) {
-                        return BadgeCard(badge: badge);
-                      }).toList())
-                ],
-              ));
+      child: (_badges.length == 0)
+          ? Padding(
+              padding: EdgeInsets.all(70),
+            )
+          : Column(
+              children: <Widget>[
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: _badges.sublist(0, 3).map((Badge badge) {
+                      return BadgeCard(badge: badge);
+                    }).toList()),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: _badges.sublist(3, 6).map((Badge badge) {
+                      return BadgeCard(badge: badge);
+                    }).toList()),
+                Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    children: _badges.sublist(6).map((Badge badge) {
+                      return BadgeCard(badge: badge);
+                    }).toList())
+              ],
+            ),
+    );
   }
 }

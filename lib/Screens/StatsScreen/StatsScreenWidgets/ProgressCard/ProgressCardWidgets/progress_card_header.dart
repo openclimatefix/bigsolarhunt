@@ -40,7 +40,6 @@ class PanelCountDisplayText extends StatefulWidget {
 
 class _PanelCountDisplayTextState extends State<PanelCountDisplayText> {
   DatabaseProvider panelDatabase = DatabaseProvider.databaseProvider;
-  int _uploadPanels = 0;
   int _userPanels = 0;
 
   @override

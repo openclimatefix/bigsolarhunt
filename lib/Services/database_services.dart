@@ -16,7 +16,6 @@ class DatabaseProvider {
   static const String _panelDatabaseName = 'panel_database';
   static const String _userPanelTableName = 'userPanels';
   static const String _userBadgeTableName = "userBadges";
-  static const String _dbLastUpdated = 'last_updated';
   static const String _uploadQueueTableName = 'uploadQueue';
 
   Future<Database> get database async {
@@ -36,7 +35,6 @@ class DatabaseProvider {
   Future<void> _onCreate(Database db, int newVersion) async {
     await createUserPanelsTable(db);
     await createUserBadgesTable(db);
-    await createUserPanelsTable(db);
     await createUploadQueueTable(db);
   }
 
@@ -67,18 +65,6 @@ class DatabaseProvider {
     Future.forEach(initialBadges, (badgeRow) async {
       await db.insert(_userBadgeTableName, badgeRow.toMap());
     });
-  }
-
-  Future<void> _updateDatabaseLastModified(Database db) async {
-    final Map<String, dynamic> lastModified = {
-      'id': 1,
-      'last_updated': DateTime.now().millisecondsSinceEpoch
-    };
-    await db.insert(
-      _dbLastUpdated,
-      lastModified,
-      conflictAlgorithm: ConflictAlgorithm.replace,
-    );
   }
 
   Future<List<SolarPanel>> getUserPanelData() async {
@@ -150,9 +136,7 @@ class DatabaseProvider {
     final String path = toDelete.path;
     await db.delete(
       _uploadQueueTableName,
-      // Use a `where` clause to delete a specific dog.
       where: "path = ?",
-      // Pass the Dog's id as a whereArg to prevent SQL injection.
       whereArgs: [path],
     );
   }

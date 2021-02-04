@@ -5,7 +5,6 @@ import 'ProgressCardWidgets/progress_card_header.dart';
 import 'ProgressCardWidgets/progress_card_footer.dart';
 
 class ProgressCard extends StatelessWidget {
-  final int numPanelsSubmitted = 44;
   const ProgressCard({Key key}) : super(key: key);
 
   @override

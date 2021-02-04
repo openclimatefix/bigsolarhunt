@@ -2,6 +2,7 @@ import 'dart:io';
 import 'package:latlong/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:solar_streets/DataStructs/mapillary_user.dart';
 import 'package:solar_streets/DataStructs/solar_panel.dart';
 import 'package:connectivity/connectivity.dart';
 import 'package:solar_streets/DataStructs/upload_queue_item.dart';
@@ -20,7 +21,6 @@ class MapillaryService {
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
       final UploadSession session = await _createUploadSession();
-      // TODO: add location to upload
       await _awsUpload(imageFile, session);
       await uploadQueuePanels(session);
       await _closeUploadSession(session);
@@ -33,7 +33,7 @@ class MapillaryService {
     }
   }
 
-  Future uploadQueuePanels(UploadSession session) async {
+  Future<void> uploadQueuePanels(UploadSession session) async {
     final List<UploadQueueItem> uploadQueue =
         await panelDatabase.getUploadQueue();
     uploadQueue.forEach((uploadQueueItem) async {
@@ -88,8 +88,8 @@ class MapillaryService {
   }
 
   _closeUploadSession(UploadSession session) async {
-    final String url = _BASE_URL +
-        '/${session.key}/closed?client_id=$_CLIENT_ID&_dry_run'; //TODO remove &_dry_run to publish for reals
+    final String url =
+        _BASE_URL + '/${session.key}/closed?client_id=$_CLIENT_ID';
     final Map<String, String> headers = {};
     final String token = await _getToken();
     headers['Authorization'] = token;
@@ -103,6 +103,22 @@ class MapillaryService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token');
     return 'Bearer ' + token;
+  }
+
+  Future<MapillaryUser> getUserFromKey(String userkey) async {
+    var clientId = 'SG1nOGZNWEtmalFlN21JbFYxR2ltdDozNTlkMDEyN2E5YjM1MjQx';
+
+    var url = Uri.parse(
+        'https://a.mapillary.com/v3/users/$userkey?client_id=$clientId');
+
+    http.Response response = await http.get(url);
+
+    if (response.statusCode == 200) {
+      var user = MapillaryUser.fromJson(jsonDecode(response.body));
+      return user;
+    } else {
+      throw Exception('Error getting user');
+    }
   }
 }
 
