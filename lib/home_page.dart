@@ -25,7 +25,7 @@ class _HomePageState extends State<HomePage> {
 
   checkMapilliaryLoginState() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool sfBool = await prefs.getBool('ownAccount') ?? false;
+    bool sfBool = prefs.getBool('ownAccount');
     setState(() {
       loggedInWithMapilliary = sfBool;
     });
@@ -42,13 +42,13 @@ class _HomePageState extends State<HomePage> {
           child: Image.asset('assets/logo_white.png'),
         ),
         actions: [
-          loggedInWithMapilliary
-              ? null
+          loggedInWithMapilliary == null || loggedInWithMapilliary
+              ? SizedBox()
               : IconButton(
                   icon: const Icon(Icons.account_circle),
                   tooltip: 'Account',
                   onPressed: () =>
-                      Navigator.pushReplacementNamed(context, 'login'),
+                      Navigator.pushReplacementNamed(context, '/login'),
                 ),
         ],
         title: Text(allDestinations[_currentIndex].title,
@@ -59,15 +59,17 @@ class _HomePageState extends State<HomePage> {
         centerTitle: true,
       ),
       body: SafeArea(
-          top: false,
-          child: Navigator(
-              key: _navigatorKey,
-              initialRoute: '/',
-              onGenerateRoute: (RouteSettings settings) {
-                WidgetBuilder builder =
-                    (BuildContext context) => _currentDestination.screen;
-                return MaterialPageRoute(builder: builder, settings: settings);
-              })),
+        top: false,
+        child: Navigator(
+          key: _navigatorKey,
+          initialRoute: '/',
+          onGenerateRoute: (RouteSettings settings) {
+            WidgetBuilder builder =
+                (BuildContext context) => _currentDestination.screen;
+            return MaterialPageRoute(builder: builder, settings: settings);
+          },
+        ),
+      ),
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Theme.of(context).navigationRailTheme.backgroundColor,
         currentIndex: _currentIndex,
@@ -85,12 +87,12 @@ class _HomePageState extends State<HomePage> {
         },
         items: allDestinations.map((Destination destination) {
           return BottomNavigationBarItem(
-              icon: Icon(destination.icon,
-                  color: Theme.of(context).iconTheme.color),
-              activeIcon:
-                  Icon(destination.icon, color: Theme.of(context).accentColor),
-              backgroundColor: destination.color,
-              title: Text(destination.title));
+            icon: Icon(destination.icon,
+                color: Theme.of(context).iconTheme.color),
+            activeIcon:
+                Icon(destination.icon, color: Theme.of(context).accentColor),
+            title: Text(destination.title),
+          );
         }).toList(),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
@@ -103,21 +105,17 @@ class _HomePageState extends State<HomePage> {
 }
 
 class Destination {
-  const Destination(
-      this.index, this.title, this.route, this.screen, this.icon, this.color);
+  const Destination(this.index, this.title, this.route, this.screen, this.icon);
   final int index;
   final String title;
   final String route;
   final IconData icon;
-  final MaterialColor color;
   final Widget screen;
 }
 
 const List<Destination> allDestinations = <Destination>[
-  Destination(0, 'Solar Streets', '/', OpenStreetMapScreen(), Icons.place,
-      Colors.grey), ////Icons.public
-  Destination(
-      1, 'Stats', '/stats', StatsScreen(), Icons.equalizer, Colors.purple),
-  Destination(
-      2, 'Info', '/info', InfoScreen(), Icons.info_outline, Colors.green),
+  Destination(0, 'Solar Streets', '/', OpenStreetMapScreen(),
+      Icons.place), ////Icons.public
+  Destination(1, 'Stats', '/stats', StatsScreen(), Icons.equalizer),
+  Destination(2, 'Info', '/info', InfoScreen(), Icons.info_outline),
 ];

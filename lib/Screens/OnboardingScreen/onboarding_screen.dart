@@ -11,7 +11,6 @@ class OnboardingScreen extends StatefulWidget {
 class _OnboardingScreenState extends State<OnboardingScreen> {
   PageController _pageController;
   double currentIndex = 0;
-  bool createAccount = false;
 
   static const _kDuration = const Duration(milliseconds: 300);
   static const _kCurve = Curves.ease;
@@ -21,7 +20,7 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   closeFunction() {
-    Navigator.pushReplacementNamed(context, 'login');
+    Navigator.pushReplacementNamed(context, '/login');
   }
 
   @override

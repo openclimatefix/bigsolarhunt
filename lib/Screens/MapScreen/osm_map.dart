@@ -20,16 +20,23 @@ class OpenStreetMapScreen extends StatelessWidget {
     Key key,
   }) : super(key: key);
 
-  _getMapData() async {
-    await _getMarkers();
+  _getMapData(BuildContext context) async {
+    _markers = [];
+    await _getMarkers(context);
     return true;
   }
 
-  _getMarkers() async {
+  _getMarkers(BuildContext context) async {
     List<Marker> userPanelData = await _getUserPanels();
     List<Marker> uploadQueue = await _getUploadQueuePanels();
     _markers.addAll(userPanelData);
     _markers.addAll(uploadQueue);
+    userLocationOptions = UserLocationOptions(
+      context: context,
+      mapController: mapController,
+      markers: _markers,
+      updateMapLocationOnPositionChange: false,
+    );
   }
 
   Future<List<Marker>> _getUserPanels() async {
@@ -51,6 +58,8 @@ class OpenStreetMapScreen extends StatelessWidget {
     List<Marker> markers = [];
     uploadQueue.forEach((panel) {
       markers.add(Marker(
+        width: 15.0,
+        height: 15.0,
         point: LatLng(panel.lat, panel.lon),
         builder: (ctx) => Container(child: _uploadMarker),
       ));
@@ -72,47 +81,45 @@ class OpenStreetMapScreen extends StatelessWidget {
         ? 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'
         : 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png';
 
-    userLocationOptions = UserLocationOptions(
-      context: context,
-      mapController: mapController,
-      markers: _markers,
-    );
-
     return Scaffold(
-        body: Padding(
-            padding: EdgeInsets.all(0.0),
-            child: FutureBuilder(
-                future: _getMapData(),
-                builder: (context, AsyncSnapshot snapshot) {
-                  if (snapshot.hasData) {
-                    return Column(
-                      children: [
-                        Flexible(
-                          child: FlutterMap(
-                            options: MapOptions(
-                              center: LatLng(54.12501425, -4.31989979),
-                              zoom: 5.3,
-                              plugins: [
-                                UserLocationPlugin(),
-                              ],
-                            ),
-                            layers: [
-                              TileLayerOptions(
-                                urlTemplate: _tileUrl,
-                                subdomains: ['a', 'b', 'c'],
-                                tileProvider: NonCachingNetworkTileProvider(),
-                              ),
-                              MarkerLayerOptions(markers: _markers),
-                              userLocationOptions,
-                            ],
-                            mapController: mapController,
-                          ),
+      body: Padding(
+        padding: EdgeInsets.all(0.0),
+        child: FutureBuilder(
+          future: _getMapData(context),
+          builder: (context, AsyncSnapshot snapshot) {
+            if (snapshot.hasData) {
+              return Column(
+                children: [
+                  Flexible(
+                    child: FlutterMap(
+                      options: MapOptions(
+                        center: LatLng(54.12501425, -4.31989979),
+                        zoom: 5.3,
+                        maxZoom: 18,
+                        plugins: [
+                          UserLocationPlugin(),
+                        ],
+                      ),
+                      layers: [
+                        TileLayerOptions(
+                          urlTemplate: _tileUrl,
+                          subdomains: ['a', 'b', 'c'],
+                          tileProvider: NonCachingNetworkTileProvider(),
                         ),
+                        MarkerLayerOptions(markers: _markers),
+                        userLocationOptions,
                       ],
-                    );
-                  } else {
-                    return Center(child: CircularProgressIndicator());
-                  }
-                })));
+                      mapController: mapController,
+                    ),
+                  ),
+                ],
+              );
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
+      ),
+    );
   }
 }
