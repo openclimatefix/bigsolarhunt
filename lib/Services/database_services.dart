@@ -3,10 +3,10 @@ import 'package:latlong/latlong.dart';
 import 'package:path/path.dart';
 import 'package:flutter_locations_distance/flutter_locations_distance.dart';
 
-import 'package:solar_streets/DataStructs/solar_panel.dart';
-import 'package:solar_streets/DataStructs/badge.dart';
-import 'package:solar_streets/DataStructs/upload_queue_item.dart';
-import 'package:solar_streets/Progress/progress_utilities.dart';
+import 'package:solar_hunt/DataStructs/solar_panel.dart';
+import 'package:solar_hunt/DataStructs/badge.dart';
+import 'package:solar_hunt/DataStructs/upload_queue_item.dart';
+import 'package:solar_hunt/Progress/progress_utilities.dart';
 
 class DatabaseProvider {
   DatabaseProvider._();

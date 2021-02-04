@@ -2,10 +2,10 @@ import 'package:flutter/material.dart';
 
 import 'package:shared_preferences/shared_preferences.dart';
 
-import 'package:solar_streets/Screens/OnboardingScreen/onboarding_screen.dart';
-import 'package:solar_streets/home_page.dart';
-import 'package:solar_streets/Screens/UploadScreen/upload_screen.dart';
-import 'package:solar_streets/Themes/themes.dart';
+import 'package:solar_hunt/Screens/OnboardingScreen/onboarding_screen.dart';
+import 'package:solar_hunt/home_page.dart';
+import 'package:solar_hunt/Screens/UploadScreen/upload_screen.dart';
+import 'package:solar_hunt/Themes/themes.dart';
 import 'Screens/LoginScreen/account_login.dart';
 
 int initScreen;

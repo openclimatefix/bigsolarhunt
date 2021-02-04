@@ -3,9 +3,9 @@ import 'dart:ui';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:user_location/user_location.dart';
-import 'package:solar_streets/DataStructs/solar_panel.dart';
-import 'package:solar_streets/DataStructs/upload_queue_item.dart';
-import 'package:solar_streets/Services/database_services.dart';
+import 'package:solar_hunt/DataStructs/solar_panel.dart';
+import 'package:solar_hunt/DataStructs/upload_queue_item.dart';
+import 'package:solar_hunt/Services/database_services.dart';
 
 class OpenStreetMapScreen extends StatelessWidget {
   static Widget _panelMarker;

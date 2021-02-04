@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:solar_streets/DataStructs/badge.dart';
+import 'package:solar_hunt/DataStructs/badge.dart';
 
 class BadgeCard extends StatelessWidget {
   final Badge badge;
