@@ -1,12 +1,12 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:latlong/latlong.dart';
 import 'package:path/path.dart';
-import 'package:flutter_locations_distance/flutter_locations_distance.dart';
 
 import 'package:solar_hunt/DataStructs/solar_panel.dart';
 import 'package:solar_hunt/DataStructs/badge.dart';
 import 'package:solar_hunt/DataStructs/upload_queue_item.dart';
 import 'package:solar_hunt/Progress/progress_utilities.dart';
+import 'package:solar_hunt/Services/latlong_services.dart';
 
 class DatabaseProvider {
   DatabaseProvider._();
@@ -186,7 +186,7 @@ class DatabaseProvider {
       double distance;
       for (int i = 0; i < currentPanels.length; i++) {
         try {
-          distance = await FlutterLocationsDistance().distanceBetween(
+          distance = getDistanceFromLatLonInKm(
               lastUploadedPanel.lat,
               lastUploadedPanel.lon,
               currentPanels[i].lat,
@@ -194,7 +194,7 @@ class DatabaseProvider {
         } on Exception {
           distance = -1.0;
         }
-        if ((distance >= 321868.8) && !currentBadges[7].unlocked) {
+        if ((distance >= 322.8) && !currentBadges[7].unlocked) {
           unlockBadgeOfIndex(7, newBadges);
         }
       }

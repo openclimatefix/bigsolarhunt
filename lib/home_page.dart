@@ -114,7 +114,7 @@ class Destination {
 }
 
 const List<Destination> allDestinations = <Destination>[
-  Destination(0, 'Solar Streets', '/', OpenStreetMapScreen(),
+  Destination(0, 'Solar Hunt', '/', OpenStreetMapScreen(),
       Icons.place), ////Icons.public
   Destination(1, 'Stats', '/stats', StatsScreen(), Icons.equalizer),
   Destination(2, 'Info', '/info', InfoScreen(), Icons.info_outline),
