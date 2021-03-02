@@ -82,7 +82,6 @@ class MapillaryService {
     if (response.statusCode == 204) {
       return image;
     } else {
-      print('Error uploading');
       throw Exception('Error uploading to AWS');
     }
   }
