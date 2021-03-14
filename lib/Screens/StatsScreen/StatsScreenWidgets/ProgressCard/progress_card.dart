@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'ProgressCardWidgets/progress_card_body.dart';
 import 'ProgressCardWidgets/progress_card_header.dart';
 import 'ProgressCardWidgets/progress_card_footer.dart';
 
@@ -18,8 +17,7 @@ class ProgressCard extends StatelessWidget {
               ProgressCardHeader(),
               Padding(
                   padding: EdgeInsets.only(top: 12, bottom: 12),
-                  child: ProgressCardBody()),
-              ProgressCardFooter()
+                  child: ProgressCardFooter())
             ])));
   }
 }

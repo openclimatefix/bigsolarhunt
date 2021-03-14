@@ -81,6 +81,7 @@ class LoginScreen extends StatelessWidget {
                   padding: EdgeInsets.all(20),
                   height: MediaQuery.of(context).size.height * 0.5,
                   child: Card(
+                      child: SingleChildScrollView(
                     child: Container(
                       padding: EdgeInsets.all(20),
                       child: Column(
@@ -131,7 +132,7 @@ class LoginScreen extends StatelessWidget {
                         ],
                       ),
                     ),
-                  ))
+                  )))
             ],
           )
         ])));

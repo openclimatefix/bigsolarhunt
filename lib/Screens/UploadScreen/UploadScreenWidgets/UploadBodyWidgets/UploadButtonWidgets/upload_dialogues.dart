@@ -4,17 +4,13 @@ import 'package:solar_hunt/DataStructs/badge.dart';
 import 'package:solar_hunt/Services/dialogue_services.dart';
 
 class UploadCompleteDialogue extends StatelessWidget {
-  final List<Badge> unlockedBadges;
-  const UploadCompleteDialogue({Key key, @required this.unlockedBadges})
-      : super(key: key);
+  const UploadCompleteDialogue({Key key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     return GenericDialogue(
         title: "Upload Complete!",
-        desc: unlockedBadges.isEmpty
-            ? "Thanks for contributing to Open Climate Fix!"
-            : "You've unlocked a badge!",
+        desc: "Thanks for contributing to Open Climate Fix!",
         icon: DialogueIcons.SUCCESS);
   }
 }

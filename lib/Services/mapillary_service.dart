@@ -16,7 +16,7 @@ class MapillaryService {
   static const _CLIENT_ID =
       'SG1nOGZNWEtmalFlN21JbFYxR2ltdDozNTlkMDEyN2E5YjM1MjQx';
 
-  Future<bool> upload(File imageFile, LatLng panelLocation) async {
+  Future<bool> upload(File imageFile, SolarPanel newPanel) async {
     final connectivityResult = await Connectivity().checkConnectivity();
     if (connectivityResult == ConnectivityResult.mobile ||
         connectivityResult == ConnectivityResult.wifi) {
@@ -24,11 +24,10 @@ class MapillaryService {
       await _awsUpload(imageFile, session);
       await uploadQueuePanels(session);
       await _closeUploadSession(session);
-      await panelDatabase.insertUserPanel(SolarPanel(
-          id: null, lat: panelLocation.latitude, lon: panelLocation.longitude));
+      await panelDatabase.insertUserPanel(newPanel);
       return true;
     } else {
-      panelDatabase.insertQueueData(imageFile.path, panelLocation);
+      panelDatabase.insertQueueData(imageFile.path, newPanel.lat, newPanel.lon);
       return false;
     }
   }
@@ -41,7 +40,10 @@ class MapillaryService {
       await _awsUpload(image, session);
       panelDatabase.deleteFromUploadQueue(uploadQueueItem);
       panelDatabase.insertUserPanel(SolarPanel(
-          id: null, lat: uploadQueueItem.lat, lon: uploadQueueItem.lon));
+          id: null,
+          lat: uploadQueueItem.lat,
+          lon: uploadQueueItem.lon,
+          date: DateTime.now()));
     });
   }
 
