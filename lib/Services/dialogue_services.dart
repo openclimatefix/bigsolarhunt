@@ -1,4 +1,6 @@
+import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
+import 'package:solar_hunt/DataStructs/badge.dart';
 
 class GenericDialogue extends StatelessWidget {
   final String title;
@@ -45,4 +47,98 @@ class DialogueIcons {
     color: Colors.lightGreen,
     size: 40,
   );
+}
+
+class BadgeUnlockedDialogue extends StatelessWidget {
+  final Badge badge;
+  const BadgeUnlockedDialogue({Key key, @required this.badge})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    return AlertDialog(
+      title: Column(children: [
+        Padding(
+            padding: EdgeInsets.only(top: 12),
+            child: Icon(Icons.cake_outlined)),
+        Text("You've unlocked a badge!")
+      ]),
+      actions: <Widget>[
+        FlatButton(
+          child: Text('Close'),
+          onPressed: () {
+            Navigator.of(context).popAndPushNamed('/');
+          },
+        )
+      ],
+      content: SingleChildScrollView(
+        child: ListBody(
+          children: <Widget>[
+            Image.asset(badge.imagePath),
+            Padding(
+                padding: EdgeInsets.only(top: 12),
+                child: Text(badge.description, textAlign: TextAlign.center))
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class BadgeInspectDialogue extends StatelessWidget {
+  final Badge badge;
+  const BadgeInspectDialogue({Key key, @required this.badge}) : super(key: key);
+
+  @override
+  Widget build(BuildContext context) {
+    IconData icon = badge.unlocked ? Icons.cake_outlined : Icons.lock_outline;
+    String imagePath =
+        badge.unlocked ? badge.imagePath : 'assets/badges/unachieved.png';
+    String description =
+        badge.unlocked ? badge.description : "This badge is locked";
+
+    return AlertDialog(
+      title: Column(children: [
+        Padding(padding: EdgeInsets.only(top: 12), child: Icon(icon)),
+        Text(badge.id)
+      ]),
+      actions: <Widget>[
+        FlatButton(
+          child: Text('Close'),
+          onPressed: () {
+            Navigator.of(context).pop();
+          },
+        )
+      ],
+      content: SingleChildScrollView(
+        child: ListBody(
+          children: <Widget>[
+            Image.asset(imagePath),
+            Padding(
+                padding: EdgeInsets.only(top: 12),
+                child: Text(description, textAlign: TextAlign.center)),
+            badge.unlocked
+                ? Padding(
+                    padding: EdgeInsets.only(top: 12),
+                    child: Text(
+                        "Unlocked on " + formattedDate(badge.dateUnlocked),
+                        textAlign: TextAlign.center))
+                : Container()
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+String formattedDate(DateTime date) {
+  return DateFormat('E').format(date) +
+      ", " +
+      date.day.toString() +
+      " " +
+      DateFormat('MMM').format(date) +
+      " " +
+      date.year.toString() +
+      " at " +
+      DateFormat('Hm').format(date);
 }

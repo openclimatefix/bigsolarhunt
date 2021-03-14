@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:sqflite/sqflite.dart';
 import 'package:latlong/latlong.dart';
 import 'package:path/path.dart';
@@ -5,7 +6,6 @@ import 'package:path/path.dart';
 import 'package:solar_hunt/DataStructs/solar_panel.dart';
 import 'package:solar_hunt/DataStructs/badge.dart';
 import 'package:solar_hunt/DataStructs/upload_queue_item.dart';
-import 'package:solar_hunt/Progress/progress_utilities.dart';
 import 'package:solar_hunt/Services/latlong_services.dart';
 
 class DatabaseProvider {
@@ -34,7 +34,7 @@ class DatabaseProvider {
 
   Future<void> _onCreate(Database db, int newVersion) async {
     await createUserPanelsTable(db);
-    await createUserBadgesTable(db);
+    await createAndPopulateUserBadgesTable(db);
     await createUploadQueueTable(db);
   }
 
@@ -50,14 +50,16 @@ class DatabaseProvider {
     await db.execute("CREATE TABLE IF NOT EXISTS $_userPanelTableName("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"
         "lat FLOAT,"
-        "lon FLOAT"
+        "lon FLOAT,"
+        "date TEXT"
         ")");
   }
 
-  Future<void> createUserBadgesTable(Database db) async {
+  Future<void> createAndPopulateUserBadgesTable(Database db) async {
     await db.execute("CREATE TABLE $_userBadgeTableName("
-        "id INTEGER PRIMARY KEY,"
+        "id TEXT PRIMARY KEY,"
         "imagePath TEXT,"
+        "panelCount INTEGER,"
         "unlocked INTEGER,"
         "dateUnlocked TEXT,"
         "description TEXT"
@@ -81,11 +83,7 @@ class DatabaseProvider {
     final List<Map<String, dynamic>> result =
         await db.rawQuery("SELECT COUNT (*) FROM $_userPanelTableName");
     int count = Sqflite.firstIntValue(result);
-    if (count >= maxPanels) {
-      return (count - maxPanels);
-    } else {
-      return count;
-    }
+    return count;
   }
 
   Future<int> getUploadQueueCount() async {
@@ -93,11 +91,7 @@ class DatabaseProvider {
     final List<Map<String, dynamic>> result =
         await db.rawQuery("SELECT COUNT (*) FROM $_uploadQueueTableName");
     int count = Sqflite.firstIntValue(result);
-    if (count >= maxPanels) {
-      return (count - maxPanels);
-    } else {
-      return count;
-    }
+    return count;
   }
 
   Future<List<Badge>> getUserBadgeData() async {
@@ -113,12 +107,11 @@ class DatabaseProvider {
     await db.insert(_userPanelTableName, newPanel.toMapNoID());
   }
 
-  Future<void> insertQueueData(String imagePath, LatLng panelLocation) async {
+  Future<void> insertQueueData(
+      String imagePath, double panelLat, double panelLon) async {
     final Database db = await database;
-    final toUpload = UploadQueueItem(
-        path: imagePath,
-        lat: panelLocation.latitude,
-        lon: panelLocation.longitude);
+    final toUpload =
+        UploadQueueItem(path: imagePath, lat: panelLat, lon: panelLon);
     await db.insert(_uploadQueueTableName, toUpload.toMap());
   }
 
@@ -145,64 +138,117 @@ class DatabaseProvider {
     // Checks the badge table to see whether any new badges have been earned
     // Updates the table accordingly
     final Database db = await database;
-    List<Badge> currentBadges = await getUserBadgeData();
+    List<Badge> userBadges = await getUserBadgeData();
     List<SolarPanel> currentPanels = await getUserPanelData();
-    int panelCount = await getUserPanelCount();
+    int userPanels = await getUserPanelCount();
     List<Badge> newBadges = new List();
 
-    unlockBadgeOfIndex(int index, List<Badge> badgeList) async {
-      Badge unlockedBadge = currentBadges[index];
+    unlockBadgeOfId(String id, List<Badge> newBadgeList) async {
+      // Get badge to be unlocked from current badge table list
+      Badge unlockedBadge = userBadges.singleWhere((badge) => badge.id == id);
+      // Set the badge to unlocked
       unlockedBadge.unlocked = true;
       unlockedBadge.dateUnlocked = DateTime.now();
-      badgeList.add(unlockedBadge);
+      // Add the new badge to the newbadge list
+      newBadgeList.add(unlockedBadge);
+      // Replace table entry for newly unlocked badge with unlocked version
       await db.insert(_userBadgeTableName, unlockedBadge.toMap(),
           conflictAlgorithm: ConflictAlgorithm.replace);
     }
 
-    checkLevelBadges() {
-      // Check level badges (rows 0-2 in badge table)
-      List<int> levels = [1, 5, 10];
-      for (int i = 0; i < levels.length; i++) {
-        if ((panelCount >= levelToPanels[levels[i]]) &&
-            !currentBadges[i].unlocked) {
-          unlockBadgeOfIndex(i, newBadges);
-        }
-      }
-    }
-
     checkPanelCountBadges() {
-      // Check panel count badges (rows 3-5 in badge table)
-      List<int> badgePanelCounts = [5, 20, 50];
-      for (int i = 0; i < badgePanelCounts.length; i++) {
-        if ((panelCount >= badgePanelCounts[i]) &&
-            !currentBadges[i + 3].unlocked) {
-          unlockBadgeOfIndex(i + 3, newBadges);
-        }
+      // Check panel count badges
+      Badge newBadge = userBadges.singleWhere(
+          (badge) => (badge.unlocked == false &&
+              badge.panelCount != null &&
+              badge.panelCount <= userPanels),
+          orElse: () => null);
+      if (newBadge != null) {
+        unlockBadgeOfId(newBadge.id, newBadges);
       }
     }
 
-    checkExplorerBadge() async {
-      // Check explorer badge (row 7 in badge table)
-      double distance;
-      for (int i = 0; i < currentPanels.length; i++) {
-        try {
-          distance = getDistanceFromLatLonInKm(
-              lastUploadedPanel.lat,
-              lastUploadedPanel.lon,
-              currentPanels[i].lat,
-              currentPanels[i].lon);
-        } on Exception {
-          distance = -1.0;
-        }
-        if ((distance >= 322.8) && !currentBadges[7].unlocked) {
-          unlockBadgeOfIndex(7, newBadges);
-        }
+    checkExplorerBadge() {
+      // Get greatest distance between current panel and all other panels
+      double distance = currentPanels
+          .map((panel) {
+            try {
+              return getDistanceFromLatLonInKm(lastUploadedPanel.lat,
+                  lastUploadedPanel.lon, panel.lat, panel.lon);
+            } on Exception {
+              return -1.0;
+            }
+          })
+          .toList()
+          .reduce(max);
+
+      // Check if unlocked
+      Badge explorerBadge = userBadges.singleWhere(
+          (badge) => (badge.unlocked == false &&
+              badge.id == "Explorer" &&
+              distance >= 322.8),
+          orElse: () => null);
+      if (explorerBadge != null) {
+        unlockBadgeOfId(explorerBadge.id, newBadges);
       }
     }
 
-    checkLevelBadges();
+    checkAntiExplorerBadge() {
+      // Get smallest distance between current panel and all other panels
+      double distance = currentPanels
+          .map((panel) {
+            try {
+              return getDistanceFromLatLonInKm(lastUploadedPanel.lat,
+                  lastUploadedPanel.lon, panel.lat, panel.lon);
+            } on Exception {
+              return -1.0;
+            }
+          })
+          .toList()
+          .reduce(min);
+
+      // Check if unlocked
+      Badge explorerBadge = userBadges.singleWhere(
+          (badge) => (badge.unlocked == false &&
+              badge.id == "Anti Explorer" &&
+              distance <= 0.1),
+          orElse: () => null);
+      if (explorerBadge != null) {
+        unlockBadgeOfId(explorerBadge.id, newBadges);
+      }
+    }
+
+    checkStreakBadge() {
+      // Get badge if not unlocked
+      Badge explorerBadge = userBadges.singleWhere(
+          (badge) => (badge.unlocked == false && badge.id == "Streak"),
+          orElse: () => null);
+      if (explorerBadge == null) {
+        return;
+      }
+      // Check if five conecutive days have had submitted panels
+      DateTime now = DateTime.now();
+      if ([1, 2, 3, 4, 5]
+              .map((i) => currentPanels.firstWhere(
+                  (panel) =>
+                      panel.date
+                          .difference(now.subtract(Duration(days: i)))
+                          .inDays ==
+                      0,
+                  orElse: () => null))
+              .toList()
+              .where((item) => item != null)
+              .toList()
+              .length ==
+          5) {
+        unlockBadgeOfId(explorerBadge.id, newBadges);
+      }
+    }
+
     checkPanelCountBadges();
     checkExplorerBadge();
+    checkAntiExplorerBadge();
+    checkStreakBadge();
 
     return newBadges;
   }

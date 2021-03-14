@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:solar_hunt/Progress/progress_utilities.dart';
 import 'package:solar_hunt/Services/database_services.dart';
 
 class ProgressCardHeader extends StatelessWidget {
@@ -75,14 +74,14 @@ class _PanelCountDisplayTextState extends State<PanelCountDisplayText> {
               .textTheme
               .headline5
               .copyWith(color: Colors.greenAccent));
-    } else if (_userPanels <= maxPanels) {
+    } else if (_userPanels <= 100000) {
       return Text(_userPanels.toString(),
           style: Theme.of(context)
               .textTheme
               .headline6
               .copyWith(color: Colors.greenAccent));
     } else {
-      return Text((maxPanels - 1).toString(),
+      return Text((100000 - 1).toString(),
           style: Theme.of(context)
               .textTheme
               .headline5
@@ -104,7 +103,7 @@ class ProgressCardHeaderText extends StatelessWidget {
         child: Column(
           children: <Widget>[
             Text(
-              "Panels sumbitted",
+              "Panels submitted",
               style: Theme.of(context).textTheme.headline6,
               textAlign: TextAlign.left,
             ),
