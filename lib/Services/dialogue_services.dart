@@ -58,9 +58,7 @@ class BadgeUnlockedDialogue extends StatelessWidget {
   Widget build(BuildContext context) {
     return AlertDialog(
       title: Column(children: [
-        Padding(
-            padding: EdgeInsets.only(top: 12),
-            child: Icon(Icons.cake_outlined)),
+        Padding(padding: EdgeInsets.only(top: 12), child: Icon(Icons.cake)),
         Text("You've unlocked a badge!")
       ]),
       actions: <Widget>[
@@ -91,7 +89,7 @@ class BadgeInspectDialogue extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    IconData icon = badge.unlocked ? Icons.cake_outlined : Icons.lock_outline;
+    IconData icon = badge.unlocked ? Icons.cake : Icons.lock_outline;
     String imagePath =
         badge.unlocked ? badge.imagePath : 'assets/badges/unachieved.png';
     String description =
