@@ -1,8 +1,14 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:latlong/latlong.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
+
 import 'package:exif/exif.dart';
+import 'package:flutter_exif_plugin/flutter_exif_plugin.dart';
+
+import 'package:location/location.dart';
 
 import 'UploadScreenWidgets/fine_tune_map.dart';
 import 'UploadScreenWidgets/upload_screen_body.dart';
@@ -22,20 +28,30 @@ class _UploadScreenState extends State<UploadScreen> {
   File _imageFile;
   Image _image;
   LatLng _panelLocation;
+  FlutterExif _exif;
+  ImagePicker _picker = ImagePicker();
 
-  final picker = ImagePicker();
+  Location location = new Location();
 
   Future _getImageAndSetState() async {
     // Take a picture with the camera
-    final pickedFile = await picker.getImage(source: ImageSource.camera);
-    final bytes = await pickedFile.readAsBytes();
+    final pickerImage = await _picker.getImage(source: ImageSource.camera);
+    Uint8List bytes = await pickerImage.readAsBytes();
+    _exif = FlutterExif.fromBytes(bytes);
+    // final bytes = await pickedFile.readAsBytes();
     // Read exif data from image
-    final exif = await readExifFromBytes(bytes);
     // To see all exif data use the following
     // exif.forEach((key, value) {print("$key : $value");});
+    LocationData locationData = await location.getLocation();
+    print(locationData);
+    await _exif.setLatLong(locationData.latitude, locationData.longitude);
+    await _exif.saveAttributes();
+
+    Uint8List imageToRead = await _exif.imageData;
+    final exif = await readExifFromBytes(imageToRead);
 
     final locationExifExists = exif.containsKey("GPS GPSLatitude");
-
+    print(locationExifExists);
     if (!locationExifExists) {
       showDialog(
           context: context,
