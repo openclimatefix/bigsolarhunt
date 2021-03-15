@@ -211,7 +211,8 @@ class DatabaseProvider {
       Badge explorerBadge = userBadges.singleWhere(
           (badge) => (badge.unlocked == false &&
               badge.id == "Anti Explorer" &&
-              distance <= 0.1),
+              distance <= 0.1 &&
+              distance > 0.0),
           orElse: () => null);
       if (explorerBadge != null) {
         unlockBadgeOfId(explorerBadge.id, newBadges);
