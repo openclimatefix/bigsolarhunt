@@ -67,7 +67,7 @@ List<Badge> miscBadges = [
       description: 'Submit 2 panels over 200 miles apart'),
   Badge(
       id: "Anti Explorer",
-      imagePath: 'assets/badges/streetstrider.png',
+      imagePath: 'assets/badges/anti-explorer.png',
       panelCount: null,
       unlocked: false,
       dateUnlocked: null,
