@@ -40,6 +40,7 @@ dependencies:
   shared_preferences: ^0.5.10
   url_launcher: ^5.7.10
   connectivity: ^2.0.2
+  flutter_exif_plugin:
   exif:
   intl: ^0.16.0
   oauth2_client: ^1.6.1
