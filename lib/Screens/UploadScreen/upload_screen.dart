@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:latlong/latlong.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
@@ -38,29 +39,26 @@ class _UploadScreenState extends State<UploadScreen> {
     final pickerImage = await _picker.getImage(source: ImageSource.camera);
     Uint8List bytes = await pickerImage.readAsBytes();
     _exif = FlutterExif.fromBytes(bytes);
-    // final bytes = await pickedFile.readAsBytes();
-    // Read exif data from image
-    // To see all exif data use the following
-    // exif.forEach((key, value) {print("$key : $value");});
-    LocationData locationData = await location.getLocation();
-    print(locationData);
+
+    LocationData locationData;
+
+    try {
+      locationData = await location.getLocation();
+    } on PlatformException catch (e) {
+      showDialog(
+          context: context,
+          builder: (_) => new GenericDialogue(
+              title: "User location is required to upload images.",
+              desc: "Please enable location services for this app.",
+              icon: DialogueIcons.ERROR));
+      return null;
+    }
+
     await _exif.setLatLong(locationData.latitude, locationData.longitude);
     await _exif.saveAttributes();
 
     Uint8List imageToRead = await _exif.imageData;
     final exif = await readExifFromBytes(imageToRead);
-
-    final locationExifExists = exif.containsKey("GPS GPSLatitude");
-    print(locationExifExists);
-    if (!locationExifExists) {
-      showDialog(
-          context: context,
-          builder: (_) => new GenericDialogue(
-              title: "Can't retrieve image location data",
-              desc: "Please enable location tagging in your camera app.",
-              icon: DialogueIcons.ERROR));
-      return null;
-    }
 
     // Convert day/minute/second coordinates to degrees if exists, else return null
     final lat = gpsDMSToDeg(
@@ -70,8 +68,8 @@ class _UploadScreenState extends State<UploadScreen> {
 
     // Set all the above to state. _panelLocation can be null
     setState(() {
-      _imageFile = File(pickedFile.path);
-      _image = Image.file(File(pickedFile.path));
+      _imageFile = File(pickerImage.path);
+      _image = Image.file(File(pickerImage.path));
       _panelLocation = LatLng(lat, long);
     });
   }
