@@ -293,6 +293,15 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "0.4.3"
+  flutter_exif_plugin:
+    dependency: "direct main"
+    description:
+      path: "."
+      ref: HEAD
+      resolved-ref: b88abc68eb3cf1caf807f9606e5d479c397978ab
+      url: "https://github.com/mukhikaran/flutter_exif.git"
+    source: git
+    version: "0.0.4"
   flutter_image:
     dependency: transitive
     description:
