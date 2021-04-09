@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_map/plugin_api.dart';
 import 'package:latlong/latlong.dart';
 import 'package:location/location.dart';
-import 'package:user_location/user_location.dart';
 
 class FineTuneMap extends StatefulWidget {
   const FineTuneMap({Key key}) : super(key: key);
@@ -19,7 +18,6 @@ class _FineTuneMapState extends State<FineTuneMap> {
   static LatLng _userLocationLowerBound;
   static List<Marker> _markers = [];
   static LatLng _panelLocation;
-  static Widget _uploadMarker = Image.asset('assets/panel-icon-blue.png');
 
   @override
   void initState() {
@@ -54,6 +52,10 @@ class _FineTuneMapState extends State<FineTuneMap> {
         ? 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'
         : 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png';
 
+    Image _uploadMarker = Theme.of(context).brightness == Brightness.light
+        ? Image.asset('assets/icons/panel-icon-queue-light.png')
+        : Image.asset('assets/icons/panel-icon-queue-dark.png');
+
     _markers = [
       Marker(
           point: _panelLocation,
@@ -66,13 +68,13 @@ class _FineTuneMapState extends State<FineTuneMap> {
               style: Theme.of(context)
                   .textTheme
                   .headline6
-                  .copyWith(color: Colors.white)),
+                  .copyWith(color: Theme.of(context).colorScheme.onSecondary)),
           actions: <Widget>[
             IconButton(
                 icon: const Icon(Icons.done),
                 onPressed: () => Navigator.pop(context, _panelLocation))
           ],
-          backgroundColor: Colors.deepOrange,
+          backgroundColor: Theme.of(context).colorScheme.secondary,
         ),
         body: Stack(children: <Widget>[
           new FlutterMap(
@@ -96,14 +98,13 @@ class _FineTuneMapState extends State<FineTuneMap> {
           Container(
               width: MediaQuery.of(context).size.width,
               height: MediaQuery.of(context).size.height * 0.08,
-              decoration: BoxDecoration(color: Colors.deepOrange[300]),
+              decoration: BoxDecoration(
+                  color: Theme.of(context).colorScheme.secondaryVariant),
               alignment: Alignment.topCenter,
               child: Center(
                   child: Text("Drag the map to position the marker",
-                      style: Theme.of(context)
-                          .textTheme
-                          .headline6
-                          .copyWith(color: Colors.white),
+                      style: Theme.of(context).textTheme.headline6.copyWith(
+                          color: Theme.of(context).colorScheme.onSecondary),
                       textAlign: TextAlign.center)))
         ]));
   }

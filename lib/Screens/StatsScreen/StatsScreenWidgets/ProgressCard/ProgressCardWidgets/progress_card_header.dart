@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:solar_hunt/Services/database_services.dart';
+import 'package:solar_hunt/Services/markdown_services.dart';
 
 class ProgressCardHeader extends StatelessWidget {
   const ProgressCardHeader({Key key}) : super(key: key);
@@ -24,7 +25,8 @@ class PanelCountDisplay extends StatelessWidget {
         width: MediaQuery.of(context).size.width * 0.26,
         padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
-            border: Border.all(color: Colors.greenAccent, width: 5),
+            border: Border.all(
+                color: Theme.of(context).colorScheme.primary, width: 5),
             shape: BoxShape.circle),
         child: Center(child: PanelCountDisplayText()));
   }
@@ -61,31 +63,31 @@ class _PanelCountDisplayTextState extends State<PanelCountDisplayText> {
           style: Theme.of(context)
               .textTheme
               .headline2
-              .copyWith(color: Colors.greenAccent));
+              .copyWith(color: Theme.of(context).colorScheme.primary));
     } else if (_userPanels <= 999) {
       return Text(_userPanels.toString(),
           style: Theme.of(context)
               .textTheme
               .headline4
-              .copyWith(color: Colors.greenAccent));
+              .copyWith(color: Theme.of(context).colorScheme.primary));
     } else if (_userPanels <= 9999) {
       return Text(_userPanels.toString(),
           style: Theme.of(context)
               .textTheme
               .headline5
-              .copyWith(color: Colors.greenAccent));
+              .copyWith(color: Theme.of(context).colorScheme.primary));
     } else if (_userPanels <= 100000) {
       return Text(_userPanels.toString(),
           style: Theme.of(context)
               .textTheme
               .headline6
-              .copyWith(color: Colors.greenAccent));
+              .copyWith(color: Theme.of(context).colorScheme.primary));
     } else {
       return Text((100000 - 1).toString(),
           style: Theme.of(context)
               .textTheme
               .headline5
-              .copyWith(color: Colors.greenAccent));
+              .copyWith(color: Theme.of(context).colorScheme.primary));
     }
   }
 }
@@ -98,18 +100,7 @@ class ProgressCardHeaderText extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-        padding: EdgeInsets.all(12),
         width: MediaQuery.of(context).size.width * 0.48,
-        child: Column(
-          children: <Widget>[
-            Text(
-              "Panels submitted",
-              style: Theme.of(context).textTheme.headline6,
-              textAlign: TextAlign.left,
-            ),
-            Divider(thickness: 2),
-            Text('Each panel helps improve our predictions and save CO2')
-          ],
-        ));
+        child: BodyTextFromMdFile(mdfile: 'assets/text/progresscard.md'));
   }
 }

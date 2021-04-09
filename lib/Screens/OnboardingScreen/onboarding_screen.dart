@@ -64,16 +64,12 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
 
 List<OnboardingPage> onboardingPages = [
   OnboardingPage(
-      title: "Discover",
-      description: "Explore your area to find rooftop panels",
-      widget: Image.asset('assets/onboarding-discover.png')),
+      mdfile: "assets/text/onboarding1.md",
+      widget: Image.asset('assets/images/onboarding-discover.png')),
   OnboardingPage(
-      title: "Capture",
-      description:
-          "Take a photo of your discovered panel (make sure you have permission!)",
-      widget: Image.asset('assets/onboarding-capture.png')),
+      mdfile: "assets/text/onboarding2.md",
+      widget: Image.asset('assets/images/onboarding-capture.png')),
   OnboardingPage(
-      title: "Contribute",
-      description: "Upload your photo to the OCF project",
-      widget: Image.asset('assets/onboarding-contribute.png'))
+      mdfile: "assets/text/onboarding3.md",
+      widget: Image.asset('assets/images/onboarding-contribute.png'))
 ];

@@ -18,12 +18,14 @@ class GenericDialogue extends StatelessWidget {
         Padding(padding: EdgeInsets.only(bottom: 12), child: icon),
         Text(title, style: Theme.of(context).textTheme.headline5)
       ]),
-      content: new Text(desc, style: Theme.of(context).textTheme.bodyText1),
+      content: new Text(desc,
+          style: Theme.of(context).textTheme.bodyText1,
+          textAlign: TextAlign.center),
       actions: <Widget>[
-        FlatButton(
+        TextButton(
           child: Text('Close'),
           onPressed: () {
-            Navigator.of(context).popAndPushNamed('/');
+            Navigator.of(context).pushNamedAndRemoveUntil('/', (r) => false);
           },
         )
       ],
@@ -62,10 +64,10 @@ class BadgeUnlockedDialogue extends StatelessWidget {
         Text("You've unlocked a badge!")
       ]),
       actions: <Widget>[
-        FlatButton(
+        TextButton(
           child: Text('Close'),
           onPressed: () {
-            Navigator.of(context).popAndPushNamed('/');
+            Navigator.of(context).pushNamedAndRemoveUntil('/', (r) => false);
           },
         )
       ],
@@ -101,7 +103,7 @@ class BadgeInspectDialogue extends StatelessWidget {
         Text(badge.id)
       ]),
       actions: <Widget>[
-        FlatButton(
+        TextButton(
           child: Text('Close'),
           onPressed: () {
             Navigator.of(context).pop();
