@@ -6,7 +6,6 @@ import 'package:latlong/latlong.dart';
 import 'dart:io';
 import 'package:image_picker/image_picker.dart';
 
-import 'package:exif/exif.dart';
 import 'package:flutter_exif_plugin/flutter_exif_plugin.dart';
 
 import 'package:location/location.dart';
@@ -57,20 +56,11 @@ class _UploadScreenState extends State<UploadScreen> {
     await _exif.setLatLong(locationData.latitude, locationData.longitude);
     await _exif.saveAttributes();
 
-    Uint8List imageToRead = await _exif.imageData;
-    final exif = await readExifFromBytes(imageToRead);
-
-    // Convert day/minute/second coordinates to degrees if exists, else return null
-    final lat = gpsDMSToDeg(
-        exif["GPS GPSLatitude"].values, exif["GPS GPSLatitudeRef"].printable);
-    final long = gpsDMSToDeg(
-        exif["GPS GPSLongitude"].values, exif["GPS GPSLongitudeRef"].printable);
-
     // Set all the above to state. _panelLocation can be null
     setState(() {
       _imageFile = File(pickerImage.path);
       _image = Image.file(File(pickerImage.path));
-      _panelLocation = LatLng(lat, long);
+      _panelLocation = LatLng(locationData.latitude, locationData.longitude);
     });
   }
 
@@ -111,17 +101,17 @@ class _UploadScreenState extends State<UploadScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text('Upload a photo',
-              style: Theme.of(context)
-                  .textTheme
-                  .headline6
-                  .copyWith(color: Colors.white)),
-          actions: <Widget>[
-            IconButton(
-                icon: const Icon(Icons.refresh), onPressed: () => _regetImage())
-          ],
-          backgroundColor: Colors.orange,
-        ),
+            backgroundColor: Theme.of(context).colorScheme.primaryVariant,
+            title: Text('Upload a photo',
+                style: Theme.of(context)
+                    .textTheme
+                    .headline6
+                    .copyWith(color: Theme.of(context).colorScheme.onPrimary)),
+            actions: <Widget>[
+              IconButton(
+                  icon: const Icon(Icons.refresh),
+                  onPressed: () => _regetImage())
+            ]),
         body: _image != null
             ? UploadBody(
                 imageFile: _imageFile,

@@ -36,10 +36,10 @@ class _HomePageState extends State<HomePage> {
     Destination _currentDestination = allDestinations[_currentIndex];
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Theme.of(context).primaryColor,
+        backgroundColor: Theme.of(context).colorScheme.primary,
         leading: Padding(
           padding: const EdgeInsets.only(left: 15.0),
-          child: Image.asset('assets/logo_white.png'),
+          child: Image.asset('assets/branding/logo_white.png'),
         ),
         actions: [
           loggedInWithMapilliary == null || loggedInWithMapilliary
@@ -55,7 +55,7 @@ class _HomePageState extends State<HomePage> {
             style: Theme.of(context)
                 .textTheme
                 .headline6
-                .copyWith(color: Colors.white)),
+                .copyWith(color: Theme.of(context).colorScheme.onPrimary)),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -71,7 +71,7 @@ class _HomePageState extends State<HomePage> {
         ),
       ),
       bottomNavigationBar: BottomNavigationBar(
-        backgroundColor: Theme.of(context).navigationRailTheme.backgroundColor,
+        backgroundColor: Theme.of(context).colorScheme.surface,
         currentIndex: _currentIndex,
         showSelectedLabels: false,
         showUnselectedLabels: false,
@@ -87,17 +87,20 @@ class _HomePageState extends State<HomePage> {
         },
         items: allDestinations.map((Destination destination) {
           return BottomNavigationBarItem(
-            icon: Icon(destination.icon,
-                color: Theme.of(context).iconTheme.color),
-            activeIcon:
-                Icon(destination.icon, color: Theme.of(context).accentColor),
-            title: Text(destination.title),
+            icon: Icon(destination.icon),
+            activeIcon: Icon(
+              destination.icon,
+              color: Theme.of(context).colorScheme.primary,
+            ),
+            label: destination.title,
           );
         }).toList(),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add_a_photo, color: Colors.white),
+        backgroundColor: Theme.of(context).colorScheme.secondary,
+        child: Icon(Icons.add_a_photo,
+            color: Theme.of(context).colorScheme.onSecondary),
         onPressed: () => Navigator.pushNamed(context, '/upload'),
       ),
     );

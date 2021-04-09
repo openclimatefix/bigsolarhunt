@@ -51,7 +51,7 @@ class _ProgressCardFooterState extends State<ProgressCardFooter> {
             height: 30,
             decoration: BoxDecoration(
                 image: DecorationImage(
-                    image: AssetImage('assets/panel-icon-light.png')))),
+                    image: AssetImage('assets/icons/panel-icon-light.png')))),
         panelsToNextBadge > 0
             ? Text("$panelsToNextBadge to next badge",
                 style: Theme.of(context).textTheme.bodyText2)
@@ -64,8 +64,8 @@ class _ProgressCardFooterState extends State<ProgressCardFooter> {
                     height: 30,
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                            image:
-                                AssetImage('assets/panel-icon-orange.png')))),
+                            image: AssetImage(
+                                'assets/icons/panel-icon-queue.png')))),
                 Text("$_queuePanels in queue",
                     style: Theme.of(context).textTheme.bodyText2)
               ])

@@ -17,6 +17,7 @@ class BadgeCard extends StatelessWidget {
       width: length,
       height: length,
       child: Card(
+          color: Theme.of(context).colorScheme.surface,
           child: Padding(
               padding: EdgeInsets.all(6),
               child: InkWell(

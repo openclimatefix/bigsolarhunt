@@ -10,29 +10,25 @@ class StatsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-        body: ListView(children: <Widget>[
-      Padding(
-          padding: EdgeInsets.all(20),
-          child: Text("Your progress",
-              style: Theme.of(context)
-                  .textTheme
-                  .headline5
-                  .copyWith(color: Colors.lightBlue),
-              textAlign: TextAlign.left)),
-      Padding(
-          padding: EdgeInsets.only(left: 20, right: 20), child: ProgressCard()),
-      Padding(
-          padding: EdgeInsets.all(20),
-          child: Text("Your badges",
-              style: Theme.of(context)
-                  .textTheme
-                  .headline5
-                  .copyWith(color: Colors.lightBlue),
-              textAlign: TextAlign.left)),
-      Padding(
-          padding: EdgeInsets.only(left: 20, right: 20, bottom: 80),
-          child: BadgeGrid())
-    ]));
+    return Container(
+        color: Theme.of(context).colorScheme.background,
+        child: ListView(children: <Widget>[
+          Padding(
+              padding: EdgeInsets.all(20),
+              child: Text("Your progress",
+                  style: Theme.of(context).textTheme.headline5,
+                  textAlign: TextAlign.left)),
+          Padding(
+              padding: EdgeInsets.only(left: 20, right: 20),
+              child: ProgressCard()),
+          Padding(
+              padding: EdgeInsets.all(20),
+              child: Text("Your badges",
+                  style: Theme.of(context).textTheme.headline5,
+                  textAlign: TextAlign.left)),
+          Padding(
+              padding: EdgeInsets.only(left: 20, right: 20, bottom: 80),
+              child: BadgeGrid())
+        ]));
   }
 }

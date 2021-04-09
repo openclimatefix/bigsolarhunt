@@ -16,7 +16,9 @@ class StaticMap extends StatelessWidget {
         ? 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'
         : 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png';
 
-    Widget _uploadMarker = Image.asset('assets/panel-icon-blue.png');
+    Widget _uploadMarker = Theme.of(context).brightness == Brightness.light
+        ? Image.asset('assets/icons/panel-icon-queue-light.png')
+        : Image.asset('assets/icons/panel-icon-queue-dark.png');
     List<Marker> markers = [
       Marker(
           point: panelPosition,

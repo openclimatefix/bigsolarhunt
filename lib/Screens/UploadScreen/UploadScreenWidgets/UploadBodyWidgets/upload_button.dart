@@ -94,25 +94,26 @@ class _UploadButtonState extends State<UploadButton> {
           ButtonState.idle: widget.panelLocation == null
               ? IconedButton(
                   text: "Edit Location",
-                  icon: Icon(Icons.location_searching, color: Colors.white),
-                  color: Colors.blueGrey)
+                  icon: Icon(Icons.location_searching,
+                      color: Theme.of(context).colorScheme.onPrimary),
+                  color: Theme.of(context).colorScheme.primaryVariant)
               : IconedButton(
                   text: "Upload",
-                  icon: Icon(Icons.file_upload, color: Colors.white),
-                  color: Theme.of(context).accentColor),
+                  icon: Icon(Icons.file_upload,
+                      color: Theme.of(context).colorScheme.onSecondary),
+                  color: Theme.of(context).colorScheme.secondary),
           ButtonState.loading: IconedButton(
-              text: "Loading", color: Theme.of(context).accentColor),
+              text: "Loading", color: Theme.of(context).colorScheme.secondary),
           ButtonState.fail: IconedButton(
               text: "Failed",
-              icon: Icon(Icons.cancel, color: Colors.white),
-              color: Colors.red.shade300),
+              icon: Icon(Icons.cancel,
+                  color: Theme.of(context).colorScheme.onError),
+              color: Theme.of(context).colorScheme.error),
           ButtonState.success: IconedButton(
               text: "Success",
-              icon: Icon(
-                Icons.check_circle,
-                color: Colors.white,
-              ),
-              color: Colors.green.shade400)
+              icon: Icon(Icons.check_circle,
+                  color: Theme.of(context).colorScheme.onSecondary),
+              color: Theme.of(context).colorScheme.secondaryVariant)
         },
         onPressed: () => {
               widget.panelLocation == null

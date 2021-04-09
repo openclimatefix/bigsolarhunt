@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-
 import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:solar_hunt/Screens/OnboardingScreen/onboarding_screen.dart';
 import 'package:solar_hunt/home_page.dart';
 import 'package:solar_hunt/Screens/UploadScreen/upload_screen.dart';
 import 'package:solar_hunt/Themes/themes.dart';
-import 'Screens/LoginScreen/account_login.dart';
+import 'package:solar_hunt/Screens/AccountScreen/account_screen.dart';
 
 int initScreen;
 
@@ -27,7 +26,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-        themeMode: ThemeMode.light,
+        themeMode: ThemeMode.system,
         theme: lightTheme,
         darkTheme: darkTheme,
         initialRoute: token == null ? "/onboarding" : "/",

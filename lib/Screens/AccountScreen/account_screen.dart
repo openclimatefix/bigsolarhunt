@@ -2,14 +2,20 @@ import 'package:flutter/material.dart';
 import 'package:oauth2_client/access_token_response.dart';
 import 'package:oauth2_client/oauth2_client.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:jwt_decoder/jwt_decoder.dart';
+
 import 'package:solar_hunt/DataStructs/mapillary_user.dart';
 import 'package:solar_hunt/Services/mapillary_oauth.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:solar_hunt/Services/mapillary_service.dart';
+import 'package:solar_hunt/Services/markdown_services.dart';
 
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    String backgroundImage =
+        Theme.of(context).colorScheme.brightness == Brightness.light
+            ? "assets/backgrounds/login-screen-background-light.png"
+            : "assets/backgrounds/login-screen-background-dark.png";
     return WillPopScope(
         onWillPop: () => Navigator.of(context).pushNamed('/'),
         child: Container(
@@ -17,8 +23,7 @@ class LoginScreen extends StatelessWidget {
             padding: EdgeInsets.only(top: 20, bottom: 20, left: 12, right: 12),
             decoration: BoxDecoration(
                 image: DecorationImage(
-                    image: AssetImage("assets/login-screen-background.png"),
-                    fit: BoxFit.cover)),
+                    image: AssetImage(backgroundImage), fit: BoxFit.cover)),
             child: Container(
                 padding: EdgeInsets.all(20),
                 height: MediaQuery.of(context).size.height * 0.7,
@@ -27,7 +32,8 @@ class LoginScreen extends StatelessWidget {
                     children: [
                       Padding(
                           padding: EdgeInsets.all(20),
-                          child: Image.asset('assets/mapillary-logo.png')),
+                          child: Image.asset(
+                              'assets/branding/mapillary-logo.png')),
                       CreateAccountCard()
                     ]))));
   }
@@ -79,48 +85,24 @@ class CreateAccountCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-        child: SingleChildScrollView(
-            padding: EdgeInsets.all(12),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                Padding(
-                    padding: EdgeInsets.only(bottom: 10),
-                    child: Text(
-                      'Create an account with Mapilliary?',
-                      style: Theme.of(context).textTheme.headline5,
-                      textAlign: TextAlign.center,
-                    )),
-                Padding(
-                    padding: EdgeInsets.only(bottom: 20),
-                    child: Text(
-                      'Mappilary is the service that processes and uploads submitted images to OpenStreetMap. Creating an account enables you to view your submissions on Mapillary\'s website.',
-                      style: Theme.of(context)
-                          .textTheme
-                          .bodyText2
-                          .copyWith(color: Colors.grey),
-                      textAlign: TextAlign.center,
-                    )),
-                RaisedButton(
-                    child: Text('Create Account',
-                        style: Theme.of(context)
-                            .textTheme
-                            .button
-                            .copyWith(color: Colors.white)),
-                    color: Color.fromARGB(240, 33, 43, 54),
-                    onPressed: () => _createAccount(context)),
-                OutlineButton(
-                    child: Text('Not now'),
-                    onPressed: () => _continueWithoutAccount(context)),
-                Padding(
-                    padding: EdgeInsets.only(top: 20),
-                    child: Text('(You can change your mind later)',
-                        style: Theme.of(context)
-                            .textTheme
-                            .bodyText2
-                            .copyWith(color: Colors.grey)))
-              ],
-            )));
+    return SingleChildScrollView(
+        padding: EdgeInsets.all(10),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+          children: [
+            BodyTextFromMdFile(mdfile: "assets/text/accountscreen.md"),
+            ButtonBar(
+                buttonAlignedDropdown: true,
+                alignment: MainAxisAlignment.center,
+                children: [
+                  ElevatedButton(
+                      child: Text("Let's go!"),
+                      onPressed: () => _createAccount(context)),
+                  OutlinedButton(
+                      child: Text('Not now'),
+                      onPressed: () => _continueWithoutAccount(context))
+                ])
+          ],
+        ));
   }
 }

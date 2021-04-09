@@ -16,6 +16,7 @@ class ImageDetails extends StatelessWidget {
   Widget build(BuildContext context) {
     DateTime date = DateTime.now();
     return Container(
+        color: Theme.of(context).colorScheme.background,
         padding: EdgeInsets.only(top: 16, left: 20, right: 20),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,10 +34,8 @@ class ImageDetails extends StatelessWidget {
                   ),
                   InkWell(
                       child: Text("Edit",
-                          style: Theme.of(context)
-                              .textTheme
-                              .button
-                              .copyWith(color: Colors.blue)),
+                          style: Theme.of(context).textTheme.button.copyWith(
+                              color: Theme.of(context).colorScheme.secondary)),
                       onTap: fineTuneLocation)
                 ]),
             panelPosition == null

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 
-import 'package:solar_hunt/DataStructs/badge.dart';
 import 'package:solar_hunt/Services/dialogue_services.dart';
 
 class UploadCompleteDialogue extends StatelessWidget {

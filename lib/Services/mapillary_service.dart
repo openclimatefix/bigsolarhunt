@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'package:latlong/latlong.dart';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:solar_hunt/DataStructs/mapillary_user.dart';

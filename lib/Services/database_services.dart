@@ -1,6 +1,5 @@
 import 'dart:math';
 import 'package:sqflite/sqflite.dart';
-import 'package:latlong/latlong.dart';
 import 'package:path/path.dart';
 
 import 'package:solar_hunt/DataStructs/solar_panel.dart';
@@ -141,7 +140,7 @@ class DatabaseProvider {
     List<Badge> userBadges = await getUserBadgeData();
     List<SolarPanel> currentPanels = await getUserPanelData();
     int userPanels = await getUserPanelCount();
-    List<Badge> newBadges = new List();
+    List<Badge> newBadges = [];
 
     unlockBadgeOfId(String id, List<Badge> newBadgeList) async {
       // Get badge to be unlocked from current badge table list

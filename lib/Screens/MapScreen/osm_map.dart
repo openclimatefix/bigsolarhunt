@@ -32,11 +32,18 @@ class OpenStreetMapScreen extends StatelessWidget {
     _markers.addAll(userPanelData);
     _markers.addAll(uploadQueue);
     userLocationOptions = UserLocationOptions(
-      context: context,
-      mapController: mapController,
-      markers: _markers,
-      updateMapLocationOnPositionChange: false,
-    );
+        context: context,
+        mapController: mapController,
+        markers: _markers,
+        updateMapLocationOnPositionChange: false,
+        moveToCurrentLocationFloatingActionButton: Container(
+            height: 20,
+            width: 20,
+            decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Theme.of(context).colorScheme.surface),
+            child: Icon(Icons.gps_fixed_rounded,
+                color: Theme.of(context).colorScheme.onSurface)));
   }
 
   Future<List<Marker>> _getUserPanels() async {
@@ -70,55 +77,54 @@ class OpenStreetMapScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     _panelMarker = Theme.of(context).brightness == Brightness.light
-        ? Image.asset('assets/panel-icon-light.png')
-        : Image.asset('assets/panel-icon-dark.png');
+        ? Image.asset('assets/icons/panel-icon-light.png')
+        : Image.asset('assets/icons/panel-icon-dark.png');
 
     _uploadMarker = Theme.of(context).brightness == Brightness.light
-        ? Image.asset('assets/panel-icon-orange.png')
-        : Image.asset('assets/panel-icon-orange-dark.png');
+        ? Image.asset('assets/icons/panel-icon-queue.png')
+        : Image.asset('assets/icons/panel-icon-queue-dark.png');
 
     _tileUrl = Theme.of(context).brightness == Brightness.light
         ? 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'
         : 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png';
 
-    return Scaffold(
-      body: Padding(
-        padding: EdgeInsets.all(0.0),
-        child: FutureBuilder(
-          future: _getMapData(context),
-          builder: (context, AsyncSnapshot snapshot) {
-            if (snapshot.hasData) {
-              return Column(
-                children: [
-                  Flexible(
-                    child: FlutterMap(
-                      options: MapOptions(
-                        center: LatLng(54.12501425, -4.31989979),
-                        zoom: 5.3,
-                        maxZoom: 18,
-                        plugins: [
-                          UserLocationPlugin(),
-                        ],
-                      ),
-                      layers: [
-                        TileLayerOptions(
+    return Container(
+      color: Theme.of(context).colorScheme.background,
+      child: FutureBuilder(
+        future: _getMapData(context),
+        builder: (context, AsyncSnapshot snapshot) {
+          if (snapshot.hasData) {
+            return Column(
+              children: [
+                Flexible(
+                  child: FlutterMap(
+                    options: MapOptions(
+                      center: LatLng(54.12501425, -4.31989979),
+                      zoom: 5.3,
+                      maxZoom: 18,
+                      plugins: [
+                        UserLocationPlugin(),
+                      ],
+                    ),
+                    layers: [
+                      TileLayerOptions(
                           urlTemplate: _tileUrl,
                           subdomains: ['a', 'b', 'c'],
                           tileProvider: NonCachingNetworkTileProvider(),
-                        ),
-                        MarkerLayerOptions(markers: _markers),
-                        userLocationOptions,
-                      ],
-                      mapController: mapController,
-                    ),
+                          retinaMode: true &&
+                              MediaQuery.of(context).devicePixelRatio > 1.0),
+                      MarkerLayerOptions(markers: _markers),
+                      userLocationOptions,
+                    ],
+                    mapController: mapController,
                   ),
-                ],
-              );
-            } else {
-              return Center(child: CircularProgressIndicator());
-            }
-          },
-        ),
+                ),
+              ],
+            );
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        },
       ),
     );
   }

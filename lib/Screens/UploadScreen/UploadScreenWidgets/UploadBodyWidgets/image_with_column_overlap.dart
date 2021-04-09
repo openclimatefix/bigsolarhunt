@@ -17,7 +17,7 @@ class ImageWithColumnOverlap extends StatelessWidget {
           child: Container(
               height: 10,
               decoration: BoxDecoration(
-                  color: Theme.of(context).canvasColor,
+                  color: Theme.of(context).colorScheme.background,
                   borderRadius: BorderRadius.only(
                       topRight: Radius.circular(15),
                       topLeft: Radius.circular(15)))))
