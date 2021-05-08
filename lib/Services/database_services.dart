@@ -4,7 +4,6 @@ import 'package:path/path.dart';
 
 import 'package:solar_hunt/DataStructs/solar_panel.dart';
 import 'package:solar_hunt/DataStructs/badge.dart';
-import 'package:solar_hunt/DataStructs/upload_queue_item.dart';
 import 'package:solar_hunt/Services/latlong_services.dart';
 
 class DatabaseProvider {
@@ -15,7 +14,6 @@ class DatabaseProvider {
   static const String _panelDatabaseName = 'panel_database';
   static const String _userPanelTableName = 'userPanels';
   static const String _userBadgeTableName = "userBadges";
-  static const String _uploadQueueTableName = 'uploadQueue';
 
   Future<Database> get database async {
     if (_database != null) return _database;
@@ -34,15 +32,6 @@ class DatabaseProvider {
   Future<void> _onCreate(Database db, int newVersion) async {
     await createUserPanelsTable(db);
     await createAndPopulateUserBadgesTable(db);
-    await createUploadQueueTable(db);
-  }
-
-  Future<void> createUploadQueueTable(Database db) async {
-    await db.execute("CREATE TABLE $_uploadQueueTableName("
-        "path TINYTEXT,"
-        "lat FLOAT,"
-        "lon FLOAT"
-        ")");
   }
 
   Future<void> createUserPanelsTable(Database db) async {
@@ -50,7 +39,9 @@ class DatabaseProvider {
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"
         "lat FLOAT,"
         "lon FLOAT,"
-        "date TEXT"
+        "path TEXT,"
+        "date TEXT,"
+        "uploaded INTEGER"
         ")");
   }
 
@@ -68,27 +59,36 @@ class DatabaseProvider {
     });
   }
 
-  Future<List<SolarPanel>> getUserPanelData() async {
+  Future<List<SolarPanel>> getUserPanels() async {
     final Database db = await database;
-    final List<Map<String, dynamic>> response =
-        await db.rawQuery("SELECT * FROM $_userPanelTableName");
+    final List<Map<String, dynamic>> response = await db
+        .rawQuery("SELECT * FROM $_userPanelTableName WHERE uploaded = 1");
     List<SolarPanel> panelData =
         response.map((row) => SolarPanel.fromMap(row)).toList();
     return panelData;
   }
 
+  Future<List<SolarPanel>> getUploadQueue() async {
+    final Database db = await database;
+    final List<Map<String, dynamic>> response = await db
+        .rawQuery("SELECT * FROM $_userPanelTableName WHERE uploaded = 0");
+    List<SolarPanel> uploadQueue =
+        response.map((row) => SolarPanel.fromMap(row)).toList();
+    return uploadQueue;
+  }
+
   Future<int> getUserPanelCount() async {
     final Database db = await database;
-    final List<Map<String, dynamic>> result =
-        await db.rawQuery("SELECT COUNT (*) FROM $_userPanelTableName");
+    final List<Map<String, dynamic>> result = await db.rawQuery(
+        "SELECT COUNT (*) FROM $_userPanelTableName WHERE uploaded = 1");
     int count = Sqflite.firstIntValue(result);
     return count;
   }
 
   Future<int> getUploadQueueCount() async {
     final Database db = await database;
-    final List<Map<String, dynamic>> result =
-        await db.rawQuery("SELECT COUNT (*) FROM $_uploadQueueTableName");
+    final List<Map<String, dynamic>> result = await db.rawQuery(
+        "SELECT COUNT (*) FROM $_userPanelTableName WHERE uploaded = 0");
     int count = Sqflite.firstIntValue(result);
     return count;
   }
@@ -104,33 +104,26 @@ class DatabaseProvider {
   Future<void> insertUserPanel(SolarPanel newPanel) async {
     final Database db = await database;
     await db.insert(_userPanelTableName, newPanel.toMapNoID());
+    print(await db.query(_userPanelTableName));
   }
 
-  Future<void> insertQueueData(
-      String imagePath, double panelLat, double panelLon) async {
+  Future<void> insertQueuePanel(SolarPanel newPanel) async {
     final Database db = await database;
-    final toUpload =
-        UploadQueueItem(path: imagePath, lat: panelLat, lon: panelLon);
-    await db.insert(_uploadQueueTableName, toUpload.toMap());
+    await db.insert(
+        _userPanelTableName, newPanel.toMapNoID(setUploaded: false));
+    print(await db.query(_userPanelTableName));
   }
 
-  Future<List<UploadQueueItem>> getUploadQueue() async {
+  Future<void> markAsUploaded(SolarPanel toMark) async {
     final Database db = await database;
-    final List<Map<String, dynamic>> response =
-        await db.rawQuery("SELECT * FROM $_uploadQueueTableName");
-    List<UploadQueueItem> uploadQueue =
-        response.map((row) => UploadQueueItem.fromMap(row)).toList();
-    return uploadQueue;
-  }
-
-  Future<void> deleteFromUploadQueue(UploadQueueItem toDelete) async {
-    final Database db = await database;
-    final String path = toDelete.path;
-    await db.delete(
-      _uploadQueueTableName,
-      where: "path = ?",
-      whereArgs: [path],
-    );
+    final int id = toMark.id;
+    // do the update and get the number of affected rows
+    int updateCount = await db.rawUpdate('''
+    UPDATE $_userPanelTableName
+    SET uploaded = ? 
+    WHERE id = ?
+    ''', [1, id]);
+    print(await db.query(_userPanelTableName));
   }
 
   Future<List<Badge>> checkForNewBadges(SolarPanel lastUploadedPanel) async {
@@ -138,7 +131,7 @@ class DatabaseProvider {
     // Updates the table accordingly
     final Database db = await database;
     List<Badge> userBadges = await getUserBadgeData();
-    List<SolarPanel> currentPanels = await getUserPanelData();
+    List<SolarPanel> currentPanels = await getUserPanels();
     int userPanels = await getUserPanelCount();
     List<Badge> newBadges = [];
 
@@ -245,10 +238,12 @@ class DatabaseProvider {
       }
     }
 
-    checkPanelCountBadges();
-    checkExplorerBadge();
-    checkAntiExplorerBadge();
-    checkStreakBadge();
+    if (currentPanels.isNotEmpty) {
+      checkPanelCountBadges();
+      checkExplorerBadge();
+      checkAntiExplorerBadge();
+      checkStreakBadge();
+    }
 
     return newBadges;
   }

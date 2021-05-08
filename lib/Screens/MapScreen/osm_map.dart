@@ -4,7 +4,6 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
 import 'package:user_location/user_location.dart';
 import 'package:solar_hunt/DataStructs/solar_panel.dart';
-import 'package:solar_hunt/DataStructs/upload_queue_item.dart';
 import 'package:solar_hunt/Services/database_services.dart';
 
 class OpenStreetMapScreen extends StatelessWidget {
@@ -47,7 +46,7 @@ class OpenStreetMapScreen extends StatelessWidget {
   }
 
   Future<List<Marker>> _getUserPanels() async {
-    List<SolarPanel> userPanelData = await panelDatabase.getUserPanelData();
+    List<SolarPanel> userPanelData = await panelDatabase.getUserPanels();
     List<Marker> markers = [];
     userPanelData.forEach((panel) {
       markers.add(Marker(
@@ -61,7 +60,7 @@ class OpenStreetMapScreen extends StatelessWidget {
   }
 
   Future<List<Marker>> _getUploadQueuePanels() async {
-    List<UploadQueueItem> uploadQueue = await panelDatabase.getUploadQueue();
+    List<SolarPanel> uploadQueue = await panelDatabase.getUploadQueue();
     List<Marker> markers = [];
     uploadQueue.forEach((panel) {
       markers.add(Marker(
@@ -81,7 +80,7 @@ class OpenStreetMapScreen extends StatelessWidget {
         : Image.asset('assets/icons/panel-icon-dark.png');
 
     _uploadMarker = Theme.of(context).brightness == Brightness.light
-        ? Image.asset('assets/icons/panel-icon-queue.png')
+        ? Image.asset('assets/icons/panel-icon-queue-light.png')
         : Image.asset('assets/icons/panel-icon-queue-dark.png');
 
     _tileUrl = Theme.of(context).brightness == Brightness.light

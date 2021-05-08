@@ -1,31 +1,29 @@
 class SolarPanel {
-  SolarPanel({this.id, this.lat, this.lon, this.date});
+  SolarPanel(
+      {this.id, this.lat, this.lon, this.path, this.date, this.uploaded});
 
   final int id;
   final double lat;
   final double lon;
+  final String path;
   final DateTime date;
+  final bool uploaded;
 
   factory SolarPanel.fromMap(Map<String, dynamic> json) => new SolarPanel(
       id: json['id'],
       lat: json['lat'],
       lon: json['lon'],
-      date: json['date'] == 'NULL' ? null : DateTime.parse(json['date']));
+      path: json['path'],
+      date: json['date'] == 'NULL' ? null : DateTime.parse(json['date']),
+      uploaded: json['uploaded'] == 1);
 
-  Map<String, dynamic> toMap() {
-    return {
-      'id': id,
-      'lat': lat,
-      'lon': lon,
-      'date': date == null ? 'NULL' : date.toIso8601String()
-    };
-  }
-
-  Map<String, dynamic> toMapNoID() {
+  Map<String, dynamic> toMapNoID({bool setUploaded = true}) {
     return {
       'lat': lat,
       'lon': lon,
-      'date': date == null ? 'NULL' : date.toIso8601String()
+      'path': path,
+      'date': date == null ? 'NULL' : date.toIso8601String(),
+      'uploaded': setUploaded ? 1 : 0
     };
   }
 }
