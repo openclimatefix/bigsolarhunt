@@ -37,6 +37,15 @@ class _ProgressCardFooterState extends State<ProgressCardFooter> {
 
   @override
   Widget build(BuildContext context) {
+    String _panelIconString =
+        Theme.of(context).colorScheme.brightness == Brightness.light
+            ? 'assets/icons/panel-icon-light.png'
+            : 'assets/icons/panel-icon-dark.png';
+    String _panelIconQueueString =
+        Theme.of(context).colorScheme.brightness == Brightness.light
+            ? 'assets/icons/panel-icon-queue-light.png'
+            : 'assets/icons/panel-icon-queue-dark.png';
+
     int panelsToNextBadge = panelCountBadgeIntegers
             .firstWhere((i) => i > _userPanels, orElse: () => _userPanels) -
         _userPanels;
@@ -50,8 +59,7 @@ class _ProgressCardFooterState extends State<ProgressCardFooter> {
             width: 30,
             height: 30,
             decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage('assets/icons/panel-icon-light.png')))),
+                image: DecorationImage(image: AssetImage(_panelIconString)))),
         panelsToNextBadge > 0
             ? Text("$panelsToNextBadge to next badge",
                 style: Theme.of(context).textTheme.bodyText2)
@@ -64,8 +72,7 @@ class _ProgressCardFooterState extends State<ProgressCardFooter> {
                     height: 30,
                     decoration: BoxDecoration(
                         image: DecorationImage(
-                            image: AssetImage(
-                                'assets/icons/panel-icon-queue.png')))),
+                            image: AssetImage(_panelIconQueueString)))),
                 Text("$_queuePanels in queue",
                     style: Theme.of(context).textTheme.bodyText2)
               ])

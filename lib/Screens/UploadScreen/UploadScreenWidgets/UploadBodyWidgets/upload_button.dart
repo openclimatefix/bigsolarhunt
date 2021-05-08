@@ -3,13 +3,13 @@ import 'package:latlong/latlong.dart';
 import 'dart:io';
 import 'package:progress_state_button/iconed_button.dart';
 import 'package:progress_state_button/progress_button.dart';
-import 'package:solar_hunt/DataStructs/solar_panel.dart';
+import 'package:connectivity/connectivity.dart';
 
+import 'package:solar_hunt/DataStructs/solar_panel.dart';
 import 'package:solar_hunt/Services/mapillary_service.dart';
 import 'UploadButtonWidgets/upload_dialogues.dart';
 import 'package:solar_hunt/Services/dialogue_services.dart';
 import 'package:solar_hunt/Services/database_services.dart';
-
 import 'package:solar_hunt/DataStructs/badge.dart';
 
 class UploadButton extends StatefulWidget {
@@ -30,41 +30,60 @@ class _UploadButtonState extends State<UploadButton> {
   MapillaryService mapillaryService = new MapillaryService();
   DatabaseProvider panelDatabase = DatabaseProvider.databaseProvider;
   ButtonState state = ButtonState.idle;
+  ConnectivityResult conRes;
+
+  Future _checkConnectivity() async {
+    final connectivityResult = await Connectivity().checkConnectivity();
+    setState(() {
+      conRes = connectivityResult;
+    });
+  }
 
   void handleUpload(File imageFile, LatLng panelLocation) async {
     _displayLoading();
-    var responseImage;
+
     SolarPanel newPanel = SolarPanel(
         id: null,
         lat: panelLocation.latitude,
         lon: panelLocation.longitude,
-        date: DateTime.now());
-    try {
-      responseImage = await mapillaryService.upload(imageFile, newPanel);
-    } catch (e) {
-      _displayFailure();
-      print(e);
+        path: imageFile.path,
+        date: DateTime.now(),
+        uploaded: true);
 
-      showDialog(
-          context: context, builder: (_) => new FailureDialogue(error: e));
-      return null;
+    if (conRes != ConnectivityResult.none) {
+      bool uploaded = await mapillaryService.upload(newPanel);
+      if (uploaded) {
+        await panelDatabase.insertUserPanel(newPanel);
+      } else {
+        await panelDatabase.insertQueuePanel(newPanel);
+        _displayFailure();
+        showDialog(
+            context: context,
+            builder: (_) => new FailureDialogue(
+                error: Exception("Failed to upload. Panel added to queue.")));
+      }
+    } else {
+      await panelDatabase.insertQueuePanel(newPanel);
     }
 
     _displaySuccess();
+
     List<Badge> unlockedBadges =
         await panelDatabase.checkForNewBadges(newPanel);
 
     if (unlockedBadges.length == 0) {
-      showDialog(
-          context: context, builder: (_) => new UploadCompleteDialogue());
+      conRes == ConnectivityResult.none
+          ? showDialog(
+              context: context, builder: (_) => new UploadLaterDialogue())
+          : showDialog(
+              context: context, builder: (_) => new UploadCompleteDialogue());
+    } else {
+      unlockedBadges.forEach((badge) {
+        showDialog(
+            context: context,
+            builder: (_) => new BadgeUnlockedDialogue(badge: badge));
+      });
     }
-
-    unlockedBadges.forEach((badge) {
-      showDialog(
-          context: context,
-          builder: (_) => new BadgeUnlockedDialogue(badge: badge));
-    });
-    return responseImage;
   }
 
   void _displayLoading() {
@@ -86,6 +105,12 @@ class _UploadButtonState extends State<UploadButton> {
   }
 
   @override
+  void initState() {
+    _checkConnectivity();
+    super.initState();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return ProgressButton.icon(
         iconedButtons: {
@@ -97,11 +122,17 @@ class _UploadButtonState extends State<UploadButton> {
                   icon: Icon(Icons.location_searching,
                       color: Theme.of(context).colorScheme.onPrimary),
                   color: Theme.of(context).colorScheme.primaryVariant)
-              : IconedButton(
-                  text: "Upload",
-                  icon: Icon(Icons.file_upload,
-                      color: Theme.of(context).colorScheme.onSecondary),
-                  color: Theme.of(context).colorScheme.secondary),
+              : conRes == ConnectivityResult.none
+                  ? IconedButton(
+                      text: "Queue Image",
+                      icon: Icon(Icons.file_upload,
+                          color: Theme.of(context).colorScheme.onSecondary),
+                      color: Theme.of(context).colorScheme.secondary)
+                  : IconedButton(
+                      text: "Upload",
+                      icon: Icon(Icons.file_upload,
+                          color: Theme.of(context).colorScheme.onSecondary),
+                      color: Theme.of(context).colorScheme.secondary),
           ButtonState.loading: IconedButton(
               text: "Loading", color: Theme.of(context).colorScheme.secondary),
           ButtonState.fail: IconedButton(

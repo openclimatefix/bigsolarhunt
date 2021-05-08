@@ -3,8 +3,6 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:solar_hunt/DataStructs/mapillary_user.dart';
 import 'package:solar_hunt/DataStructs/solar_panel.dart';
-import 'package:connectivity/connectivity.dart';
-import 'package:solar_hunt/DataStructs/upload_queue_item.dart';
 import 'package:solar_hunt/Services/database_services.dart';
 import 'dart:convert';
 
@@ -15,34 +13,30 @@ class MapillaryService {
   static const _CLIENT_ID =
       'SG1nOGZNWEtmalFlN21JbFYxR2ltdDozNTlkMDEyN2E5YjM1MjQx';
 
-  Future<bool> upload(File imageFile, SolarPanel newPanel) async {
-    final connectivityResult = await Connectivity().checkConnectivity();
-    if (connectivityResult == ConnectivityResult.mobile ||
-        connectivityResult == ConnectivityResult.wifi) {
-      final UploadSession session = await _createUploadSession();
+  Future<bool> upload(SolarPanel newPanel) async {
+    // upload attempts to upload a SolarPanel struct to Mapillary
+    // returns true if succesful, else false
+    final UploadSession session = await _createUploadSession();
+    final imageFile = File(newPanel.path);
+    try {
       await _awsUpload(imageFile, session);
-      await uploadQueuePanels(session);
+      await _uploadQueuePanels(session);
       await _closeUploadSession(session);
-      await panelDatabase.insertUserPanel(newPanel);
-      return true;
-    } else {
-      panelDatabase.insertQueueData(imageFile.path, newPanel.lat, newPanel.lon);
+    } catch (e) {
+      print(e);
       return false;
     }
+    return true;
   }
 
-  Future<void> uploadQueuePanels(UploadSession session) async {
-    final List<UploadQueueItem> uploadQueue =
-        await panelDatabase.getUploadQueue();
-    uploadQueue.forEach((uploadQueueItem) async {
-      final File image = File(uploadQueueItem.path);
+  Future<void> _uploadQueuePanels(UploadSession session) async {
+    // I want to refactor this and the above so this just calls the above
+    // then the panelDatabase only needs to be accessed in the uploadButton class
+    final List<SolarPanel> uploadQueue = await panelDatabase.getUploadQueue();
+    uploadQueue.forEach((uploadQueuePanel) async {
+      final File image = File(uploadQueuePanel.path);
       await _awsUpload(image, session);
-      panelDatabase.deleteFromUploadQueue(uploadQueueItem);
-      panelDatabase.insertUserPanel(SolarPanel(
-          id: null,
-          lat: uploadQueueItem.lat,
-          lon: uploadQueueItem.lon,
-          date: DateTime.now()));
+      panelDatabase.markAsUploaded(uploadQueuePanel);
     });
   }
 
