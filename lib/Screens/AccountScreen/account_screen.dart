@@ -13,7 +13,8 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return WillPopScope(
-        onWillPop: () => Navigator.of(context).pushNamed('/'),
+        onWillPop: () => Navigator.of(context)
+            .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false),
         child: Container(
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -60,7 +61,8 @@ class CreateAccountCard extends StatelessWidget {
     prefs.setBool('ownAccount', false);
     prefs.setString('userKey', userkey);
 
-    Navigator.pushNamed(context, '/');
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
   }
 
   _createAccount(BuildContext context) async {
