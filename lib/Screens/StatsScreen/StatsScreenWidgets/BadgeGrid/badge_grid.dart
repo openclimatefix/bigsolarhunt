@@ -46,17 +46,17 @@ class _BadgeGridState extends State<BadgeGrid> {
           : Column(
               children: <Widget>[
                 Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: _badges.sublist(0, 3).map((Badge badge) {
                       return BadgeCard(badge: badge);
                     }).toList()),
                 Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: _badges.sublist(3, 6).map((Badge badge) {
                       return BadgeCard(badge: badge);
                     }).toList()),
                 Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                    mainAxisAlignment: MainAxisAlignment.center,
                     children: _badges.sublist(6).map((Badge badge) {
                       return BadgeCard(badge: badge);
                     }).toList())

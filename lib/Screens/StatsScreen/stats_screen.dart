@@ -16,7 +16,9 @@ class StatsScreen extends StatelessWidget {
           Padding(
               padding: EdgeInsets.all(20),
               child: Text("Your progress",
-                  style: Theme.of(context).textTheme.headline5,
+                  style: Theme.of(context).textTheme.headline5.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground,
+                      fontWeight: FontWeight.bold),
                   textAlign: TextAlign.left)),
           Padding(
               padding: EdgeInsets.only(left: 20, right: 20),
@@ -24,7 +26,9 @@ class StatsScreen extends StatelessWidget {
           Padding(
               padding: EdgeInsets.all(20),
               child: Text("Your badges",
-                  style: Theme.of(context).textTheme.headline5,
+                  style: Theme.of(context).textTheme.headline5.copyWith(
+                      color: Theme.of(context).colorScheme.onBackground,
+                      fontWeight: FontWeight.bold),
                   textAlign: TextAlign.left)),
           Padding(
               padding: EdgeInsets.only(left: 20, right: 20, bottom: 80),

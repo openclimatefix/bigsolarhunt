@@ -8,17 +8,13 @@ class ProgressCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-        color: Theme.of(context).colorScheme.surface,
-        shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.all(Radius.circular(20))),
-        child: Padding(
-            padding: EdgeInsets.all(20),
-            child: Column(children: <Widget>[
-              ProgressCardHeader(),
-              Padding(
-                  padding: EdgeInsets.only(top: 12, bottom: 12),
-                  child: ProgressCardFooter())
-            ])));
+    return Padding(
+        padding: EdgeInsets.all(20),
+        child: Column(children: <Widget>[
+          ProgressCardHeader(),
+          Padding(
+              padding: EdgeInsets.only(top: 12, bottom: 12),
+              child: ProgressCardFooter())
+        ]));
   }
 }

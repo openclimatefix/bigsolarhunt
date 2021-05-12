@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
+import 'package:solar_hunt/Services/internet_services.dart';
 import 'package:user_location/user_location.dart';
 import 'package:solar_hunt/DataStructs/solar_panel.dart';
 import 'package:solar_hunt/Services/database_services.dart';
@@ -22,7 +23,8 @@ class OpenStreetMapScreen extends StatelessWidget {
   _getMapData(BuildContext context) async {
     _markers = [];
     await _getMarkers(context);
-    return true;
+    bool connected = await checkConnection();
+    return connected;
   }
 
   _getMarkers(BuildContext context) async {
@@ -75,13 +77,8 @@ class OpenStreetMapScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    _panelMarker = Theme.of(context).brightness == Brightness.light
-        ? Image.asset('assets/icons/panel-icon-light.png')
-        : Image.asset('assets/icons/panel-icon-dark.png');
-
-    _uploadMarker = Theme.of(context).brightness == Brightness.light
-        ? Image.asset('assets/icons/panel-icon-queue-light.png')
-        : Image.asset('assets/icons/panel-icon-queue-dark.png');
+    _panelMarker = Image.asset('assets/icons/panel-icon.png');
+    _uploadMarker = Image.asset('assets/icons/panel-icon-queue.png');
 
     _tileUrl = Theme.of(context).brightness == Brightness.light
         ? 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'
@@ -92,7 +89,7 @@ class OpenStreetMapScreen extends StatelessWidget {
       child: FutureBuilder(
         future: _getMapData(context),
         builder: (context, AsyncSnapshot snapshot) {
-          if (snapshot.hasData) {
+          if (snapshot.hasData && snapshot.data == true) {
             return Column(
               children: [
                 Flexible(
@@ -120,6 +117,8 @@ class OpenStreetMapScreen extends StatelessWidget {
                 ),
               ],
             );
+          } else if (snapshot.hasData && snapshot.data == false) {
+            return Center(child: NotConnectedContainer(showtext: true));
           } else {
             return Center(child: CircularProgressIndicator());
           }

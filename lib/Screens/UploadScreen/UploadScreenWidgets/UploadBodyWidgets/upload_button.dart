@@ -3,13 +3,13 @@ import 'package:latlong/latlong.dart';
 import 'dart:io';
 import 'package:progress_state_button/iconed_button.dart';
 import 'package:progress_state_button/progress_button.dart';
-import 'package:connectivity/connectivity.dart';
 
 import 'package:solar_hunt/DataStructs/solar_panel.dart';
 import 'package:solar_hunt/Services/mapillary_service.dart';
 import 'UploadButtonWidgets/upload_dialogues.dart';
 import 'package:solar_hunt/Services/dialogue_services.dart';
 import 'package:solar_hunt/Services/database_services.dart';
+import 'package:solar_hunt/Services/internet_services.dart';
 import 'package:solar_hunt/DataStructs/badge.dart';
 
 class UploadButton extends StatefulWidget {
@@ -30,12 +30,13 @@ class _UploadButtonState extends State<UploadButton> {
   MapillaryService mapillaryService = new MapillaryService();
   DatabaseProvider panelDatabase = DatabaseProvider.databaseProvider;
   ButtonState state = ButtonState.idle;
-  ConnectivityResult conRes;
+  bool connected = false;
 
   Future _checkConnectivity() async {
-    final connectivityResult = await Connectivity().checkConnectivity();
+    bool result = await checkConnection();
+    result = result == null ? false : result;
     setState(() {
-      conRes = connectivityResult;
+      connected = result;
     });
   }
 
@@ -50,7 +51,7 @@ class _UploadButtonState extends State<UploadButton> {
         date: DateTime.now(),
         uploaded: true);
 
-    if (conRes != ConnectivityResult.none) {
+    if (connected) {
       bool uploaded = await mapillaryService.upload(newPanel);
       if (uploaded) {
         await panelDatabase.insertUserPanel(newPanel);
@@ -72,7 +73,7 @@ class _UploadButtonState extends State<UploadButton> {
         await panelDatabase.checkForNewBadges(newPanel);
 
     if (unlockedBadges.length == 0) {
-      conRes == ConnectivityResult.none
+      !connected
           ? showDialog(
               context: context, builder: (_) => new UploadLaterDialogue())
           : showDialog(
@@ -122,7 +123,7 @@ class _UploadButtonState extends State<UploadButton> {
                   icon: Icon(Icons.location_searching,
                       color: Theme.of(context).colorScheme.onPrimary),
                   color: Theme.of(context).colorScheme.primaryVariant)
-              : conRes == ConnectivityResult.none
+              : !connected
                   ? IconedButton(
                       text: "Queue Image",
                       icon: Icon(Icons.file_upload,

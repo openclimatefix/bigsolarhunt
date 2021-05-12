@@ -21,13 +21,14 @@ class UploadBody extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Stack(children: <Widget>[
+      Container(color: Theme.of(context).colorScheme.background),
       ListView(children: <Widget>[
         ImageWithColumnOverlap(imageFile: imageFile),
-        Divider(
-            thickness: 2,
-            height: 2,
-            indent: MediaQuery.of(context).size.width * 0.4,
-            endIndent: MediaQuery.of(context).size.width * 0.4),
+        Center(
+            child: Container(
+                color: Colors.grey,
+                width: MediaQuery.of(context).size.width * 0.2,
+                height: 2)),
         ImageDetails(
             panelPosition: panelPosition, fineTuneLocation: fineTuneLocation)
       ]),

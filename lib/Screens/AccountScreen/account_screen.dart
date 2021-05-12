@@ -12,18 +12,22 @@ import 'package:solar_hunt/Services/markdown_services.dart';
 class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    String backgroundImage =
-        Theme.of(context).colorScheme.brightness == Brightness.light
-            ? "assets/backgrounds/login-screen-background-light.png"
-            : "assets/backgrounds/login-screen-background-dark.png";
     return WillPopScope(
         onWillPop: () => Navigator.of(context).pushNamed('/'),
         child: Container(
-            constraints: BoxConstraints.expand(),
-            padding: EdgeInsets.only(top: 20, bottom: 20, left: 12, right: 12),
             decoration: BoxDecoration(
-                image: DecorationImage(
-                    image: AssetImage(backgroundImage), fit: BoxFit.cover)),
+              gradient: LinearGradient(
+                colors: [
+                  Color(0xff212b36),
+                  Color(0xff212b36),
+                  Theme.of(context).colorScheme.background,
+                  Theme.of(context).colorScheme.background,
+                ],
+                stops: [0.0, 0.4, 0.4, 1.0],
+                end: Alignment.bottomCenter,
+                begin: Alignment.topCenter,
+              ),
+            ),
             child: Container(
                 padding: EdgeInsets.all(20),
                 height: MediaQuery.of(context).size.height * 0.7,

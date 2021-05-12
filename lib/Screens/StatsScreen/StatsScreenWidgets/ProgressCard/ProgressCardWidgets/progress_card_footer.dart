@@ -37,14 +37,8 @@ class _ProgressCardFooterState extends State<ProgressCardFooter> {
 
   @override
   Widget build(BuildContext context) {
-    String _panelIconString =
-        Theme.of(context).colorScheme.brightness == Brightness.light
-            ? 'assets/icons/panel-icon-light.png'
-            : 'assets/icons/panel-icon-dark.png';
-    String _panelIconQueueString =
-        Theme.of(context).colorScheme.brightness == Brightness.light
-            ? 'assets/icons/panel-icon-queue-light.png'
-            : 'assets/icons/panel-icon-queue-dark.png';
+    String _panelIconString = 'assets/icons/panel-icon.png';
+    String _panelIconQueueString = 'assets/icons/panel-icon-queue.png';
 
     int panelsToNextBadge = panelCountBadgeIntegers
             .firstWhere((i) => i > _userPanels, orElse: () => _userPanels) -
@@ -62,7 +56,9 @@ class _ProgressCardFooterState extends State<ProgressCardFooter> {
                 image: DecorationImage(image: AssetImage(_panelIconString)))),
         panelsToNextBadge > 0
             ? Text("$panelsToNextBadge to next badge",
-                style: Theme.of(context).textTheme.bodyText2)
+                style: Theme.of(context).textTheme.bodyText2.copyWith(
+                    color: Theme.of(context).colorScheme.onBackground,
+                    fontWeight: FontWeight.bold))
             : Container(),
         _queuePanels > 0
             ? Row(children: [
