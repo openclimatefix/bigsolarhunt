@@ -32,15 +32,16 @@ class ImageDetails extends StatelessWidget {
                         .bodyText2
                         .copyWith(fontSize: 10),
                   ),
-                  InkWell(
-                      child: Text("Edit",
-                          style: Theme.of(context).textTheme.button.copyWith(
-                              color: Theme.of(context).colorScheme.secondary)),
-                      onTap: fineTuneLocation)
+                  // InkWell(
+                  //    child: Text("Edit",
+                  //        style: Theme.of(context).textTheme.button.copyWith(
+                  //            color: Theme.of(context).colorScheme.secondary)),
+                  //    onTap: fineTuneLocation)
                 ]),
             panelPosition == null
                 ? Center(
-                    child: Text("Could not get panel position from EXIF data"))
+                    child: Text(
+                        "Could not get panel position from EXIF data. Please enable location services."))
                 : Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[

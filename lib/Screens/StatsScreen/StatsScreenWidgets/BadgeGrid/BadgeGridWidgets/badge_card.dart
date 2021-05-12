@@ -14,22 +14,15 @@ class BadgeCard extends StatelessWidget {
     double opacity = badge.unlocked ? 1 : 0.5;
     double length = MediaQuery.of(context).size.width * 0.27;
     return Container(
-      width: length,
-      height: length,
-      child: Card(
-          color: Theme.of(context).colorScheme.surface,
-          child: Padding(
-              padding: EdgeInsets.all(6),
-              child: InkWell(
-                  onTap: () {
-                    showDialog(
-                        context: context,
-                        builder: (_) => new BadgeInspectDialogue(badge: badge));
-                  },
-                  child: Opacity(
-                      opacity: opacity, child: Image.asset(imagePath)))),
-          shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.all(Radius.circular(20)))),
-    );
+        margin: EdgeInsets.zero,
+        width: length,
+        height: length,
+        child: InkWell(
+            onTap: () {
+              showDialog(
+                  context: context,
+                  builder: (_) => new BadgeInspectDialogue(badge: badge));
+            },
+            child: Opacity(opacity: opacity, child: Image.asset(imagePath))));
   }
 }

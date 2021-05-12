@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
+import 'package:solar_hunt/Services/internet_services.dart';
 
 class StaticMap extends StatelessWidget {
   final LatLng panelPosition;
@@ -16,28 +17,36 @@ class StaticMap extends StatelessWidget {
         ? 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/light_all/{z}/{x}/{y}.png'
         : 'https://cartodb-basemaps-{s}.global.ssl.fastly.net/dark_all/{z}/{x}/{y}.png';
 
-    Widget _uploadMarker = Theme.of(context).brightness == Brightness.light
-        ? Image.asset('assets/icons/panel-icon-queue-light.png')
-        : Image.asset('assets/icons/panel-icon-queue-dark.png');
+    Widget _uploadMarker = Image.asset('assets/icons/panel-icon-queue.png');
     List<Marker> markers = [
       Marker(
           point: panelPosition,
           builder: (ctx) => Container(child: _uploadMarker))
     ];
 
-    return FlutterMap(
-      options: MapOptions(
-        center: panelPosition,
-        zoom: 15,
-      ),
-      layers: [
-        TileLayerOptions(
-          urlTemplate: tileUrl,
-          subdomains: ['a', 'b', 'c'],
-          tileProvider: NonCachingNetworkTileProvider(),
-        ),
-        MarkerLayerOptions(markers: markers),
-      ],
-    );
+    return FutureBuilder(
+        future: checkConnection(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData && snapshot.data == true) {
+            return FlutterMap(
+              options: MapOptions(
+                center: panelPosition,
+                zoom: 15,
+              ),
+              layers: [
+                TileLayerOptions(
+                  urlTemplate: tileUrl,
+                  subdomains: ['a', 'b', 'c'],
+                  tileProvider: NonCachingNetworkTileProvider(),
+                ),
+                MarkerLayerOptions(markers: markers),
+              ],
+            );
+          } else if (snapshot.hasData && snapshot.data == false) {
+            return Center(child: NotConnectedContainer(showtext: false));
+          } else {
+            return Center(child: CircularProgressIndicator());
+          }
+        });
   }
 }

@@ -37,10 +37,6 @@ class _HomePageState extends State<HomePage> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
-        leading: Padding(
-          padding: const EdgeInsets.only(left: 15.0),
-          child: Image.asset('assets/branding/logo_white.png'),
-        ),
         actions: [
           loggedInWithMapilliary == null || loggedInWithMapilliary
               ? SizedBox()
@@ -117,7 +113,7 @@ class Destination {
 }
 
 const List<Destination> allDestinations = <Destination>[
-  Destination(0, 'Solar Hunt', '/', OpenStreetMapScreen(),
+  Destination(0, 'The Big Solar Hunt', '/', OpenStreetMapScreen(),
       Icons.place), ////Icons.public
   Destination(1, 'Stats', '/stats', StatsScreen(), Icons.equalizer),
   Destination(2, 'Info', '/info', InfoScreen(), Icons.info_outline),
