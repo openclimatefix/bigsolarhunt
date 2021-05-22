@@ -36,7 +36,6 @@ class _UploadScreenState extends State<UploadScreen> {
     // Take a picture with the camera
     final pickerImage = await _picker.getImage(source: ImageSource.camera);
     Uint8List bytes = await pickerImage.readAsBytes();
-    _exif = FlutterExif.fromBytes(bytes);
 
     LocationData locationData;
 
@@ -52,8 +51,12 @@ class _UploadScreenState extends State<UploadScreen> {
       return null;
     }
 
-    await _exif.setLatLong(locationData.latitude, locationData.longitude);
-    await _exif.saveAttributes();
+    if (Platform.isAndroid) {
+      // Android-specific code - add location to exif via user location
+      _exif = FlutterExif.fromBytes(bytes);
+      await _exif.setLatLong(locationData.latitude, locationData.longitude);
+      await _exif.saveAttributes();
+    }
 
     // Set all the above to state. _panelLocation can be null
     setState(() {

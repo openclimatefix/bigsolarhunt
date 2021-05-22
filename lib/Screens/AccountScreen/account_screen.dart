@@ -56,7 +56,7 @@ class CreateAccountCard extends StatelessWidget {
     String userkey = JwtDecoder.decode(_BEARER_TOKEN)['sub'];
 
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('username', null);
+    prefs.setString('username', "");
     prefs.setString('token', _BEARER_TOKEN);
     prefs.setBool('ownAccount', false);
     prefs.setString('userKey', userkey);

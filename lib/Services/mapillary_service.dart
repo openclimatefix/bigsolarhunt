@@ -41,7 +41,7 @@ class MapillaryService {
   }
 
   Future<UploadSession> _createUploadSession() async {
-    final String url = _BASE_URL + '?client_id=$_CLIENT_ID';
+    final Uri url = Uri.parse(_BASE_URL + '?client_id=$_CLIENT_ID');
     final Map<String, String> headers = {};
     final Map<String, String> body = {};
     final String token = await _getToken();
@@ -82,8 +82,8 @@ class MapillaryService {
   }
 
   _closeUploadSession(UploadSession session) async {
-    final String url =
-        _BASE_URL + '/${session.key}/closed?client_id=$_CLIENT_ID';
+    final Uri url =
+        Uri.parse(_BASE_URL + '/${session.key}/closed?client_id=$_CLIENT_ID');
     final Map<String, String> headers = {};
     final String token = await _getToken();
     headers['Authorization'] = token;

@@ -94,6 +94,7 @@ class _HomePageState extends State<HomePage> {
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
+        heroTag: "uploadbtn",
         backgroundColor: Theme.of(context).colorScheme.secondary,
         child: Icon(Icons.add_a_photo,
             color: Theme.of(context).colorScheme.onSecondary),
@@ -104,7 +105,7 @@ class _HomePageState extends State<HomePage> {
 }
 
 class Destination {
-  const Destination(this.index, this.title, this.route, this.screen, this.icon);
+  Destination(this.index, this.title, this.route, this.screen, this.icon);
   final int index;
   final String title;
   final String route;
@@ -112,7 +113,7 @@ class Destination {
   final Widget screen;
 }
 
-const List<Destination> allDestinations = <Destination>[
+List<Destination> allDestinations = <Destination>[
   Destination(0, 'The Big Solar Hunt', '/', OpenStreetMapScreen(),
       Icons.place), ////Icons.public
   Destination(1, 'Stats', '/stats', StatsScreen(), Icons.equalizer),

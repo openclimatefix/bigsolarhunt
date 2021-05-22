@@ -20,7 +20,8 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
   }
 
   closeFunction() {
-    Navigator.pushReplacementNamed(context, '/login');
+    Navigator.pushNamedAndRemoveUntil(
+        context, '/', (Route<dynamic> route) => false);
   }
 
   @override
@@ -45,6 +46,11 @@ class _OnboardingScreenState extends State<OnboardingScreen> {
     return Scaffold(
       body: Stack(
         children: <Widget>[
+          Container(
+            height: MediaQuery.of(context).size.height,
+            width: MediaQuery.of(context).size.width,
+            color: Theme.of(context).colorScheme.background,
+          ),
           PageView(controller: _pageController, children: onboardingPages),
           Container(
             padding: EdgeInsets.all(20),
