@@ -43,3 +43,18 @@ ThemeData darkTheme = ThemeData(
   textTheme: GoogleFonts.poppinsTextTheme()
       .apply(bodyColor: Colors.white, displayColor: Colors.white),
 );
+
+class SolarTheme with ChangeNotifier {
+  static bool isDark = false;
+
+  void switchTheme() {
+    isDark = !isDark;
+    notifyListeners();
+  }
+
+  ThemeMode themeMode() {
+    return isDark ? ThemeMode.dark : ThemeMode.light;
+  }
+}
+
+SolarTheme solarTheme = SolarTheme();
