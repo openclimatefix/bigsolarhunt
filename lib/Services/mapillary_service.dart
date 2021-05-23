@@ -20,8 +20,8 @@ class MapillaryService {
     final imageFile = File(newPanel.path);
     try {
       await _awsUpload(imageFile, session);
-      await _uploadQueuePanels(session);
       await _closeUploadSession(session);
+      await uploadQueuePanels();
     } catch (e) {
       print(e);
       return false;
@@ -29,15 +29,21 @@ class MapillaryService {
     return true;
   }
 
-  Future<void> _uploadQueuePanels(UploadSession session) async {
-    // I want to refactor this and the above so this just calls the above
-    // then the panelDatabase only needs to be accessed in the uploadButton class
+  Future<bool> uploadQueuePanels() async {
+    final UploadSession session = await _createUploadSession();
     final List<SolarPanel> uploadQueue = await panelDatabase.getUploadQueue();
-    uploadQueue.forEach((uploadQueuePanel) async {
-      final File image = File(uploadQueuePanel.path);
-      await _awsUpload(image, session);
-      panelDatabase.markAsUploaded(uploadQueuePanel);
-    });
+    try {
+      uploadQueue.forEach((uploadQueuePanel) async {
+        final File image = File(uploadQueuePanel.path);
+        await _awsUpload(image, session);
+        panelDatabase.markAsUploaded(uploadQueuePanel);
+      });
+      await _closeUploadSession(session);
+    } catch (e) {
+      print(e);
+      return false;
+    }
+    return true;
   }
 
   Future<UploadSession> _createUploadSession() async {

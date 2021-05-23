@@ -1,11 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:solar_hunt/Services/internet_services.dart';
+import 'package:solar_hunt/Themes/themes.dart';
 
 import 'Animation/page_route_animations.dart';
 import 'Screens/InfoScreen/info_screen.dart';
 import 'Screens/MapScreen/osm_map.dart';
 import 'Screens/StatsScreen/stats_screen.dart';
+import 'Services/mapillary_service.dart';
+import 'Services/dialogue_services.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -13,14 +17,25 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+  MapillaryService mapillaryService = new MapillaryService();
   final _navigatorKey = GlobalKey<NavigatorState>();
   int _currentIndex = 0;
   bool loggedInWithMapilliary;
+  bool connected;
 
   @override
   void initState() {
+    _checkConnectivity();
     checkMapilliaryLoginState();
     super.initState();
+  }
+
+  Future _checkConnectivity() async {
+    bool result = await checkConnection();
+    result = result == null ? false : result;
+    setState(() {
+      connected = result;
+    });
   }
 
   checkMapilliaryLoginState() async {
@@ -31,6 +46,33 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  void handleOptionsClick(String value) async {
+    switch (value) {
+      case 'Toggle theme':
+        solarTheme.switchTheme();
+        break;
+      case 'Upload queue items':
+        bool uploaded = await mapillaryService.uploadQueuePanels();
+        if (uploaded) {
+          showDialog(
+              context: context,
+              builder: (_) => new GenericDialogue(
+                  title: "Upload Successful",
+                  desc: "Queue panels uploaded!",
+                  icon: DialogueIcons.SUCCESS));
+        } else {
+          showDialog(
+              context: context,
+              builder: (_) => new GenericDialogue(
+                  title: "Upload Failed",
+                  desc:
+                      "We couldn't upload your queued panels! Try again later.",
+                  icon: DialogueIcons.ERROR));
+        }
+        break;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     Destination _currentDestination = allDestinations[_currentIndex];
@@ -38,14 +80,19 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
         actions: [
-          loggedInWithMapilliary == null || loggedInWithMapilliary
-              ? SizedBox()
-              : IconButton(
-                  icon: const Icon(Icons.account_circle),
-                  tooltip: 'Account',
-                  onPressed: () =>
-                      Navigator.pushReplacementNamed(context, '/login'),
-                ),
+          PopupMenuButton<String>(
+              icon: Icon(Icons.more_vert),
+              onSelected: handleOptionsClick,
+              itemBuilder: (BuildContext context) {
+                return {'Toggle theme', 'Upload queue items'}
+                    .map((String choice) {
+                  return PopupMenuItem<String>(
+                    enabled: choice == "Toggle theme" ? true : connected,
+                    value: choice,
+                    child: Text(choice),
+                  );
+                }).toList();
+              })
         ],
         title: Text(allDestinations[_currentIndex].title,
             style: Theme.of(context)
