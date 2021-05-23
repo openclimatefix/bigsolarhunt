@@ -2,9 +2,9 @@ default:
   image: cirrusci/flutter:2.0.3
 
 variables:
-  BUILD_NAME: '1.1.${CI_PIPELINE_IID}'
-  BUILD_NUMBER: '${CI_PIPELINE_IID}'
-  RELEASE_TAG: 'v${BUILD_NAME}+${BUILD_NUMBER}'
+  BUILD_NAME: 1.1.${CI_PIPELINE_IID}
+  BUILD_NUMBER: ${CI_PIPELINE_IID}
+  RELEASE_TAG: v${BUILD_NAME}+${BUILD_NUMBER}
 
 
 stages: 
@@ -16,8 +16,10 @@ stages:
 build-debug-android:
   environment: android
   stage: build-debug
-  except:
-    - master
+  rules:
+    - if: $CI_COMMIT_TAG
+      when: never
+    - if: $CI_COMMIT_BRANCH != $CI_DEFAULT_BRANCH
   script:
     - flutter clean
     - flutter pub get
@@ -62,9 +64,9 @@ create-release:
       when: never
     - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
   script:
-    - echo 'running release_job for $TAG'
+    - echo 'running release_job for ${RELEASE_TAG}'
   release:
-    name: 'Release ${RELEASE_TAG}'
-    description: '${CI_COMMIT_MESSAGE}'
+    name: Release ${RELEASE_TAG}
+    description: ${CI_COMMIT_MESSAGE}
     tag_name: ${RELEASE_TAG}
-    ref: '$CI_COMMIT_SHA'
+    ref: ${CI_COMMIT_SHA}
