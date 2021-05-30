@@ -23,7 +23,6 @@ class PanelCountDisplay extends StatelessWidget {
     return Container(
         height: MediaQuery.of(context).size.width * 0.26,
         width: MediaQuery.of(context).size.width * 0.26,
-        padding: EdgeInsets.all(10),
         decoration: BoxDecoration(
             border: Border.all(
                 color: Theme.of(context).colorScheme.primary, width: 5),
@@ -60,30 +59,27 @@ class _PanelCountDisplayTextState extends State<PanelCountDisplayText> {
   Widget build(BuildContext context) {
     if (_userPanels <= 99) {
       return Text(_userPanels.toString(),
-          style: Theme.of(context)
-              .textTheme
-              .headline2
-              .copyWith(color: Theme.of(context).colorScheme.primary));
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.headline2.copyWith(
+              color: Theme.of(context).colorScheme.primary, fontSize: 60));
     } else if (_userPanels <= 999) {
       return Text(_userPanels.toString(),
-          style: Theme.of(context)
-              .textTheme
-              .headline4
-              .copyWith(color: Theme.of(context).colorScheme.primary));
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.headline2.copyWith(
+              color: Theme.of(context).colorScheme.primary, fontSize: 44));
     } else if (_userPanels <= 9999) {
       return Text(_userPanels.toString(),
-          style: Theme.of(context)
-              .textTheme
-              .headline5
-              .copyWith(color: Theme.of(context).colorScheme.primary));
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.headline2.copyWith(
+              color: Theme.of(context).colorScheme.primary, fontSize: 34));
     } else if (_userPanels <= 100000) {
       return Text(_userPanels.toString(),
-          style: Theme.of(context)
-              .textTheme
-              .headline6
-              .copyWith(color: Theme.of(context).colorScheme.primary));
+          textAlign: TextAlign.center,
+          style: Theme.of(context).textTheme.headline2.copyWith(
+              color: Theme.of(context).colorScheme.primary, fontSize: 24));
     } else {
       return Text((100000 - 1).toString(),
+          textAlign: TextAlign.center,
           style: Theme.of(context)
               .textTheme
               .headline5
