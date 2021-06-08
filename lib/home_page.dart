@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:solar_hunt/Services/internet_services.dart';
 import 'package:solar_hunt/Themes/themes.dart';
 
@@ -20,13 +19,11 @@ class _HomePageState extends State<HomePage> {
   MapillaryService mapillaryService = new MapillaryService();
   final _navigatorKey = GlobalKey<NavigatorState>();
   int _currentIndex = 0;
-  bool loggedInWithMapilliary;
   bool connected;
 
   @override
   void initState() {
     _checkConnectivity();
-    checkMapilliaryLoginState();
     super.initState();
   }
 
@@ -38,27 +35,22 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
-  checkMapilliaryLoginState() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    bool sfBool = prefs.getBool('ownAccount');
-    setState(() {
-      loggedInWithMapilliary = sfBool;
-    });
-  }
-
   void handleOptionsClick(String value) async {
     switch (value) {
       case 'Toggle theme':
         solarTheme.switchTheme();
         break;
-      case 'Upload queue items':
+      case 'Sign in':
+        Navigator.of(context).pushNamed('/login');
+        break;
+      case 'Upload queued images':
         bool uploaded = await mapillaryService.uploadQueuePanels();
         if (uploaded) {
           showDialog(
               context: context,
               builder: (_) => new GenericDialogue(
                   title: "Upload Successful",
-                  desc: "Queue panels uploaded!",
+                  desc: "Queued panels uploaded!",
                   icon: DialogueIcons.SUCCESS));
         } else {
           showDialog(
@@ -84,7 +76,7 @@ class _HomePageState extends State<HomePage> {
               icon: Icon(Icons.more_vert),
               onSelected: handleOptionsClick,
               itemBuilder: (BuildContext context) {
-                return {'Toggle theme', 'Upload queue items'}
+                return {'Toggle theme', 'Upload queued images', 'Sign in'}
                     .map((String choice) {
                   return PopupMenuItem<String>(
                     enabled: choice == "Toggle theme" ? true : connected,

@@ -4,10 +4,15 @@ import 'package:shared_preferences/shared_preferences.dart';
 import 'package:solar_hunt/DataStructs/mapillary_user.dart';
 import 'package:solar_hunt/DataStructs/solar_panel.dart';
 import 'package:solar_hunt/Services/database_services.dart';
+import 'package:solar_hunt/Services/telegram_service.dart';
+
 import 'dart:convert';
 
 class MapillaryService {
+  String token;
+  String userEmail;
   DatabaseProvider panelDatabase = DatabaseProvider.databaseProvider;
+  final TelegramBot telegramBot = TelegramBot();
 
   static const _BASE_URL = 'https://a.mapillary.com/v3/me/uploads';
   static const _CLIENT_ID =
@@ -81,6 +86,9 @@ class MapillaryService {
     });
     final response = await request.send();
     if (response.statusCode == 204) {
+      Future<String> email = _getEmail();
+      String imageKey = response.headers['location'].split('%2F')[4];
+      telegramBot.userUpload(await email, imageKey);
       return image;
     } else {
       throw Exception('Error uploading to AWS');
@@ -103,6 +111,12 @@ class MapillaryService {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String token = prefs.getString('token');
     return 'Bearer ' + token;
+  }
+
+  Future<String> _getEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String email = prefs.getString('email');
+    return email;
   }
 
   Future<MapillaryUser> getUserFromKey(String userkey) async {

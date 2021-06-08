@@ -1,5 +1,6 @@
-## Sign in with Mapillary?
+## Share your progress with Possible?
 
-#### Mappilary is the service that processes and uploads submitted images to OpenStreetMap. Linking an account enables you to view your submissions on Mapillary\'s website.
+#### By submitting your email, Possible can enter you into exciting prize draws when you upload photos!
+(If you skip now you can always change your mind later!)
 
 ![line break](resource:assets/images/line_break.png)
