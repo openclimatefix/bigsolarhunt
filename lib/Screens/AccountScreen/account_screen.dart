@@ -11,31 +11,17 @@ class LoginScreen extends StatelessWidget {
       onWillPop: () => Navigator.of(context)
           .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false),
       child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              colors: [
-                Colors.white,
-                Colors.white,
-                Theme.of(context).colorScheme.background,
-                Theme.of(context).colorScheme.background,
-              ],
-              stops: [0.0, 0.4, 0.4, 1.0],
-              end: Alignment.bottomCenter,
-              begin: Alignment.topCenter,
-            ),
-          ),
-          child: Container(
-              padding: EdgeInsets.all(20),
-              height: MediaQuery.of(context).size.height * 0.7,
-              child: Column(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                  children: [
-                    Padding(
-                        padding: EdgeInsets.all(20),
-                        child:
-                            Image.asset('assets/branding/possible-logo.jpg')),
-                    CreateAccountCard(),
-                  ]))),
+          padding: EdgeInsets.all(20),
+          color: Theme.of(context).colorScheme.background,
+          height: MediaQuery.of(context).size.height * 0.7,
+          child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                Padding(
+                    padding: EdgeInsets.all(20),
+                    child: Image.asset('assets/branding/possible-logo.jpg')),
+                CreateAccountCard(),
+              ])),
     );
   }
 }
