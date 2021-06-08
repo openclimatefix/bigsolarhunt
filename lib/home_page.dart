@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:solar_hunt/Services/internet_services.dart';
 import 'package:solar_hunt/Themes/themes.dart';
 
@@ -20,10 +21,12 @@ class _HomePageState extends State<HomePage> {
   final _navigatorKey = GlobalKey<NavigatorState>();
   int _currentIndex = 0;
   bool connected;
+  bool signedIn;
 
   @override
   void initState() {
     _checkConnectivity();
+    _checkSignedIn();
     super.initState();
   }
 
@@ -32,6 +35,15 @@ class _HomePageState extends State<HomePage> {
     result = result == null ? false : result;
     setState(() {
       connected = result;
+    });
+  }
+
+  Future _checkSignedIn() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String email = prefs.getString('email');
+    bool result = email == null ? false : true;
+    setState(() {
+      signedIn = result;
     });
   }
 
@@ -79,7 +91,11 @@ class _HomePageState extends State<HomePage> {
                 return {'Toggle theme', 'Upload queued images', 'Sign in'}
                     .map((String choice) {
                   return PopupMenuItem<String>(
-                    enabled: choice == "Toggle theme" ? true : connected,
+                    enabled: choice == "Upload queued images"
+                        ? connected
+                        : choice == "Sign in"
+                            ? (!signedIn && connected)
+                            : true,
                     value: choice,
                     child: Text(choice),
                   );
