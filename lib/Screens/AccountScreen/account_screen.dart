@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';
 import 'package:solar_hunt/Services/markdown_services.dart';
 import 'package:solar_hunt/Services/telegram_service.dart';
@@ -93,10 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   ]),
               SizedBox(height: 30),
               SelectableText("Privacy policy", onTap: () {
-                Clipboard.setData(ClipboardData(
-                    text: "https://www.wearepossible.org/legalcookies"));
-                ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text("Link copied to clipboard.")));
+                launch("https://www.wearepossible.org/legalcookies");
               })
             ])));
   }

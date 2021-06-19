@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart' as fmd;
 import 'package:markdown/markdown.dart' as md;
+import 'package:url_launcher/url_launcher.dart';
 
 class ScrollableTextFromMdFile extends StatelessWidget {
   final String mdfile;
@@ -16,6 +17,8 @@ class ScrollableTextFromMdFile extends StatelessWidget {
           if (snapshot.hasData) {
             return fmd.Markdown(
               data: snapshot.data,
+              selectable: true,
+              onTapLink: (text, href, title) => launch(href),
               extensionSet: md.ExtensionSet(
                 md.ExtensionSet.gitHubFlavored.blockSyntaxes,
                 [
