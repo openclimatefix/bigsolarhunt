@@ -10,6 +10,7 @@ Future<bool> checkConnection() async {
   } on SocketException catch (_) {
     return false;
   }
+  return true;
 }
 
 class NotConnectedContainer extends StatelessWidget {

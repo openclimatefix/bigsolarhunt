@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
 
 import 'package:solar_hunt/Screens/OnboardingScreen/onboarding_screen.dart';
 import 'package:solar_hunt/home_page.dart';
@@ -47,6 +46,6 @@ class _MyAppState extends State<MyApp> {
           '/onboarding': (context) => OnboardingScreen(),
           '/login': (context) => LoginScreen()
         },
-        debugShowCheckedModeBanner: true);
+        debugShowCheckedModeBanner: false);
   }
 }
