@@ -1,34 +1,24 @@
-# About Solar Hunt
+# Big Solar Hunt Q&A
 
 ![line break](resource:assets/images/line_break.png)
 
-## :dart: What is the goal of this?
+## :sunny: Why are we hunting for solar panels?
 
 ![line break](resource:assets/images/line_break.png)
 
-The UK has about 1 million rooftop solar installations. As well as feeding power directly into homes, 
-these panels supply power back into the national grid when buildings can't use all the power they're producing.
-This is a good thing, because it means we can share clean energy around and reduce carbon emissions, 
-to help tackle climate change.
+From almost zero a decade ago, the UK now has over 1 million solar installations. These panels power homes and feed clean energy into the National Grid, reducing the UK's carbon emissions.
 
-The thing is: no single person knows exactly where all these solar panels are. 
-This means that it's difficult for the National Grid to predict when and where there will be surges or drops in solar power output.
-In order to keep the power system stable, power stations currently have to be kept running in the background - burning fossil fuels.
-If, instead, we had a record of where exactly these panels were, 
-we could use short term weather forecasts to anticipate solar power output much better, and turn down those power stations.
+Thing is, no one knows exactly where all these solar panels are (and thus, how much solar power is coming into the Grid). Right now, power stations have to keep running in the background as back-up - burning fossil fuels. But, if we knew exactly where these panels all were, the National Grid could predict how much solar power is generated in the UK, and turn down these dirty power stations.
 
 ![line break](resource:assets/images/line_break.png)
 
-**Put simply - if we know where the nation's rooftop solar panels are, we can make better use of them - 
-saving around 100,000 tonnes of carbon each year.**
+## :computer: Tell me more... how does this work?
 
 ![line break](resource:assets/images/line_break.png)
 
-### This is where you come in!
+The Open Climate Fix team is teaching a computer how to recognise solar installations from photographs. But in order to teach the computer, you need lots of examples for it to learn from.
 
-[Open Climate Fix](https://openclimatefix.org/) and [Possible](https://www.wearepossible.org/) have teamed up to create the Solar Hunt app,
-so that with the help of individuals and communities across the country, we can produce the most detailed dataset of solar panels in the UK.
-The dataset we create will be "open" - completely free for the public to use.
+Here's the good news: the OpenStreetMap community has already mapped 25% of UK panels! But to create a really powerful computer solar panel hunter, we need to double that. Once we've hit that target, the machines can take over and locate the remaining hard-to-find 50% without anyone lifting a finger.
 
 ![line break](resource:assets/images/line_break.png)
 
@@ -36,8 +26,8 @@ The dataset we create will be "open" - completely free for the public to use.
 
 ![line break](resource:assets/images/line_break.png)
 
-Every time you see a solar panel when you are out and about, take a picture of it, check it's position is correct, and hit upload. It's that simple!
-This is what to look out for:
+Every time you see a solar panel when you are out and about, take a picture of it (using the orange camera icon at the bottom centre of your screen), and hit upload. It's that simple!
+This is the sort of photo we want:
 
 ![example solar panel image](resource:assets/images/example_solar.jpg)
 
@@ -46,28 +36,23 @@ Things to consider:
 - Taking pictures of solar panels on somebody's house from the road or pavement is perfectly legal,
 but please be considerate of people's privacy when doing this.
 - If you do catch someone in your photo, don't worry. All uploaded pictures will automatically blur out faces if they are in the picture.
+- If the panels are a little far away from the camera, you can use the zoom function.
 
 ![line break](resource:assets/images/line_break.png)
 
-## :earth_africa: I want the bigger picture!
-
-
-![line break](resource:assets/images/line_break.png)
-
-This is part of a wider project to takle the UK's hefty carbon footprint. 
-Open Climate Fix are dedicated to using computer science and machine learning to help tackle climate change.
-Because finding all these panels means looking for a million rooftops, they plan to teach a computer to recognise solar installations from aeriel photographs.
-But in order to teach a computer, you need to provide it with plenty of examples to learn from.
-
-That means manually locating and imaging solar panels on rooftops in the world around us - sol the computer can learn what they look like.
-By collaberating with the [OpenStreetMap](https://www.openstreetmap.org/#map=6/54.910/-3.432) community, already 10% of UK panels have been mapped!
-But to create a really powerful computer solar power hunter, we need to try to double that figure. 
-At that point, the machines can take over finding the remaining 80% without anyone lifting a finger.
+## :earth_africa: Is this UK-only?
 
 ![line break](resource:assets/images/line_break.png)
 
-**And it doesn't stop there! Once we've got this working it can be used to map panels all around the world - 
-providing data to help clean energy push out dirty fossil fuels.**
+Yes, for now. But once we've got this working it can be used to map panels all around the world - providing data to help clean energy push out dirty fossil fuels across the globe.
+
+![line break](resource:assets/images/line_break.png)
+
+## :evergreen_tree: How much CO2 does this save?
+
+![line break](resource:assets/images/line_break.png)
+
+This project could save 100,000 tonnes of carbon every year in the UK alone. That's the same amount of carbon 1,653,521 trees would absorb over 10 years! If numbers aren't your thing, you'll have to trust us - that's a lot!
 
 ![line break](resource:assets/images/line_break.png)
 
@@ -83,3 +68,33 @@ If you would like to access the data you simply need to go to OpenStreetMap and 
 Mapillary stores the pictures, and uses them for automatically detecting map features.
 Your pictures will be publically available on the Mapillary platform. However, the photos won't be on OpenStreetMap -
 that's just the map data, so that will just have the solar panel's locations and some other details.
+
+![line break](resource:assets/images/line_break.png)
+
+## :eyes: Who is behind this app?
+
+![line break](resource:assets/images/line_break.png)
+
+The project is a collaberation between [Possible](https://www.wearepossible.org) and [Open Climate Fix](https://openclimatefix.org). Possible is a charity that brings people together to tackle the climate crisis. Open Climate Fix is a non-profit product lab, totally focussed on reducing greenhouse gas emissions as rapidly as possible.
+
+![line break](resource:assets/images/line_break.png)
+
+## :green_apple: Will you be launching an iPhone version of the app?
+
+![line break](resource:assets/images/line_break.png)
+
+We hope to in the near future, we're currently working on it. If you'd like to be notified when we do, please enter your email address [here](https://docs.google.com/forms/d/e/1FAIpQLSerGIxcwwTQR1Eqks_pL5hILa6kJRUlRtRbHxjUcgLu5U6F-Q/viewform).
+
+![line break](resource:assets/images/line_break.png)
+
+## :memo: I have questions or feedback about the Big Solar Hunt, how do I contact you?
+
+![line break](resource:assets/images/line_break.png)
+
+Please email Emma, the Campaign Manager at Possible, on [emma@wearepossible.org](mailto:emma@wearepossible.org).
+
+![line break](resource:assets/images/line_break.png)
+
+![line break](resource:assets/images/line_break.png)
+
+![line break](resource:assets/images/line_break.png)
