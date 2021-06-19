@@ -66,12 +66,12 @@ List<Badge> miscBadges = [
       dateUnlocked: null,
       description: 'Submit 2 panels over 200 miles apart'),
   Badge(
-      id: "Anti Explorer",
-      imagePath: 'assets/badges/anti-explorer.png',
+      id: "Five In A Day",
+      imagePath: 'assets/badges/5-in-a-day-badge.png',
       panelCount: null,
       unlocked: false,
       dateUnlocked: null,
-      description: 'Submit 2 panels in close proximity')
+      description: 'Submit 5 panels in one day')
 ];
 
 List<Badge> initialBadges = panelCountBadges + miscBadges;

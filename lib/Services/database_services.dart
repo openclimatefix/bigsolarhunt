@@ -185,29 +185,24 @@ class DatabaseProvider {
       }
     }
 
-    checkAntiExplorerBadge() {
-      // Get smallest distance between current panel and all other panels
-      double distance = currentPanels
-          .map((panel) {
-            try {
-              return getDistanceFromLatLonInKm(lastUploadedPanel.lat,
-                  lastUploadedPanel.lon, panel.lat, panel.lon);
-            } on Exception {
-              return -1.0;
-            }
-          })
-          .toList()
-          .reduce(min);
-
-      // Check if unlocked
-      Badge explorerBadge = userBadges.singleWhere(
-          (badge) => (badge.unlocked == false &&
-              badge.id == "Anti Explorer" &&
-              distance <= 0.1 &&
-              distance > 0.0),
+    checkFiveInADayBadge() {
+      // Get badge if not unlocked
+      Badge fiveInADayBadge = userBadges.singleWhere(
+          (badge) => (badge.unlocked == false && badge.id == "Five In A Day"),
           orElse: () => null);
-      if (explorerBadge != null) {
-        unlockBadgeOfId(explorerBadge.id, newBadges);
+      if (fiveInADayBadge == null) {
+        return;
+      }
+      // Check if five badges have been submitted in the same day
+      DateTime now = DateTime.now();
+      if (currentPanels
+              .where((panel) => (panel.date.day == now.day &&
+                  panel.date.month == now.month &&
+                  panel.date.year == now.year))
+              .toList()
+              .length ==
+          5) {
+        unlockBadgeOfId(fiveInADayBadge.id, newBadges);
       }
     }
 
@@ -219,7 +214,7 @@ class DatabaseProvider {
       if (explorerBadge == null) {
         return;
       }
-      // Check if five conecutive days have had submitted panels
+      // Check if five consecutive days have had submitted panels
       DateTime now = DateTime.now();
       if ([1, 2, 3, 4, 5]
               .map((i) => currentPanels.firstWhere(
@@ -241,7 +236,7 @@ class DatabaseProvider {
     if (currentPanels.isNotEmpty) {
       checkPanelCountBadges();
       checkExplorerBadge();
-      checkAntiExplorerBadge();
+      checkFiveInADayBadge();
       checkStreakBadge();
     }
 
