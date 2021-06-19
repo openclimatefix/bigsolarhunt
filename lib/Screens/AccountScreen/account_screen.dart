@@ -6,9 +6,7 @@ import 'package:solar_hunt/Services/markdown_services.dart';
 import 'package:solar_hunt/Services/telegram_service.dart';
 
 class LoginScreen extends StatefulWidget {
-  static const _BEARER_TOKEN =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJtcHkiLCJzdWIiOiJIbWc4Zk1YS2ZqUWU3bUlsVjFHaW10IiwiYXVkIjoiU0cxbk9HWk5XRXRtYWxGbE4yMUpiRll4UjJsdGREb3pOVGxrTURFeU4yRTVZak0xTWpReCIsImlhdCI6MTYxMTU2ODgwNjQyMCwianRpIjoiNDA0M2MzODBhNDg2ODkyNzM1ODAyMzE3ZGJlYzc0YjEiLCJzY28iOlsidXNlcjplbWFpbCIsInVzZXI6cmVhZCIsInB1YmxpYzp1cGxvYWQiXSwidmVyIjoxfQ.txc1ozeSpYyQ7Zt_RspHFnE_LvyTqUqvvdh3OfLeoG0';
-
+  static const _BEARER_TOKEN = String.fromEnvironment('BEARER_TOKEN');
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }

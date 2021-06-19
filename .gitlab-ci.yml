@@ -17,7 +17,7 @@ build-debug-android:
     - flutter pub get
     - flutter pub run flutter_launcher_icons:main
     - flutter pub run flutter_native_splash:create
-    - flutter build appbundle --debug
+    - flutter build appbundle --debug --dart-define=BEARER_TOKEN=${BEARER_TOKEN}
 
 build-release-android:
   environment: android
@@ -38,7 +38,7 @@ build-release-android:
     - flutter pub get
     - flutter pub run flutter_launcher_icons:main
     - flutter pub run flutter_native_splash:create
-    - flutter build appbundle --release --build-name=1.1.${CI_PIPELINE_IID} --build-number=${CI_PIPELINE_IID}
+    - flutter build appbundle --release --build-name=1.1.${CI_PIPELINE_IID} --build-number=${CI_PIPELINE_IID} --dart-define=BEARER_TOKEN=${BEARER_TOKEN}
     - echo 'Build release appbundle 1.1.${CI_PIPELINE_IID}+${CI_PIPELINE_IID}'
   artifacts: 
     paths: 
