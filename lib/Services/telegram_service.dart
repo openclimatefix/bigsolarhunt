@@ -1,17 +1,18 @@
 import 'package:teledart/teledart.dart';
 import 'package:teledart/telegram.dart';
 
-class TelegramBot {
-  static const _BOT_TOKEN = '1819046324:AAGX3fUFtSWlkkCFcXRTPfSqpD1J-1ZQYt4';
-  static const _CHAT_ID = '1373362016';
-  var teledart = TeleDart(Telegram(_BOT_TOKEN), Event());
+import 'package:bigsolarhunt/Config/config.dart';
 
-  newUser(String email) {
-    teledart.telegram.sendMessage(_CHAT_ID, email);
+class TelegramBot {
+  var teledart = TeleDart(Telegram(Env.TELEGRAM_BOT_TOKEN), Event());
+
+  newUser({String userID, String email}) {
+    var message = "userID: $userID\nemail: $email";
+    teledart.telegram.sendMessage(Env.TELEGRAM_CHAT_ID, message);
   }
 
-  userUpload(String email, String imageKey) {
-    var uploadMessage = '$email image_key: $imageKey';
-    teledart.telegram.sendMessage(_CHAT_ID, uploadMessage);
+  userUpload({String userID, String email, String imageKey}) {
+    var message = "userID: $userID\nemail: $email\nimageKey: $imageKey";
+    teledart.telegram.sendMessage(Env.TELEGRAM_CHAT_ID, message);
   }
 }

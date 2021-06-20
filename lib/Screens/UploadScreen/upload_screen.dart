@@ -12,7 +12,7 @@ import 'package:location/location.dart';
 
 import 'UploadScreenWidgets/fine_tune_map.dart';
 import 'UploadScreenWidgets/upload_screen_body.dart';
-import 'package:solar_hunt/Services/dialogue_services.dart';
+import 'package:bigsolarhunt/Services/dialogue_services.dart';
 
 class UploadScreen extends StatefulWidget {
   const UploadScreen({

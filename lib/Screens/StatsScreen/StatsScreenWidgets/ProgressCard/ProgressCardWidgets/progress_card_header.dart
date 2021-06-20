@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:solar_hunt/Services/database_services.dart';
-import 'package:solar_hunt/Services/markdown_services.dart';
+import 'package:bigsolarhunt/Services/database_services.dart';
+import 'package:bigsolarhunt/Services/markdown_services.dart';
 
 class ProgressCardHeader extends StatelessWidget {
   const ProgressCardHeader({Key key}) : super(key: key);

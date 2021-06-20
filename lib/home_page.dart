@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:solar_hunt/Services/internet_services.dart';
-import 'package:solar_hunt/Themes/themes.dart';
+import 'package:bigsolarhunt/Services/internet_services.dart';
+import 'package:bigsolarhunt/Themes/themes.dart';
 
 import 'Animation/page_route_animations.dart';
 import 'Screens/InfoScreen/info_screen.dart';
@@ -169,7 +169,7 @@ class Destination {
 }
 
 List<Destination> allDestinations = <Destination>[
-  Destination(0, 'The Big Solar Hunt', '/', OpenStreetMapScreen(),
+  Destination(0, 'Big Solar Hunt', '/', OpenStreetMapScreen(),
       Icons.place), ////Icons.public
   Destination(1, 'Stats', '/stats', StatsScreen(), Icons.equalizer),
   Destination(2, 'Info', '/info', InfoScreen(), Icons.info_outline),
