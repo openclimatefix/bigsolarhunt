@@ -17,7 +17,7 @@ build-debug-android:
     - flutter pub get
     - flutter pub run flutter_launcher_icons:main
     - flutter pub run flutter_native_splash:create
-    - flutter build appbundle --debug --dart-define=BEARER_TOKEN=${BEARER_TOKEN}
+    - flutter build appbundle --debug --dart-define=MAPILLARY_BEARER_TOKEN=${MAPILLARY_BEARER_TOKEN},MAPILLARY_CLIENT_ID=${MAPILLARY_CLIENT_ID},TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN},TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
 
 build-release-android:
   environment: android
@@ -38,7 +38,7 @@ build-release-android:
     - flutter pub get
     - flutter pub run flutter_launcher_icons:main
     - flutter pub run flutter_native_splash:create
-    - flutter build appbundle --release --build-name=1.1.${CI_PIPELINE_IID} --build-number=${CI_PIPELINE_IID} --dart-define=BEARER_TOKEN=${BEARER_TOKEN}
+    - flutter build appbundle --release --build-name=1.1.${CI_PIPELINE_IID} --build-number=${CI_PIPELINE_IID} --dart-define=MAPILLARY_BEARER_TOKEN=${MAPILLARY_BEARER_TOKEN},MAPILLARY_CLIENT_ID=${MAPILLARY_CLIENT_ID},TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN},TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
     - echo 'Build release appbundle 1.1.${CI_PIPELINE_IID}+${CI_PIPELINE_IID}'
   artifacts: 
     paths: 

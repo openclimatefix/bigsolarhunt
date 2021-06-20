@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:jwt_decoder/jwt_decoder.dart';
-import 'package:solar_hunt/Services/markdown_services.dart';
-import 'package:solar_hunt/Services/telegram_service.dart';
+import 'package:uuid/uuid.dart';
+
+import 'package:bigsolarhunt/Services/markdown_services.dart';
+import 'package:bigsolarhunt/Services/telegram_service.dart';
 
 class LoginScreen extends StatefulWidget {
-  static const _BEARER_TOKEN = String.fromEnvironment('BEARER_TOKEN');
   @override
   _LoginScreenState createState() => _LoginScreenState();
 }
@@ -17,25 +17,28 @@ class _LoginScreenState extends State<LoginScreen> {
   final textController = TextEditingController();
 
   _continueWithoutAccount(BuildContext context) async {
-    String userkey = JwtDecoder.decode(LoginScreen._BEARER_TOKEN)['sub'];
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    prefs.setString('token', LoginScreen._BEARER_TOKEN);
-    prefs.setString('userKey', userkey);
-    prefs.setString('email', null);
-
+    // Don't overwrite userID if it already exists
+    if (prefs.getString('userID') == null) {
+      var uuid = Uuid();
+      prefs.setString('userID', uuid.v4());
+    }
     Navigator.of(context)
         .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
   }
 
   _createAccount(BuildContext context) async {
-    String userkey = JwtDecoder.decode(LoginScreen._BEARER_TOKEN)['sub'];
     SharedPreferences prefs = await SharedPreferences.getInstance();
+    // Don't overwrite userID if it already exists
+    if (prefs.getString('userID') == null) {
+      var uuid = Uuid();
+      prefs.setString('userID', uuid.v4());
+    }
     String email = textController.text;
-    prefs.setString('token', LoginScreen._BEARER_TOKEN);
-    prefs.setString('userKey', userkey);
     prefs.setString('email', email);
-    telegramBot.newUser(email);
-    Navigator.of(context).pushNamed('/');
+    telegramBot.newUser(userID: prefs.getString('userID'), email: email);
+    Navigator.of(context)
+        .pushNamedAndRemoveUntil('/', (Route<dynamic> route) => false);
   }
 
   @override

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:solar_hunt/DataStructs/badge.dart';
-import 'package:solar_hunt/Services/dialogue_services.dart';
+import 'package:bigsolarhunt/DataStructs/badge.dart';
+import 'package:bigsolarhunt/Services/dialogue_services.dart';
 
 class BadgeCard extends StatelessWidget {
   final Badge badge;

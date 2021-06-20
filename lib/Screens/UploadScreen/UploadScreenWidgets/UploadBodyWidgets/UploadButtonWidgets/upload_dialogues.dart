@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:solar_hunt/Services/dialogue_services.dart';
+import 'package:bigsolarhunt/Services/dialogue_services.dart';
 
 class UploadCompleteDialogue extends StatelessWidget {
   const UploadCompleteDialogue({Key key}) : super(key: key);

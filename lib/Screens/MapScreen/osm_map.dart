@@ -3,9 +3,9 @@ import 'dart:ui';
 import 'dart:async';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
-import 'package:solar_hunt/Services/internet_services.dart';
-import 'package:solar_hunt/DataStructs/solar_panel.dart';
-import 'package:solar_hunt/Services/database_services.dart';
+import 'package:bigsolarhunt/Services/internet_services.dart';
+import 'package:bigsolarhunt/DataStructs/solar_panel.dart';
+import 'package:bigsolarhunt/Services/database_services.dart';
 import 'package:flutter_map_location_marker/flutter_map_location_marker.dart';
 
 class OpenStreetMapScreen extends StatefulWidget {

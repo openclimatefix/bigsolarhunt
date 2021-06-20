@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'BadgeGridWidgets/badge_card.dart';
-import 'package:solar_hunt/DataStructs/badge.dart';
-import 'package:solar_hunt/Services/database_services.dart';
+import 'package:bigsolarhunt/DataStructs/badge.dart';
+import 'package:bigsolarhunt/Services/database_services.dart';
 
 class BadgeGrid extends StatefulWidget {
   const BadgeGrid({

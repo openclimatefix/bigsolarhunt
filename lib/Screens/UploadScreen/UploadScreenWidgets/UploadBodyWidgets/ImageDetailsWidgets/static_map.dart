@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:latlong/latlong.dart';
-import 'package:solar_hunt/Services/internet_services.dart';
+import 'package:bigsolarhunt/Services/internet_services.dart';
 
 class StaticMap extends StatelessWidget {
   final LatLng panelPosition;

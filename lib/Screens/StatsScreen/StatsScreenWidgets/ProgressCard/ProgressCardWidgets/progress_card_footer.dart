@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:solar_hunt/Services/database_services.dart';
-import 'package:solar_hunt/DataStructs/badge.dart';
+import 'package:bigsolarhunt/Services/database_services.dart';
+import 'package:bigsolarhunt/DataStructs/badge.dart';
 
 class ProgressCardFooter extends StatefulWidget {
   const ProgressCardFooter({Key key}) : super(key: key);

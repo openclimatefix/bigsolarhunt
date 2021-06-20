@@ -1,4 +1,4 @@
-# solar_hunt
+# bigsolarhunt
 
 Flutter frontend for the OpenClimateFix solar streets project.
 

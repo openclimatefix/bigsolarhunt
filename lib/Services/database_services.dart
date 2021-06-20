@@ -2,9 +2,9 @@ import 'dart:math';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
-import 'package:solar_hunt/DataStructs/solar_panel.dart';
-import 'package:solar_hunt/DataStructs/badge.dart';
-import 'package:solar_hunt/Services/latlong_services.dart';
+import 'package:bigsolarhunt/DataStructs/solar_panel.dart';
+import 'package:bigsolarhunt/DataStructs/badge.dart';
+import 'package:bigsolarhunt/Services/latlong_services.dart';
 
 class DatabaseProvider {
   DatabaseProvider._();

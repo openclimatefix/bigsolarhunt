@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:solar_hunt/Services/markdown_services.dart';
+import 'package:bigsolarhunt/Services/markdown_services.dart';
 
 class InfoScreen extends StatefulWidget {
   const InfoScreen({

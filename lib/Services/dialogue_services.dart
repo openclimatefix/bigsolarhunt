@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
-import 'package:solar_hunt/DataStructs/badge.dart';
+import 'package:bigsolarhunt/DataStructs/badge.dart';
 
 class GenericDialogue extends StatelessWidget {
   final String title;

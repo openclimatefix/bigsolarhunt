@@ -1,22 +1,18 @@
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:solar_hunt/DataStructs/mapillary_user.dart';
-import 'package:solar_hunt/DataStructs/solar_panel.dart';
-import 'package:solar_hunt/Services/database_services.dart';
-import 'package:solar_hunt/Services/telegram_service.dart';
+
+import 'package:bigsolarhunt/DataStructs/solar_panel.dart';
+import 'package:bigsolarhunt/Services/database_services.dart';
+import 'package:bigsolarhunt/Services/telegram_service.dart';
+import 'package:bigsolarhunt/Config/config.dart';
 
 import 'dart:convert';
 
 class MapillaryService {
-  String token;
   String userEmail;
   DatabaseProvider panelDatabase = DatabaseProvider.databaseProvider;
   final TelegramBot telegramBot = TelegramBot();
-
-  static const _BASE_URL = 'https://a.mapillary.com/v3/me/uploads';
-  static const _CLIENT_ID =
-      'SG1nOGZNWEtmalFlN21JbFYxR2ltdDozNTlkMDEyN2E5YjM1MjQx';
 
   Future<bool> upload(SolarPanel newPanel) async {
     // upload attempts to upload a SolarPanel struct to Mapillary
@@ -52,11 +48,11 @@ class MapillaryService {
   }
 
   Future<UploadSession> _createUploadSession() async {
-    final Uri url = Uri.parse(_BASE_URL + '?client_id=$_CLIENT_ID');
+    final Uri url = Uri.parse(
+        Env.MAPILLARY_BASE_URL + '?client_id=' + Env.MAPILLARY_CLIENT_ID);
     final Map<String, String> headers = {};
     final Map<String, String> body = {};
-    final String token = await _getToken();
-    headers['Authorization'] = token;
+    headers['Authorization'] = 'Bearer ' + Env.MAPILLARY_BEARER_TOKEN;
     headers['Content-Type'] = 'application/json';
     body['type'] = 'images/sequence';
     final response =
@@ -87,8 +83,10 @@ class MapillaryService {
     final response = await request.send();
     if (response.statusCode == 204) {
       Future<String> email = _getEmail();
+      Future<String> userID = _getUserID();
       String imageKey = response.headers['location'].split('%2F')[4];
-      telegramBot.userUpload(await email, imageKey);
+      telegramBot.userUpload(
+          userID: await userID, email: await email, imageKey: imageKey);
       return image;
     } else {
       throw Exception('Error uploading to AWS');
@@ -96,21 +94,15 @@ class MapillaryService {
   }
 
   _closeUploadSession(UploadSession session) async {
-    final Uri url =
-        Uri.parse(_BASE_URL + '/${session.key}/closed?client_id=$_CLIENT_ID');
+    final Uri url = Uri.parse(Env.MAPILLARY_BASE_URL +
+        '/${session.key}/closed?client_id=' +
+        Env.MAPILLARY_CLIENT_ID);
     final Map<String, String> headers = {};
-    final String token = await _getToken();
-    headers['Authorization'] = token;
+    headers['Authorization'] = 'Bearer ' + Env.MAPILLARY_BEARER_TOKEN;
     final response = await http.put(url, headers: headers);
     if (response.statusCode != 200) {
       throw Exception('Error publishing session');
     }
-  }
-
-  Future<String> _getToken() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String token = prefs.getString('token');
-    return 'Bearer ' + token;
   }
 
   Future<String> _getEmail() async {
@@ -119,20 +111,10 @@ class MapillaryService {
     return email;
   }
 
-  Future<MapillaryUser> getUserFromKey(String userkey) async {
-    var clientId = 'SG1nOGZNWEtmalFlN21JbFYxR2ltdDozNTlkMDEyN2E5YjM1MjQx';
-
-    var url = Uri.parse(
-        'https://a.mapillary.com/v3/users/$userkey?client_id=$clientId');
-
-    http.Response response = await http.get(url);
-
-    if (response.statusCode == 200) {
-      var user = MapillaryUser.fromJson(jsonDecode(response.body));
-      return user;
-    } else {
-      throw Exception('Error getting user');
-    }
+  Future<String> _getUserID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userID = prefs.getString('userID');
+    return userID;
   }
 }
 
