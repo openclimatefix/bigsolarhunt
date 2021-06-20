@@ -19,7 +19,7 @@ build-debug-android:
     - |
       flutter build appbundle \
       --debug \
-      --build-name=1.1.${CI_PIPELINE_IID} \
+      --build-name=1.2.${CI_PIPELINE_IID} \
       --build-number=${CI_PIPELINE_IID} \
       --dart-define=MAPILLARY_BEARER_TOKEN=${MAPILLARY_BEARER_TOKEN} \
       --dart-define=MAPILLARY_CLIENT_ID=${MAPILLARY_CLIENT_ID} \
@@ -48,13 +48,13 @@ build-release-android:
     - |
       flutter build appbundle \
       --release \
-      --build-name=1.1.${CI_PIPELINE_IID} \
+      --build-name=1.2.${CI_PIPELINE_IID} \
       --build-number=${CI_PIPELINE_IID} \
       --dart-define=MAPILLARY_BEARER_TOKEN=${MAPILLARY_BEARER_TOKEN} \
       --dart-define=MAPILLARY_CLIENT_ID=${MAPILLARY_CLIENT_ID} \
       --dart-define=TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN} \
       --dart-define=TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
-    - echo Built release appbundle 1.1."${CI_PIPELINE_IID}"+"${CI_PIPELINE_IID}"
+    - echo Built release appbundle 1.2."${CI_PIPELINE_IID}"+"${CI_PIPELINE_IID}"
   artifacts: 
     paths: 
       - build/app/outputs/bundle/release/app-release.aab
@@ -83,11 +83,11 @@ build-release-android:
 #      when: never
 #    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
 #  script:
-#    - echo 'running release_job for v1.1.${CI_PIPELINE_IID}+${CI_PIPELINE_IID}'
+#    - echo 'running release_job for v1.2.${CI_PIPELINE_IID}+${CI_PIPELINE_IID}'
 #  release:
-#    name: Release v1.1.${CI_PIPELINE_IID}+${CI_PIPELINE_IID}
+#    name: Release v1.2.${CI_PIPELINE_IID}+${CI_PIPELINE_IID}
 #    description: ${CI_COMMIT_MESSAGE}
-#    tag_name: v1.1.${CI_PIPELINE_IID}+${CI_PIPELINE_IID}
+#    tag_name: v1.2.${CI_PIPELINE_IID}+${CI_PIPELINE_IID}
 #    ref: ${CI_COMMIT_SHA}
 #
 #
