@@ -1,3 +1,7 @@
+import 'dart:io';
+
+import 'package:bigsolarhunt/DataStructs/solar_panel.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:teledart/teledart.dart';
 import 'package:teledart/telegram.dart';
 
@@ -11,8 +15,33 @@ class TelegramBot {
     teledart.telegram.sendMessage(Env.TELEGRAM_CHAT_ID, message);
   }
 
-  userUpload({String userID, String email, String imageKey}) {
-    var message = "userID: $userID\nemail: $email\nimageKey: $imageKey";
-    teledart.telegram.sendMessage(Env.TELEGRAM_CHAT_ID, message);
+  Future<bool> userUpload(SolarPanel newPanel) async {
+    String email = await _getEmail();
+    String userID = await _getUserID();
+    final lat = newPanel.lat;
+    final lon = newPanel.lon;
+    var message = "userID: $userID, email: $email, lat: $lat, lon: $lon";
+
+    final image = File(newPanel.path);
+    try {
+      await teledart.telegram
+          .sendPhoto(Env.TELEGRAM_CHAT_ID, image, caption: message);
+    } catch (e) {
+      print(e);
+      return false;
+    }
+    return true;
+  }
+
+  Future<String> _getEmail() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String email = prefs.getString('email');
+    return email;
+  }
+
+  Future<String> _getUserID() async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    String userID = prefs.getString('userID');
+    return userID;
   }
 }

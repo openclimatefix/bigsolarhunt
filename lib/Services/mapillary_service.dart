@@ -85,8 +85,6 @@ class MapillaryService {
       Future<String> email = _getEmail();
       Future<String> userID = _getUserID();
       String imageKey = response.headers['location'].split('%2F')[4];
-      telegramBot.userUpload(
-          userID: await userID, email: await email, imageKey: imageKey);
       return image;
     } else {
       throw Exception('Error uploading to AWS');
