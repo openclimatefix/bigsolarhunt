@@ -1,3 +1,4 @@
+import 'package:bigsolarhunt/Services/telegram_service.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong/latlong.dart';
 import 'dart:io';
@@ -5,7 +6,6 @@ import 'package:progress_state_button/iconed_button.dart';
 import 'package:progress_state_button/progress_button.dart';
 
 import 'package:bigsolarhunt/DataStructs/solar_panel.dart';
-import 'package:bigsolarhunt/Services/mapillary_service.dart';
 import 'UploadButtonWidgets/upload_dialogues.dart';
 import 'package:bigsolarhunt/Services/dialogue_services.dart';
 import 'package:bigsolarhunt/Services/database_services.dart';
@@ -27,7 +27,9 @@ class UploadButton extends StatefulWidget {
 }
 
 class _UploadButtonState extends State<UploadButton> {
-  MapillaryService mapillaryService = new MapillaryService();
+  // MapillaryService mapillaryService = new MapillaryService();
+  final TelegramBot telegramBot = TelegramBot();
+
   DatabaseProvider panelDatabase = DatabaseProvider.databaseProvider;
   ButtonState state = ButtonState.idle;
   bool connected = false;
@@ -52,7 +54,7 @@ class _UploadButtonState extends State<UploadButton> {
         uploaded: true);
 
     if (connected) {
-      bool uploaded = await mapillaryService.upload(newPanel);
+      bool uploaded = await telegramBot.userUpload(newPanel);
       if (uploaded) {
         await panelDatabase.insertUserPanel(newPanel);
       } else {
@@ -62,11 +64,11 @@ class _UploadButtonState extends State<UploadButton> {
             context: context,
             builder: (_) => new FailureDialogue(
                 error: Exception("Failed to upload. Panel added to queue.")));
+        return;
       }
     } else {
       await panelDatabase.insertQueuePanel(newPanel);
     }
-
     _displaySuccess();
 
     List<Badge> unlockedBadges =
