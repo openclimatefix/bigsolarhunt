@@ -1,3 +1,6 @@
+// Functions for creating, adding to, removing from, and fetching from
+// Application's SQLite database.
+
 import 'dart:math';
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
@@ -6,6 +9,12 @@ import 'package:bigsolarhunt/DataStructs/solar_panel.dart';
 import 'package:bigsolarhunt/DataStructs/badge.dart';
 import 'package:bigsolarhunt/Services/latlong_services.dart';
 
+/// Creates a class through which the application can interact with the
+/// sqlite database. Instantiated in another class via
+///
+/// [DatabaseProvider panelDatabase = DatabaseProvider.databaseProvider;]
+///
+/// See [UploadButton] for example.
 class DatabaseProvider {
   DatabaseProvider._();
 
@@ -21,6 +30,7 @@ class DatabaseProvider {
     return _database;
   }
 
+  /// Opens the database instance, or creates it if it doesn't exist
   Future<Database> getDatabaseInstance() async {
     Database database = await openDatabase(
         join(await getDatabasesPath(), _panelDatabaseName),
@@ -34,6 +44,7 @@ class DatabaseProvider {
     await createAndPopulateUserBadgesTable(db);
   }
 
+  /// SQL to create UserPanels Table
   Future<void> createUserPanelsTable(Database db) async {
     await db.execute("CREATE TABLE IF NOT EXISTS $_userPanelTableName("
         "id INTEGER PRIMARY KEY AUTOINCREMENT,"
@@ -45,6 +56,7 @@ class DatabaseProvider {
         ")");
   }
 
+  /// SQL to create UserBadges table
   Future<void> createAndPopulateUserBadgesTable(Database db) async {
     await db.execute("CREATE TABLE $_userBadgeTableName("
         "id TEXT PRIMARY KEY,"
@@ -59,6 +71,7 @@ class DatabaseProvider {
     });
   }
 
+  /// SQL to get a list of all user's panels
   Future<List<SolarPanel>> getUserPanels() async {
     final Database db = await database;
     final List<Map<String, dynamic>> response = await db
@@ -68,6 +81,7 @@ class DatabaseProvider {
     return panelData;
   }
 
+  /// SQL to get list of solar panels that have not been uploaded to Mapillary
   Future<List<SolarPanel>> getUploadQueue() async {
     final Database db = await database;
     final List<Map<String, dynamic>> response = await db
@@ -77,6 +91,7 @@ class DatabaseProvider {
     return uploadQueue;
   }
 
+  /// Gets number of user panels that have been uploaded to Mapillary
   Future<int> getUserPanelCount() async {
     final Database db = await database;
     final List<Map<String, dynamic>> result = await db.rawQuery(
@@ -85,6 +100,7 @@ class DatabaseProvider {
     return count;
   }
 
+  /// Gets number of user panels that have NOT been uploaded to Mapillary
   Future<int> getUploadQueueCount() async {
     final Database db = await database;
     final List<Map<String, dynamic>> result = await db.rawQuery(
@@ -93,6 +109,7 @@ class DatabaseProvider {
     return count;
   }
 
+  /// SQL to get list of all user's Badges
   Future<List<Badge>> getUserBadgeData() async {
     final Database db = await database;
     final List<Map<String, dynamic>> response =
@@ -101,12 +118,16 @@ class DatabaseProvider {
     return badgeData;
   }
 
+  /// Add a solar panel to the UserPanels table, with the uploaded field set to
+  /// 1 (uploaded)
   Future<void> insertUserPanel(SolarPanel newPanel) async {
     final Database db = await database;
     await db.insert(_userPanelTableName, newPanel.toMapNoID());
     print(await db.query(_userPanelTableName));
   }
 
+  /// Add a solar panel to the UserPanels table, with the upload field set to
+  /// 0 (not uploaded)
   Future<void> insertQueuePanel(SolarPanel newPanel) async {
     final Database db = await database;
     await db.insert(
@@ -114,6 +135,7 @@ class DatabaseProvider {
     print(await db.query(_userPanelTableName));
   }
 
+  /// Change a panel's entry in the table to have uploaded set to 1
   Future<void> markAsUploaded(SolarPanel toMark) async {
     final Database db = await database;
     final int id = toMark.id;
@@ -126,15 +148,17 @@ class DatabaseProvider {
     print(await db.query(_userPanelTableName));
   }
 
+  /// Checks the badge table to see whether any new badges have been earned
+  /// Updates the table accordingly. Returns a list of newly-unlocked
+  /// [Badge] objects.
   Future<List<Badge>> checkForNewBadges(SolarPanel lastUploadedPanel) async {
-    // Checks the badge table to see whether any new badges have been earned
-    // Updates the table accordingly
     final Database db = await database;
     List<Badge> userBadges = await getUserBadgeData();
     List<SolarPanel> currentPanels = await getUserPanels();
     int userPanels = await getUserPanelCount();
     List<Badge> newBadges = [];
 
+    /// Sub-Function to set a Badge's "unlocked" field in the table to 1
     unlockBadgeOfId(String id, List<Badge> newBadgeList) async {
       // Get badge to be unlocked from current badge table list
       Badge unlockedBadge = userBadges.singleWhere((badge) => badge.id == id);
@@ -148,8 +172,8 @@ class DatabaseProvider {
           conflictAlgorithm: ConflictAlgorithm.replace);
     }
 
+    /// Sub-Function to check if count-based badges have been unlocked
     checkPanelCountBadges() {
-      // Check panel count badges
       Badge newBadge = userBadges.singleWhere(
           (badge) => (badge.unlocked == false &&
               badge.panelCount != null &&
@@ -160,8 +184,9 @@ class DatabaseProvider {
       }
     }
 
+    /// Get greatest distance between current panel and all other panels,
+    /// unlock Explorer badge if criteria matches
     checkExplorerBadge() {
-      // Get greatest distance between current panel and all other panels
       double distance = currentPanels
           .map((panel) {
             try {
@@ -185,6 +210,9 @@ class DatabaseProvider {
       }
     }
 
+    /// Sub-Function to check whether the criteria for the five-in-a-day
+    /// badge has been met, and unlocks it in the table if it has (and the badge
+    /// has not already been unlocked)
     checkFiveInADayBadge() {
       // Get badge if not unlocked
       Badge fiveInADayBadge = userBadges.singleWhere(
@@ -206,6 +234,8 @@ class DatabaseProvider {
       }
     }
 
+    /// Sub-Function to check whether the criteria for the streak badge have
+    /// been met, and unlock it if so.
     checkStreakBadge() {
       // Get badge if not unlocked
       Badge explorerBadge = userBadges.singleWhere(

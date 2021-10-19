@@ -11,6 +11,11 @@ import 'Screens/StatsScreen/stats_screen.dart';
 import 'Services/mapillary_service.dart';
 import 'Services/dialogue_services.dart';
 
+/// Main screen of the application. Contains internal navigation bar,
+/// with links to [OpenStreetMapScreen], [StatsScreen], and [InfoScreen].
+/// All screens are displayed in the scaffold's body, with a persistent
+/// [AppBar], [BottomNavigationBar], and [FloatingActionButton] for access
+/// to the [UploadScreen].
 class HomePage extends StatefulWidget {
   @override
   _HomePageState createState() => _HomePageState();
@@ -25,11 +30,14 @@ class _HomePageState extends State<HomePage> {
 
   @override
   void initState() {
+    // Ensure internet connection
     _checkConnectivity();
     _checkSignedIn();
     super.initState();
   }
 
+  /// Sets [connected] state variable to true or false, depending on user's
+  /// internet connection
   Future _checkConnectivity() async {
     bool result = await checkConnection();
     result = result == null ? false : result;
@@ -38,6 +46,8 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  /// Sets [signedIn] state variable to true if there is a non-null value in
+  /// the [email] [SharedPreferences] key.
   Future _checkSignedIn() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     String email = prefs.getString('email');
@@ -47,6 +57,8 @@ class _HomePageState extends State<HomePage> {
     });
   }
 
+  /// Handler function for [PopupMenuButton] menu. Input string [value] is
+  /// string name of the option in question.
   void handleOptionsClick(String value) async {
     switch (value) {
       case 'Toggle theme':
@@ -84,6 +96,7 @@ class _HomePageState extends State<HomePage> {
       appBar: AppBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
         actions: [
+          // Options button which on click reveals drop down menu.
           PopupMenuButton<String>(
               icon: Icon(Icons.more_vert),
               onSelected: handleOptionsClick,
@@ -102,6 +115,7 @@ class _HomePageState extends State<HomePage> {
                 }).toList();
               })
         ],
+        // Set appbar title to title of currently selected destination
         title: Text(allDestinations[_currentIndex].title,
             style: Theme.of(context)
                 .textTheme
@@ -109,6 +123,7 @@ class _HomePageState extends State<HomePage> {
                 .copyWith(color: Theme.of(context).colorScheme.onPrimary)),
         centerTitle: true,
       ),
+      // Display current destination's screen Widget in safe area as Scaffold body
       body: SafeArea(
         top: false,
         child: Navigator(
@@ -121,6 +136,7 @@ class _HomePageState extends State<HomePage> {
           },
         ),
       ),
+      // Instantiate BottomNavigationBar from allDestinations list
       bottomNavigationBar: BottomNavigationBar(
         backgroundColor: Theme.of(context).colorScheme.surface,
         currentIndex: _currentIndex,
@@ -131,6 +147,7 @@ class _HomePageState extends State<HomePage> {
             setState(() {
               _currentIndex = index;
             });
+            // Animate transition to viewing new destination screen
             Widget screen = allDestinations[index].screen;
             _navigatorKey.currentState
                 .pushReplacement(FadeThroughPageRoute(page: screen));
@@ -147,6 +164,8 @@ class _HomePageState extends State<HomePage> {
           );
         }).toList(),
       ),
+      // Display floating action button, which on pressed, navigates to the
+      // Upload Screen.
       floatingActionButtonLocation: FloatingActionButtonLocation.centerFloat,
       floatingActionButton: FloatingActionButton(
         heroTag: "uploadbtn",
@@ -159,6 +178,9 @@ class _HomePageState extends State<HomePage> {
   }
 }
 
+/// Structure class for internal views within the Home Screen, which can be
+/// accessed via the [BottomNavigationBar]. When navigated to, the [Widget] is
+/// displayed in the [HomePage]'s [Scaffold] [body].
 class Destination {
   Destination(this.index, this.title, this.route, this.screen, this.icon);
   final int index;
@@ -168,6 +190,8 @@ class Destination {
   final Widget screen;
 }
 
+/// List containing all possible views which can be displayed on the home page,
+/// navigated to via the bottom navigation bar.
 List<Destination> allDestinations = <Destination>[
   Destination(0, 'Big Solar Hunt', '/', OpenStreetMapScreen(),
       Icons.place), ////Icons.public

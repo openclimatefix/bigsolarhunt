@@ -1,3 +1,6 @@
+// Service for writing data to telegram. This is a workaround whilst
+// Mapillary is updating it's API.
+
 import 'dart:io';
 
 import 'package:bigsolarhunt/DataStructs/solar_panel.dart';
@@ -7,14 +10,17 @@ import 'package:teledart/telegram.dart';
 
 import 'package:bigsolarhunt/Config/config.dart';
 
+/// Service for posting to Telegram's API
 class TelegramBot {
   var teledart = TeleDart(Telegram(Env.TELEGRAM_BOT_TOKEN), Event());
 
+  /// Sends message to telegram channel informing of new user
   newUser({String userID, String email}) {
     var message = "userID: $userID\nemail: $email";
     teledart.telegram.sendMessage(Env.TELEGRAM_CHAT_ID, message);
   }
 
+  /// Sends new panel image to telegram channel
   Future<bool> userUpload(SolarPanel newPanel) async {
     String email = await _getEmail();
     String userID = await _getUserID();

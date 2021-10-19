@@ -14,6 +14,9 @@ import 'UploadScreenWidgets/fine_tune_map.dart';
 import 'UploadScreenWidgets/upload_screen_body.dart';
 import 'package:bigsolarhunt/Services/dialogue_services.dart';
 
+/// Screen to show when uploading an image. Upon loading the widget the user's
+/// default camera app is opened to take an image of a panel. This image, and the
+/// user's Latitude and Longitude, are saved to state.
 class UploadScreen extends StatefulWidget {
   const UploadScreen({
     Key key,
@@ -86,7 +89,7 @@ class _UploadScreenState extends State<UploadScreen> {
     final LatLng newLocation = await Navigator.push(
         context, MaterialPageRoute(builder: (context) => FineTuneMap()));
     // If the back button was pressed (and not the tick) on the FineTuneLocation screen,
-    //  no LatLng will be returned. In this case, keep the panelLocation as was
+    // no LatLng will be returned. In this case, keep the panelLocation as was
     // Else set it as the returned LatLng
     setState(() {
       _panelLocation = newLocation == null ? _panelLocation : newLocation;

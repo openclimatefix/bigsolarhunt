@@ -1,3 +1,6 @@
+// Upload button is what triggers an image upload to Mapillary/telegram
+// TODO: Have it handle an upload to AWS instead
+
 import 'package:bigsolarhunt/Services/telegram_service.dart';
 import 'package:flutter/material.dart';
 import 'package:latlong/latlong.dart';
@@ -12,9 +15,10 @@ import 'package:bigsolarhunt/Services/database_services.dart';
 import 'package:bigsolarhunt/Services/internet_services.dart';
 import 'package:bigsolarhunt/DataStructs/badge.dart';
 
+/// Dynamic button able to upload a File to OSM and display status
+///  of the async OSM API calls
 class UploadButton extends StatefulWidget {
-  // Dynamic button able to upload a File to OSM and display status
-  //  of the async OSM API calls
+
   final File imageFile;
   final LatLng panelLocation;
   final Function fineTuneLocation;
@@ -27,7 +31,7 @@ class UploadButton extends StatefulWidget {
 }
 
 class _UploadButtonState extends State<UploadButton> {
-  // MapillaryService mapillaryService = new MapillaryService();
+  // TODO: Change the telegram service here to an AWS service
   final TelegramBot telegramBot = TelegramBot();
 
   DatabaseProvider panelDatabase = DatabaseProvider.databaseProvider;
@@ -42,6 +46,8 @@ class _UploadButtonState extends State<UploadButton> {
     });
   }
 
+  /// handleUpload calls the upload function for Mapillary
+  /// (currently calls telegram as a workaround)
   void handleUpload(File imageFile, LatLng panelLocation) async {
     _displayLoading();
 
@@ -54,6 +60,7 @@ class _UploadButtonState extends State<UploadButton> {
         uploaded: true);
 
     if (connected) {
+      // Upon introduction of AWS, this can be changed to e.g. awsservice.upload
       bool uploaded = await telegramBot.userUpload(newPanel);
       if (uploaded) {
         await panelDatabase.insertUserPanel(newPanel);

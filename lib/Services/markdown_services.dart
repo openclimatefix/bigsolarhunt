@@ -1,8 +1,12 @@
+/// Functions for handling copy written in markdown.
+
 import 'package:flutter/material.dart';
 import 'package:flutter_markdown/flutter_markdown.dart' as fmd;
 import 'package:markdown/markdown.dart' as md;
 import 'package:url_launcher/url_launcher.dart';
 
+/// Widget which reads in .md file defined via [mdfile] and display it as
+/// scrollable text.
 class ScrollableTextFromMdFile extends StatelessWidget {
   final String mdfile;
 
@@ -35,6 +39,7 @@ class ScrollableTextFromMdFile extends StatelessWidget {
   }
 }
 
+/// Widget which reads in .md file as text and display it as non-scrollable text.
 class BodyTextFromMdFile extends StatelessWidget {
   final String mdfile;
 
