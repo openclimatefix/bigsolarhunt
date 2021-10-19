@@ -1,6 +1,10 @@
+// Defines Theme colors, Application font, and ChangeNotifier for
+// changes to theme.
+
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
+/// [ThemeData] for light theme colors and font
 ThemeData lightTheme = ThemeData(
   // When using hex colours, replace # with 0xff in Color constructor
   // e.g. #150030 -> Color(0xff150030)
@@ -22,6 +26,7 @@ ThemeData lightTheme = ThemeData(
   textTheme: GoogleFonts.poppinsTextTheme(),
 );
 
+/// [ThemeData] for dark theme colors and font
 ThemeData darkTheme = ThemeData(
   // When using hex colours, replace # with 0xff in Color constructor
   // e.g. #150030 -> Color(0xff150030)
@@ -44,6 +49,7 @@ ThemeData darkTheme = ThemeData(
       .apply(bodyColor: Colors.white, displayColor: Colors.white),
 );
 
+/// Notifier for listeners listening to the selected themeMode
 class SolarTheme with ChangeNotifier {
   static bool isDark = false;
 

@@ -1,3 +1,5 @@
+// Helper functions for dealing with Latitude and Longitude data
+
 import 'dart:math' as Math;
 
 double getDistanceFromLatLonInKm(lat1, lon1, lat2, lon2) {

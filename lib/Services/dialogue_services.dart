@@ -1,7 +1,11 @@
+// Contains some definitions of generic and reusable Dialogue widgets
+
 import 'package:intl/intl.dart';
 import 'package:flutter/material.dart';
 import 'package:bigsolarhunt/DataStructs/badge.dart';
 
+
+/// Dialogue with settable title, description, and icon.
 class GenericDialogue extends StatelessWidget {
   final String title;
   final String desc;
@@ -33,6 +37,7 @@ class GenericDialogue extends StatelessWidget {
   }
 }
 
+/// Defines the Icons for Error, Warning, and Success dialogues
 class DialogueIcons {
   static const Icon ERROR = Icon(
     Icons.error_outline,
@@ -51,6 +56,7 @@ class DialogueIcons {
   );
 }
 
+/// Dialogue to be shown on badge unlock
 class BadgeUnlockedDialogue extends StatelessWidget {
   final Badge badge;
   const BadgeUnlockedDialogue({Key key, @required this.badge})
@@ -85,6 +91,7 @@ class BadgeUnlockedDialogue extends StatelessWidget {
   }
 }
 
+/// Dialogue to be shown on badge inspect
 class BadgeInspectDialogue extends StatelessWidget {
   final Badge badge;
   const BadgeInspectDialogue({Key key, @required this.badge}) : super(key: key);
@@ -131,6 +138,7 @@ class BadgeInspectDialogue extends StatelessWidget {
   }
 }
 
+/// Helper function to display current date nicely
 String formattedDate(DateTime date) {
   return DateFormat('E').format(date) +
       ", " +

@@ -1,3 +1,7 @@
+// Service for communicating with Mapillary's API for image upload.
+// This is currently unused, as telegram was a workaround, but is left here
+// incase the code can be reused for Mapillary API v4.
+
 import 'dart:io';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
@@ -9,18 +13,21 @@ import 'package:bigsolarhunt/Config/config.dart';
 
 import 'dart:convert';
 
+/// Service for posting to Mapillary's API, including methods
+/// for creating and closing sessions, and uploading both individual
+/// and multiple images via POST
 class MapillaryService {
   String userEmail;
   DatabaseProvider panelDatabase = DatabaseProvider.databaseProvider;
   final TelegramBot telegramBot = TelegramBot();
 
+  /// upload attempts to upload a SolarPanel struct to Mapillary
+  /// returns true if successful, else false
   Future<bool> upload(SolarPanel newPanel) async {
-    // upload attempts to upload a SolarPanel struct to Mapillary
-    // returns true if succesful, else false
     final UploadSession session = await _createUploadSession();
     final imageFile = File(newPanel.path);
     try {
-      await _awsUpload(imageFile, session);
+      await _uploadImageWithSession(imageFile, session);
       await _closeUploadSession(session);
       await uploadQueuePanels();
     } catch (e) {
@@ -30,13 +37,16 @@ class MapillaryService {
     return true;
   }
 
+  /// uploadQueuePanels attempts to upload all the panel images
+  /// in the panel table database who's uploaded column is zero.
+  /// Returns true on success or false otherwise.
   Future<bool> uploadQueuePanels() async {
     final UploadSession session = await _createUploadSession();
     final List<SolarPanel> uploadQueue = await panelDatabase.getUploadQueue();
     try {
       uploadQueue.forEach((uploadQueuePanel) async {
         final File image = File(uploadQueuePanel.path);
-        await _awsUpload(image, session);
+        await _uploadImageWithSession(image, session);
         panelDatabase.markAsUploaded(uploadQueuePanel);
       });
       await _closeUploadSession(session);
@@ -47,16 +57,24 @@ class MapillaryService {
     return true;
   }
 
+  /// _createUploadSession osts to the Mapillary API to
+  /// fetch an [UploadSession] Authorization struct
   Future<UploadSession> _createUploadSession() async {
     final Uri url = Uri.parse(
-        Env.MAPILLARY_BASE_URL + '?client_id=' + Env.MAPILLARY_CLIENT_ID);
-    final Map<String, String> headers = {};
-    final Map<String, String> body = {};
-    headers['Authorization'] = 'Bearer ' + Env.MAPILLARY_BEARER_TOKEN;
-    headers['Content-Type'] = 'application/json';
-    body['type'] = 'images/sequence';
-    final response =
-        await http.post(url, headers: headers, body: json.encode(body));
+        '${Env.MAPILLARY_BASE_URL}?client_id=${Env.MAPILLARY_CLIENT_ID}');
+
+    // Post to Mapillary API requesting session creation
+    final response = await http.post(
+        url,
+        headers: {
+          HttpHeaders.authorizationHeader: 'Bearer ${Env.MAPILLARY_BEARER_TOKEN}',
+          HttpHeaders.contentTypeHeader: 'application/json',
+        },
+        body: {
+          json.encode({'type': 'images/sequence'}),
+        }
+    );
+
     if (response.statusCode == 200) {
       final session = UploadSession.fromJson(jsonDecode(response.body));
       return session;
@@ -65,7 +83,9 @@ class MapillaryService {
     }
   }
 
-  Future<File> _awsUpload(File image, UploadSession session) async {
+  /// _uploadImageWithSession posts a file to the Mapillary API,
+  /// using the input UploadSession for auth
+  Future<File> _uploadImageWithSession(File image, UploadSession session) async {
     String fileName = image.path.split("/").last;
     final fields = session.fields;
     fields['key'] = session.keyPrefix + fileName;
@@ -87,10 +107,12 @@ class MapillaryService {
       String imageKey = response.headers['location'].split('%2F')[4];
       return image;
     } else {
-      throw Exception('Error uploading to AWS');
+      throw Exception('Error uploading to Mapillary');
     }
   }
 
+  /// _closeUploadSession posts to the Mapillary API
+  /// to close the input [UploadSession]
   _closeUploadSession(UploadSession session) async {
     final Uri url = Uri.parse(Env.MAPILLARY_BASE_URL +
         '/${session.key}/closed?client_id=' +
@@ -99,9 +121,10 @@ class MapillaryService {
     headers['Authorization'] = 'Bearer ' + Env.MAPILLARY_BEARER_TOKEN;
     final response = await http.put(url, headers: headers);
     if (response.statusCode != 200) {
-      throw Exception('Error publishing session');
+      throw Exception('Error closing session');
     }
   }
+
 
   Future<String> _getEmail() async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -116,6 +139,8 @@ class MapillaryService {
   }
 }
 
+/// UploadSession is a wrapper class for handling JSON response
+/// from Mapillary session creation REST call as a class Object
 class UploadSession {
   UploadSession({this.fields, this.key, this.keyPrefix, this.url});
 
@@ -131,6 +156,7 @@ class UploadSession {
       url: json['url']);
 }
 
+/// MapillaryException wraps an exception JSON response as a class
 class MapillaryException implements Exception {
   final _message;
   MapillaryException(this._message);

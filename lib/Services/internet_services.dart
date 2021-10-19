@@ -1,6 +1,12 @@
+// Services for checking connection to internet, and displaying appropriate
+// visual cues when disconnected. Since application has dependency on an
+// internet connection to display maps, when no connection is detected, the
+// maps are replaced with NotConnectedContainer.
+
 import 'package:flutter/material.dart';
 import 'dart:io';
 
+/// Async function that checks connection to internet.
 Future<bool> checkConnection() async {
   try {
     final result = await InternetAddress.lookup('example.com');
@@ -13,6 +19,9 @@ Future<bool> checkConnection() async {
   return true;
 }
 
+/// Container which displays no connection icon, and optional text,
+/// depending on the value of [showtext].
+/// This replaces the OpenStreetMap widgets when there is no connection.
 class NotConnectedContainer extends StatelessWidget {
   const NotConnectedContainer({
     Key key,
