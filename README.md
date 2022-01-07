@@ -1,5 +1,9 @@
 # The Big Solar Hunt
 
+<!-- ALL-CONTRIBUTORS-BADGE:START - Do not remove or modify this section -->
+[![All Contributors](https://img.shields.io/badge/all_contributors-6-orange.svg?style=flat-square)](#contributors-)
+<!-- ALL-CONTRIBUTORS-BADGE:END -->
+
 Flutter frontend for The Big Solar Hunt Android/IOS app, a collaborative project between
 [Open Climate Fix](https://openclimatefix.org/) and [Possible](https://www.wearepossible.org/).
 
@@ -19,6 +23,7 @@ Flutter frontend for The Big Solar Hunt Android/IOS app, a collaborative project
   - [Next Steps](#next-steps)
     - [1. Transition to GitHub (`TODO`)](#1-transition-to-github-todo)
     - [2. AWS Service (`TODO`)](#2-aws-service-todo)
+  - [Contributors](#contributors)
 
 ## Installing Flutter
 
@@ -214,3 +219,26 @@ replaced with a new
 function that can upload an image or set of images to the bucket. This service can then be imported
 and its upload functions called in the two places a user can trigger an upload (see the "Application
 Navigational Flow" section).
+
+## Contributors
+
+<!-- ALL-CONTRIBUTORS-LIST:START - Do not remove or modify this section -->
+<!-- prettier-ignore-start -->
+<!-- markdownlint-disable -->
+<table>
+  <tr>
+    <td align="center"><a href="https://gitlab.com/solomoncotton"><img src="https://secure.gravatar.com/avatar/84c6b42928db49f4e8922cf6b3eb0a8a?s=180&d=identicon?s=100" width="100px;" alt=""/><br /><sub><b>Sol Cotton</b></sub></a><br /><a href="https://github.com/openclimatefix/bigsolarhunt/commits?author=solomoncotton" title="Code">💻</a> <a href="#content-solomoncotton" title="Content">🖋</a> <a href="https://github.com/openclimatefix/bigsolarhunt/commits?author=solomoncotton" title="Documentation">📖</a> <a href="#design-solomoncotton" title="Design">🎨</a> <a href="#ideas-solomoncotton" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://github.com/mukhikaran"><img src="https://avatars.githubusercontent.com/u/25258935?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Karan Mukhi</b></sub></a><br /><a href="https://github.com/openclimatefix/bigsolarhunt/commits?author=mukhikaran" title="Code">💻</a> <a href="#content-mukhikaran" title="Content">🖋</a> <a href="https://github.com/openclimatefix/bigsolarhunt/commits?author=mukhikaran" title="Documentation">📖</a> <a href="#design-mukhikaran" title="Design">🎨</a> <a href="#ideas-mukhikaran" title="Ideas, Planning, & Feedback">🤔</a></td>
+    <td align="center"><a href="https://github.com/danstowell"><img src="https://avatars.githubusercontent.com/u/202965?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Dan Stowell</b></sub></a><br /><a href="#projectManagement-danstowell" title="Project Management">📆</a> <a href="#ideas-danstowell" title="Ideas, Planning, & Feedback">🤔</a> <a href="#content-danstowell" title="Content">🖋</a></td>
+    <td align="center"><a href="https://gitlab.com/schmidt_fu"><img src="https://secure.gravatar.com/avatar/37e69d38663faea402f79bcb22702e30?s=180&d=identicon?s=100" width="100px;" alt=""/><br /><sub><b>Florian Schmidt</b></sub></a><br /><a href="https://github.com/openclimatefix/bigsolarhunt/commits?author=schmidt_fu" title="Code">💻</a></td>
+    <td align="center"><a href="https://github.com/Rabscuttler"><img src="https://avatars.githubusercontent.com/u/1125376?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Laurence Watson</b></sub></a><br /><a href="#ideas-Rabscuttler" title="Ideas, Planning, & Feedback">🤔</a></td>
+  </tr>
+  <tr>
+    <td align="center"><a href="https://github.com/flowirtz"><img src="https://avatars.githubusercontent.com/u/6052785?v=4?s=100" width="100px;" alt=""/><br /><sub><b>Flo Wirtz</b></sub></a><br /><a href="#maintenance-flowirtz" title="Maintenance">🚧</a></td>
+  </tr>
+</table>
+
+<!-- markdownlint-restore -->
+<!-- prettier-ignore-end -->
+
+<!-- ALL-CONTRIBUTORS-LIST:END -->
