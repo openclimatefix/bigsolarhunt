@@ -1,26 +1,39 @@
-# bigsolarhunt
+# The Big Solar Hunt
 
 Flutter frontend for The Big Solar Hunt Android/IOS app, a collaborative project between
-[OpenClimateFix](https://openclimatefix.org/) and [Possible](https://www.wearepossible.org/).
+[Open Climate Fix](https://openclimatefix.org/) and [Possible](https://www.wearepossible.org/).
 
-[[_TOC_]]
+- [The Big Solar Hunt](#the-big-solar-hunt)
+  - [Installing Flutter](#installing-flutter)
+  - [Repository Structure](#repository-structure)
+  - [Application Navigational Flow](#application-navigational-flow)
+  - [Database Structure](#database-structure)
+    - [userPanels table](#userpanels-table)
+    - [userBadges table](#userbadges-table)
+  - [Building the appbundle](#building-the-appbundle)
+    - [Remotely](#remotely)
+    - [Locally (not recommended)](#locally-not-recommended)
+      - [Keystore and key.properties](#keystore-and-keyproperties)
+      - [Environment variables and config.dart](#environment-variables-and-configdart)
+      - [Build command](#build-command)
+  - [Next Steps](#next-steps)
+    - [1. Transition to GitHub (`TODO`)](#1-transition-to-github-todo)
+    - [2. AWS Service (`TODO`)](#2-aws-service-todo)
 
 ## Installing Flutter
 
-For help getting started with Flutter, view the
-[online documentation](https://flutter.dev/docs), which offers tutorials, samples, guidance on
+For help getting started with Flutter, [view the
+online documentation](https://flutter.dev/docs), which offers tutorials, samples, guidance on
 mobile development, and a full API reference.
 
 - Set up with VSCode: https://flutter.dev/docs/get-started/editor?tab=vscode
 - Set up with Android Studio: https://flutter.dev/docs/get-started/editor?tab=androidstudio
 - Run the app: https://flutter.dev/docs/get-started/test-drive?tab=vscode
 
----
-
 ## Repository Structure
 
-The repository has at the top level the default flutter folder structure. For more information on
-the purposes of each folder, see
+The repository has at the top level the default flutter folder structure.
+For more information on the purposes of each folder, see
 [this link](https://www.section.io/engineering-education/flutter-folder-organization/).
 
 Within the `lib` folder is the application code itself. Internally, this folder is laid out as
@@ -32,8 +45,8 @@ lib
 - home_page.dart # Defines the main screen of the application
 - Animation/ # Files pertaining to widget animation
 - Config/ # Defines environment variables used for API tokens and other secrets
-- DataStructs/ # Class definitions for the Badge and SolarPanel data structures 
-- Screens/ # All screens of tha application, arranged into folders 
+- DataStructs/ # Class definitions for the Badge and SolarPanel data structures
+- Screens/ # All screens of tha application, arranged into folders
 - Services/ # Files containing utility functions for e.g. handling databases and connectivity checks
 - Themes/ # Defines the colour palettes for the applications' light and dark themes
 ```
@@ -64,7 +77,7 @@ OnboardingScreen --> LoginScreen : optional
 HomePage : StatsScreen
 HomePage : OpenStreetMapScreen
 HomePage : InfoScreen
-HomePage --> UploadScreen 
+HomePage --> UploadScreen
 HomePage --> LoginScreen : via popup menu
 ```
 
@@ -83,7 +96,7 @@ An upload to Mapillary (or telegram/AWS) can be triggered by the user from two p
 ### userPanels table
 
 | Column Name | Type  | Description                                                                 |
-|-------------|-------|-----------------------------------------------------------------------------|
+| ----------- | ----- | --------------------------------------------------------------------------- |
 | id          | int   | Autoincremented integer, unique to each panel                               |
 | lat         | float | Latitude in degrees                                                         |
 | lon         | float | Longitude in degrees                                                        |
@@ -95,14 +108,14 @@ See `lib/DataStructs/solar_panel.dart` for container/converter class.
 
 ### userBadges table
 
-| Column Name | Type  | Description                                                                 |
-|-------------|-------|-----------------------------------------------------------------------------|
-| id          | text  | Badge text id, unique to each badge                                         |
-| imagePath   | text  | Path to badge image asset                                                   |
-| panelCount  | int   | Number of panels required to unlock, NULL if not applicable                 |
-| unlocked    | int   | 1 if panel has been unlocked, 0 otherwise                                   |
-| dateUnlocked| text  | ISO-6801 string representation of the datetime at which the photo was taken |
-| description | text  | Text description of the requirements for unlocking the badge                |
+| Column Name  | Type | Description                                                                 |
+| ------------ | ---- | --------------------------------------------------------------------------- |
+| id           | text | Badge text id, unique to each badge                                         |
+| imagePath    | text | Path to badge image asset                                                   |
+| panelCount   | int  | Number of panels required to unlock, NULL if not applicable                 |
+| unlocked     | int  | 1 if panel has been unlocked, 0 otherwise                                   |
+| dateUnlocked | text | ISO-6801 string representation of the datetime at which the photo was taken |
+| description  | text | Text description of the requirements for unlocking the badge                |
 
 See `lib/DataStructs/badge.dart` for container/converter class, as well as table initialisation.
 
@@ -156,7 +169,7 @@ $ flutter build appbundle \
       --dart-define=MAPILLARY_BEARER_TOKEN=${MAPILLARY_BEARER_TOKEN} \
       --dart-define=MAPILLARY_CLIENT_ID=${MAPILLARY_CLIENT_ID} \
       --dart-define=TELEGRAM_BOT_TOKEN=${TELEGRAM_BOT_TOKEN} \
-      --dart-define=TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}                                                                                                                                                                                                                                                             ✔
+      --dart-define=TELEGRAM_CHAT_ID=${TELEGRAM_CHAT_ID}
 ```
 
 If you see the following exception:
@@ -175,20 +188,22 @@ flutter.versionName=flutter.version.name
 flutter.versionCode=1
 ```
 
+---
+
 ## Next Steps
 
 There are two main tasks to be done for the app to see a stable release:
 
-1. Transition to GitHub
-2. Swap telegram service to AWS storage bucket service
+- [ ] Transition to GitHub
+- [ ] Swap telegram service to AWS storage bucket service
 
-### 1. Transition to GitHub
+### 1. Transition to GitHub (`TODO`)
 
-To move the service to OCF's GitHub, the`gitlab-ci.yml` pipeline must be rewritten as a GitHub
+To move the service to OCF's GitHub, the `gitlab-ci.yml` pipeline must be rewritten as a GitHub
 Actions job. This will in turn require the environment variables found in
 GitLab's `settings -> CI/CD -> Variables` to be moved to the GitHub project-level variables.
 
-### 2. AWS Service
+### 2. AWS Service (`TODO`)
 
 Currently an upload call invokes functions that communicate to telegram, defined
 in `lib/Services/telegram_service.dart`. If the decision is that the images are to be moved to an
