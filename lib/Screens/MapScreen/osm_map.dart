@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'dart:ui';
 import 'dart:async';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:latlong/latlong.dart';
+import 'package:latlong2/latlong.dart';
 import 'package:bigsolarhunt/Services/internet_services.dart';
 import 'package:bigsolarhunt/DataStructs/solar_panel.dart';
 import 'package:bigsolarhunt/Services/database_services.dart';

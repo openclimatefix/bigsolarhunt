@@ -12,7 +12,7 @@ import 'package:bigsolarhunt/Config/config.dart';
 
 /// Service for posting to Telegram's API
 class TelegramBot {
-  var teledart = TeleDart(Telegram(Env.TELEGRAM_BOT_TOKEN), Event());
+  var teledart = TeleDart(Telegram(Env.TELEGRAM_BOT_TOKEN), Event("Bot"));
 
   /// Sends message to telegram channel informing of new user
   newUser({String userID, String email}) {

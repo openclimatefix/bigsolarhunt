@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:io';
-import 'package:latlong/latlong.dart';
+import 'package:latlong2/latlong.dart';
 
 import 'UploadBodyWidgets/upload_button.dart';
 import 'UploadBodyWidgets/image_with_column_overlap.dart';
