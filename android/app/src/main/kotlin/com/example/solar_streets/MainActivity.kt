@@ -1,4 +1,4 @@
-package com.openclimatefix.solar_hunt
+package org.openclimatefix.bigsolarhunt
 
 import io.flutter.embedding.android.FlutterActivity
 
