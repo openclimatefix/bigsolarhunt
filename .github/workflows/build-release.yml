@@ -1,4 +1,4 @@
-name: Build the Android App
+name: Build and Release the Android App
 on:
   workflow_dispatch:
     inputs:
@@ -32,7 +32,8 @@ jobs:
       - run: flutter pub run flutter_launcher_icons:main
       - run: flutter pub run flutter_native_splash:create
       # TODO: change build-name to release tag version
-      - run: |
+      - name: Build Flutter Android App
+        run: |
           flutter build appbundle \
           --release \
           --build-name=0.0.${{ github.run_number }} \
@@ -41,8 +42,23 @@ jobs:
           --dart-define=MAPILLARY_CLIENT_ID=${{ secrets.MAPILLARY_CLIENT_ID }} \
           --dart-define=TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }} \
           --dart-define=TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }}
-      - run: echo "Built release appbundle 0.0.$GITHUB_RUN_NUMBER ($GITHUB_RUN_NUMBER)"
+      - run: echo "Built release appbundle 0.0.${{ github.run_number }} (${{ github.run_number }})"
       - uses: actions/upload-artifact@v2
+        name: Export app bundle as GitHub artifact
         with:
           name: app-release.aab
           path: build/app/outputs/bundle/release/app-release.aab
+      - uses: ruby/setup-ruby@v1
+        name: Setup Ruby Install
+        with:
+          ruby-version: 2.6
+          bundler-cache: true
+      - shell: bash
+        env:
+          SLACK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+          FASTLANE_SERVICE_ACCOUNT: ${{ secrets.FASTLANE_SERVICE_ACCOUNT }}
+        name: Execute Fastlane Deploy
+        run: |
+          cd android
+          bundle install
+          bundle exec fastlane deploy
