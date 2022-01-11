@@ -3,7 +3,7 @@ description: A new Flutter project.
 
 # The following line prevents the package from being accidentally published to
 # pub.dev using `pub publish`. This is preferred for private packages.
-publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+publish_to: "none" # Remove this line if you wish to publish to pub.dev
 
 # The following defines the version and build number for your application.
 # A version number is three numbers separated by dots, like 1.2.43
@@ -15,7 +15,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 # In iOS, build-name is used as CFBundleShortVersionString while build-number used as CFBundleVersion.
 # Read more about iOS versioning at
 # https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
-version: 1.2.1+1
+version: 0.0.4+4
 
 environment:
   sdk: ">=2.7.0 <3.0.0"
@@ -39,15 +39,13 @@ dependencies:
   url_launcher: ^6.0.3
   flutter_exif_plugin:
     git:
-      url:
-        https://github.com/mukhikaran/flutter_exif.git
+      url: https://github.com/mukhikaran/flutter_exif.git
   intl: ^0.17.0
   oauth2_client: ^2.3.1
   flutter_markdown: ^0.6.9
   flutter_native_splash: ^1.3.3
   teledart: ^0.2.1
   uuid: ^3.0.5
-
 
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
@@ -69,13 +67,11 @@ flutter_native_splash:
   color_dark: "#150030"
   image: assets/branding/splash-icon.png
 
-
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
 
 # The following section is specific to Flutter.
 flutter:
-
   # The following line ensures that the Material Icons font is
   # included with your application, so that you can use the icons in
   # the material Icons class.
@@ -83,10 +79,10 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-     - assets/
-     - assets/badges/
-     - assets/branding/
-     - assets/backgrounds/
-     - assets/icons/
-     - assets/images/
-     - assets/text/
+    - assets/
+    - assets/badges/
+    - assets/branding/
+    - assets/backgrounds/
+    - assets/icons/
+    - assets/images/
+    - assets/text/
