@@ -1,11 +1,7 @@
 name: Build and Release the Android App
 on:
-  workflow_dispatch:
-    inputs:
-      deleteme:
-        description: "Foo"
-        required: false
-        default: "Bar"
+  release:
+    types: [published]
 jobs:
   build-release-android:
     runs-on: ubuntu-latest
@@ -31,18 +27,17 @@ jobs:
       - run: flutter pub get
       - run: flutter pub run flutter_launcher_icons:main
       - run: flutter pub run flutter_native_splash:create
-      # TODO: change build-name to release tag version
       - name: Build Flutter Android App
         run: |
           flutter build appbundle \
           --release \
-          --build-name=0.0.${{ github.run_number }} \
+          --build-name=${{ github.ref_name }} \
           --build-number=${{ github.run_number }} \
           --dart-define=MAPILLARY_BEARER_TOKEN=${{ secrets.MAPILLARY_BEARER_TOKEN }} \
           --dart-define=MAPILLARY_CLIENT_ID=${{ secrets.MAPILLARY_CLIENT_ID }} \
           --dart-define=TELEGRAM_BOT_TOKEN=${{ secrets.TELEGRAM_BOT_TOKEN }} \
           --dart-define=TELEGRAM_CHAT_ID=${{ secrets.TELEGRAM_CHAT_ID }}
-      - run: echo "Built release appbundle 0.0.${{ github.run_number }} (${{ github.run_number }})"
+      - run: echo "Built release appbundle ${{ github.ref_name }} (${{ github.run_number }})"
       - uses: actions/upload-artifact@v2
         name: Export app bundle as GitHub artifact
         with:
