@@ -8,7 +8,7 @@
     {
       "login": "solomoncotton",
       "name": "Sol Cotton",
-      "avatar_url": "https://secure.gravatar.com/avatar/84c6b42928db49f4e8922cf6b3eb0a8a?s=180&d=identicon",
+      "avatar_url": "https://secure.gravatar.com/avatar/84c6b42928db49f4e8922cf6b3eb0a8a",
       "profile": "https://gitlab.com/solomoncotton",
       "contributions": [
         "code",
@@ -45,7 +45,7 @@
     {
       "login": "schmidt_fu",
       "name": "Florian Schmidt",
-      "avatar_url": "https://secure.gravatar.com/avatar/37e69d38663faea402f79bcb22702e30?s=180&d=identicon",
+      "avatar_url": "https://secure.gravatar.com/avatar/37e69d38663faea402f79bcb22702e30",
       "profile": "https://gitlab.com/schmidt_fu",
       "contributions": [
         "code"
@@ -70,7 +70,7 @@
       ]
     }
   ],
-  "contributorsPerLine": 5,
+  "contributorsPerLine": 6,
   "projectName": "bigsolarhunt",
   "projectOwner": "openclimatefix",
   "repoType": "github",
